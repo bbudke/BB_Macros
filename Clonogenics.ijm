@@ -11,16 +11,24 @@ var amCmds = newMenu("Auto Montage Menu Tool", newArray("Change auto montage set
 */
 
 macro "Clonogenics Frontend Startup" {
-	run("Install...", "install=[" + getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics.ijm]");
+	run("Install...", "install=[" + getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Clonogenics.ijm]");
 }
 
 macro "Working Directory Menu Tool - C037L02f2L5270L70c0Lc0f2L020cLf2fcL0cfc" {
 	cmd = getArgument();
 	noTempFile = false;
 	if (cmd == "Set working directory") {
-		runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Global Configurator.ijm", "create");
+		runMacro(getDirectory("plugins") +
+			"BB_macros" + File.separator() +
+			"Clonogenics_modules" + File.separator() +
+			"Global_configurator.ijm", "create");
 	}
-	if (File.exists(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Global configuration.txt") != true) {
+	if (File.exists(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Clonogenics_modules" + File.separator() +
+		"Global_configuration.txt") != true) {
 		noTempFile = true;
 		showStatus("Working directory has not been set.");
 	}
@@ -33,9 +41,15 @@ macro "Working Directory Menu Tool - C037L02f2L5270L70c0Lc0f2L020cLf2fcL0cfc" {
 }
 
 macro "Clonogenics Configuration Action Tool - C037T0b10CT8b09fTdb09g" {
-	if (File.exists(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Global configuration.txt") == true) {
+	if (File.exists(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Clonogenics_modules" + File.separator() +
+		"Global_configuration.txt") == true) {
 		if (File.exists(getWorkingPaths("workingPath")) == true) {
-			runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Clonogenics Configurator.ijm", "create");
+			runMacro(getDirectory("plugins") +
+				"BB_macros" + File.separator() +
+				"Clonogenics_modules" + File.separator() +
+				"Clonogenics_configurator.ijm", "create");
 			imageIndexFile = getWorkingPaths("imageIndexFile");
 			groupLabelsFile = getWorkingPaths("groupLabelsFile");
 			checkForAndCreateIndexFiles();
@@ -48,10 +62,15 @@ macro "Clonogenics Configuration Action Tool - C037T0b10CT8b09fTdb09g" {
 }
 
 macro "Image Viewer Action Tool - C037R00eeL707eL07e7C22fV2244C2c2V9244C0f0V2944Cc22V9944" {
-	if (File.exists(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Global configuration.txt") == true) {
+	if (File.exists(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Clonogenics_modules" + File.separator() +
+		"Global_configuration.txt") == true) {
 		if (File.exists(getWorkingPaths("workingPath")) == true) {
 			if (File.exists(getWorkingPaths("analysisSetupFile")) == true) {
-				runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Image Viewer.ijm");
+				runMacro(getDirectory("plugins") +
+					"BB Macros" + File.separator() +
+					"Clonogenics Modules" + File.separator() + "Image Viewer.ijm");
 			} else {
 				showStatus("Setup file not found. Please run Clonogenics Configuration");
 			}
@@ -65,19 +84,37 @@ macro "Image Viewer Action Tool - C037R00eeL707eL07e7C22fV2244C2c2V9244C0f0V2944
 
 macro "Observational Units Menu Tool - CaaaR00aaC00cV2266CaaaR83aaC00cVb666CaaaR08aaC00cV2b66" {
 	cmd = getArgument();
-	if (File.exists(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Global configuration.txt") == true) {
+	if (File.exists(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Clonogenics_modules" + File.separator() +
+		"Global_configuration.txt") == true) {
 		if (File.exists(getWorkingPaths("workingPath")) == true) {
 			if (File.exists(getWorkingPaths("analysisSetupFile")) == true) {
 				if (cmd == "Select observational units") {
-					runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Observational Units Selector.ijm");
+					runMacro(getDirectory("plugins") +
+						"BB_macros" + File.separator() +
+						"Clonogenics_modules" + File.separator() +
+						"Observational_units_selector.ijm");
 				} else if (cmd == "Add global background masks") {
-					runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Observational Units Global Masks.ijm");
+					runMacro(getDirectory("plugins") +
+						"BB_macros" + File.separator() +
+						"Clonogenics_modules" + File.separator() +
+						"Observational_units_global_masks.ijm");
 				} else if (cmd == "Add submasks") {
-					runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Observational Units Submasks.ijm");
+					runMacro(getDirectory("plugins") +
+						"BB_macros" + File.separator() +
+						"Clonogenics_modules" + File.separator() +
+						"Observational_units_submasks.ijm");
 				} else if (cmd == "Remove submasks") {
-					runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Observational Units Utilities.ijm", cmd);
+					runMacro(getDirectory("plugins") +
+						"BB_macros" + File.separator() +
+						"Clonogenics_modules" + File.separator() +
+						"Observational_units_utilities.ijm", cmd);
 				} else if (cmd == "Update ROI zip files") {
-					runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Observational Units Utilities.ijm", cmd);
+					runMacro(getDirectory("plugins") +
+						"BB_macros" + File.separator() +
+						"Clonogenics_modules" + File.separator() +
+						"Observational_units_utilities.ijm", cmd);
 				}
 			} else {
 				showStatus("Setup file not found. Please run Clonogenics Configuration");

@@ -13,7 +13,10 @@ var zSeriesOption = retrieveConfiguration(0, 3);
 */
 
 macro "Auto Montage Startup" {
-	run("Install...", "install=[" + getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Auto Montage.ijm]");
+	run("Install...", "install=[" + getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Auto_montage.ijm]");
 	cleanup();
 }
 
@@ -23,9 +26,11 @@ macro "Auto Montage Startup" {
 --------------------------------------------------------------------------------
 */
 
-macro "Return to Clonogenics Frontend Action Tool - Ca44F36d6H096f6300" {
+macro "Return to Cytology Frontend Action Tool - Ca44F36d6H096f6300" {
 	cleanup();
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics.ijm");
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology.ijm");
 }
 
 macro "Auto Montage Configuration Action Tool - C037T0b10CT8b09fTdb09g" {
@@ -67,11 +72,26 @@ macro "Auto Montage Configuration Action Tool - C037T0b10CT8b09fTdb09g" {
 		if (maxOverlap < 0 || maxOverlap > 1) { maxOverlapError = true; } else { maxOverlapError = false; }
 	} while (panelsWideError == true || panelsHighError == true || maxOverlapError == true);
 
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Clonogenics Configurator.ijm", "change|5|" + toString(0) + "|" + channel);
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Clonogenics Configurator.ijm", "change|5|" + toString(1) + "|" + panelsWide);
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Clonogenics Configurator.ijm", "change|5|" + toString(2) + "|" + panelsHigh);
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Clonogenics Configurator.ijm", "change|5|" + toString(3) + "|" + randomize);
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Clonogenics Configurator.ijm", "change|5|" + toString(4) + "|" + maxOverlap);
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Cytology_configurator.ijm", "change|5|" + toString(0) + "|" + channel);
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Cytology_configurator.ijm", "change|5|" + toString(1) + "|" + panelsWide);
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Cytology_configurator.ijm", "change|5|" + toString(2) + "|" + panelsHigh);
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Cytology_configurator.ijm", "change|5|" + toString(3) + "|" + randomize);
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Cytology_configurator.ijm", "change|5|" + toString(4) + "|" + maxOverlap);
 }
 
 macro "Monochrome Montages From Single Channel Action Tool - C3a0F0055C140F6055C270Fc0553C030F0655C0a0F6655C080Fc655" {
@@ -170,7 +190,10 @@ function createMontages(montageType) {
 		}
 
 		for (j=0; j<imageArray.length; j++) {
-			runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Convert To Tiff.ijm", workingPath + imageArray[j] + imageType + "|" + imageType + "|" + zSeriesOption);
+			runMacro(getDirectory("plugins") +
+				"BB_macros" + File.separator() +
+				"Cytology_modules" + File.separator() +
+				"Convert_to_tiff.ijm", workingPath + imageArray[j] + imageType + "|" + imageType + "|" + zSeriesOption);
 			open(getDirectory("temp") + "Converted To Tiff.tif");
 			deleted = File.delete(getDirectory("temp") + "Converted To Tiff.tif");
 			run("Select None");
@@ -301,7 +324,10 @@ function createObsUnitArrays(groupNumber) {
 
 	setBatchMode(true);
 
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Convert To Tiff.ijm", workingPath + imageList[0] + "|" + imageType + "|" + zSeriesOption);
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Convert_to_tiff.ijm", workingPath + imageList[0] + "|" + imageType + "|" + zSeriesOption);
 	open(getDirectory("temp") + "Converted To Tiff.tif");
 	deleted = File.delete(getDirectory("temp") + "Converted To Tiff.tif");
 	getDimensions(width, height, channels, slices, frames);
@@ -482,8 +508,14 @@ function getFileListFromDirectory(directory, extension) {
 
 function getWorkingPaths(pathArg) {
 	pathArgs = newArray("workingPath", "analysisPath", "obsUnitRoiPath", "analysisSetupFile", "imageIndexFile", "groupLabelsFile");
-	if (File.exists(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Global configuration.txt") == true) {
-		runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Global Configurator.ijm", pathArg);
+	if (File.exists(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Global_configuration.txt") == true) {
+		runMacro(getDirectory("plugins") +
+			"BB_macros" + File.separator() +
+			"Cytology_modules" + File.separator() +
+			"Global_configurator.ijm", pathArg);
 		retrieved = File.openAsString(getDirectory("temp") + "temp retrieved value.txt");
 		deleted = File.delete(getDirectory("temp") + "temp retrieved value.txt");
 		retrieved = split(retrieved, "\n");
@@ -494,7 +526,10 @@ function getWorkingPaths(pathArg) {
 }
 
 function retrieveConfiguration(blockIndex, lineIndex) {
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Clonogenics Configurator.ijm", "retrieve|" + blockIndex + "|" + lineIndex);
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Cytology_configurator.ijm", "retrieve|" + blockIndex + "|" + lineIndex);
 	retrieved = File.openAsString(getDirectory("temp") + "temp retrieved value.txt");
 	deleted = File.delete(getDirectory("temp") + "temp retrieved value.txt");
 	retrieved = split(retrieved, "\n");

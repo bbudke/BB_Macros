@@ -258,8 +258,14 @@ function getFileListFromDirectory(directory, extension) {
 
 function getWorkingPaths(pathArg) {
 	pathArgs = newArray("workingPath", "analysisPath", "obsUnitRoiPath", "analysisSetupFile", "imageIndexFile", "groupLabelsFile");
-	if (File.exists(getDirectory("plugins") + "BB Macros" + File.separator() + "Cytology Modules" + File.separator() + "Global configuration.txt") == true) {
-		runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Cytology Modules" + File.separator() + "Global Configurator.ijm", pathArg);
+	if (File.exists(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Global_configuration.txt") == true) {
+		runMacro(getDirectory("plugins") +
+			"BB_macros" + File.separator() +
+			"Cytology_modules" + File.separator() +
+			"Global_configurator.ijm", pathArg);
 		retrieved = File.openAsString(getDirectory("temp") + "temp retrieved value.txt");
 		deleted = File.delete(getDirectory("temp") + "temp retrieved value.txt");
 		retrieved = split(retrieved, "\n");
@@ -270,7 +276,10 @@ function getWorkingPaths(pathArg) {
 }
 
 function retrieveConfiguration(blockIndex, lineIndex) {
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Cytology Modules" + File.separator() + "Cytology Configurator.ijm", "retrieve|" + blockIndex + "|" + lineIndex);
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Cytology_configurator.ijm", "retrieve|" + blockIndex + "|" + lineIndex);
 	retrieved = File.openAsString(getDirectory("temp") + "temp retrieved value.txt");
 	deleted = File.delete(getDirectory("temp") + "temp retrieved value.txt");
 	retrieved = split(retrieved, "\n");

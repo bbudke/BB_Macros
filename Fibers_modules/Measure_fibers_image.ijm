@@ -37,12 +37,12 @@ macro "Measure_fibers_image" {
     print(result, result_header);
     for (this_ROI = 0; this_ROI < ROI_list.length; this_ROI++) {
     	runMacro(getDirectory("plugins") +
-    		"BB Macros" + File.separator() +
+    		"BB_macros" + File.separator() +
     		"Utilities" + File.separator() +
     		"Select_roi.ijm", ROI_list[this_ROI]);
     	runMacro(getDirectory("plugins") +
-    		"BB Macros" + File.separator() +
-    		"Fibers Modules" + File.separator() +
+    		"BB_macros" + File.separator() +
+    		"Fibers_modules" + File.separator() +
     		"Measure_fiber.ijm", ROI_list[this_ROI]);
     	this_ROI_result = File.openAsString(getDirectory("temp") +
     		"Measure_fiber_result.txt");

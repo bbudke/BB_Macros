@@ -45,7 +45,10 @@ macro "Focus Counter" {
 			image = Dialog.getChoice();
 			setBatchMode(true);
 
-			runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Convert To Tiff.ijm", workingPath + image + imageType + "|" + imageType + "|" + zSeriesOption);
+			runMacro(getDirectory("plugins") +
+				"BB_macros" + File.separator() +
+				"Clonogenics_modules" + File.separator() +
+				"Convert_to_tiff.ijm", workingPath + image + imageType + "|" + imageType + "|" + zSeriesOption);
 			open(getDirectory("temp") + "Converted To Tiff.tif");
 			deleted = File.delete(getDirectory("temp") + "Converted To Tiff.tif");
 			getDimensions(width, height, channels, slices, frames);
@@ -197,7 +200,10 @@ macro "Focus Counter" {
 			calibrationImages = substring(calibrationImages, 0, lengthOf(calibrationImages) - 1);
 		}
 		showStatus(calibrationImages);
-		runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Clonogenics Configurator.ijm", "change|4|" + toString(0 + 8 * (activeChannel - 1)) + "|" + toString(calibrationImages));
+		runMacro(getDirectory("plugins") +
+			"BB_macros" + File.separator() +
+			"Clonogenics_modules" + File.separator() +
+			"Clonogenics_configurator.ijm", "change|4|" + toString(0 + 8 * (activeChannel - 1)) + "|" + toString(calibrationImages));
 
 	/*
 	----------------------------------------------------------------------------
@@ -225,7 +231,10 @@ macro "Focus Counter" {
 			}
 			setBatchMode(true);
 
-			runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Convert To Tiff.ijm", workingPath + imageList[imageIndex] + "|" + imageType + "|" + zSeriesOption);
+			runMacro(getDirectory("plugins") +
+				"BB_macros" + File.separator() +
+				"Clonogenics_modules" + File.separator() +
+				"Convert_to_tiff.ijm", workingPath + imageList[imageIndex] + "|" + imageType + "|" + zSeriesOption);
 			open(getDirectory("temp") + "Converted To Tiff.tif");
 			deleted = File.delete(getDirectory("temp") + "Converted To Tiff.tif");
 			getDimensions(width, height, channels, slices, frames);
@@ -282,7 +291,10 @@ macro "Focus Counter" {
 			}
 			percentComplete = imagesCounted / calibrationImages.length;
 
-			runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Focus Counter Core.ijm", "Single|" + activeChannel + "|" + medianBackground + "|" + averageBackground + "|" + submaskFileIndex + "|" + submaskRoiIndex + "|" + percentComplete);
+			runMacro(getDirectory("plugins") +
+				"BB_macros" + File.separator() +
+				"Clonogenics_modules" + File.separator() +
+				"Focus_counter_core.ijm", "Single|" + activeChannel + "|" + medianBackground + "|" + averageBackground + "|" + submaskFileIndex + "|" + submaskRoiIndex + "|" + percentComplete);
 
 			exitCommand = File.openAsString(getDirectory("temp") + "FCC exit command.txt");
 			imagesCounted++;
@@ -347,7 +359,10 @@ macro "Focus Counter" {
 
 			for (i=0; i<zipList.length; i++) {
 
-				runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Convert To Tiff.ijm", workingPath + zipListNoExt[i] + imageType + "|" + imageType + "|" + zSeriesOption);
+				runMacro(getDirectory("plugins") +
+					"BB_macros" + File.separator() +
+					"Clonogenics_modules" + File.separator() +
+					"Convert_to_tiff.ijm", workingPath + zipListNoExt[i] + imageType + "|" + imageType + "|" + zSeriesOption);
 				open(getDirectory("temp") + "Converted To Tiff.tif");
 				deleted = File.delete(getDirectory("temp") + "Converted To Tiff.tif");
 				getDimensions(width, height, channels, slices, frames);
@@ -435,7 +450,10 @@ macro "Focus Counter" {
 
 					percentComplete = imagesCounted / totalImages;
 
-					runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Focus Counter Core.ijm", "Batch|" + activeChannel + "|" + medianBackground + "|" + averageBackground + "|" + submaskFileIndex + "|" + submaskRoiIndex + "|" + percentComplete);
+					runMacro(getDirectory("plugins") +
+						"BB_macros" + File.separator() +
+						"Clonogenics_modules" + File.separator() +
+						"Focus_counter_core.ijm", "Batch|" + activeChannel + "|" + medianBackground + "|" + averageBackground + "|" + submaskFileIndex + "|" + submaskRoiIndex + "|" + percentComplete);
 					
 					fccOutputTemp = File.openAsString(getDirectory("temp") + "FCC output.txt");
 					fccOutput = File.open(resultsPath + "Raw Data" + File.separator() + zipListNoExt[i] + "-" + IJ.pad(j + 1, 2) + " foci.txt");
@@ -956,7 +974,10 @@ function extractImage(imageIndex, obsUnitIndex) {
 	roiManager("Reset");
 	roiManager("Open", obsUnitRoiPath + toString(imageZipList[imageZipIndex]));
 
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Convert To Tiff.ijm", workingPath + imageList[imageIndex] + "|" + imageType + "|" + zSeriesOption);
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Clonogenics_modules" + File.separator() +
+		"Convert_to_tiff.ijm", workingPath + imageList[imageIndex] + "|" + imageType + "|" + zSeriesOption);
 	open(getDirectory("temp") + "Converted To Tiff.tif");
 	deleted = File.delete(getDirectory("temp") + "Converted To Tiff.tif");
 	getDimensions(width, height, channels, slices, frames);
@@ -1002,8 +1023,14 @@ function getFileListFromDirectory(directory, extension) {
 
 function getWorkingPaths(pathArg) {
 	pathArgs = newArray("workingPath", "analysisPath", "obsUnitRoiPath", "analysisSetupFile", "imageIndexFile", "groupLabelsFile");
-	if (File.exists(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Global configuration.txt") == true) {
-		runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Global Configurator.ijm", pathArg);
+	if (File.exists(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Clonogenics_modules" + File.separator() +
+		"Global_configuration.txt") == true) {
+		runMacro(getDirectory("plugins") +
+			"BB_macros" + File.separator() +
+			"Clonogenics_modules" + File.separator() +
+			"Global_configurator.ijm", pathArg);
 		retrieved = File.openAsString(getDirectory("temp") + "temp retrieved value.txt");
 		deleted = File.delete(getDirectory("temp") + "temp retrieved value.txt");
 		retrieved = split(retrieved, "\n");
@@ -1014,7 +1041,10 @@ function getWorkingPaths(pathArg) {
 }
 
 function retrieveConfiguration(blockIndex, lineIndex) {
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Clonogenics Configurator.ijm", "retrieve|" + blockIndex + "|" + lineIndex);
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Clonogenics_modules" + File.separator() +
+		"Clonogenics_configurator.ijm", "retrieve|" + blockIndex + "|" + lineIndex);
 	retrieved = File.openAsString(getDirectory("temp") + "temp retrieved value.txt");
 	deleted = File.delete(getDirectory("temp") + "temp retrieved value.txt");
 	retrieved = split(retrieved, "\n");

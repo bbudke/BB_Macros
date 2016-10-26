@@ -29,7 +29,7 @@ macro "Measure_fiber" {
     } else {
         runMacro(
             getDirectory("plugins") +
-            "BB Macros" + File.separator() +
+            "BB_macros" + File.separator() +
             "Utilities" + File.separator() +
             "Select_roi.ijm", 
             args

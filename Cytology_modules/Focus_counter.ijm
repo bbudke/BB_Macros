@@ -38,6 +38,9 @@ macro "Focus Counter" {
 	if (arg == "Select calibration images") {
 		
 		calibrationImages = "";
+
+		// Continues to loop until 'Finish and close is selected'
+		// The list of available images is based on the ROI file list
 		do {
 			Dialog.create("Choose an image");
 			Dialog.addChoice("Image: ", zipListNoExt, zipListNoExt[0]);
@@ -45,7 +48,10 @@ macro "Focus Counter" {
 			image = Dialog.getChoice();
 			setBatchMode(true);
 
-			runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Convert To Tiff.ijm", workingPath + image + imageType + "|" + imageType + "|" + zSeriesOption);
+			runMacro(getDirectory("plugins") +
+				"BB_macros" + File.separator() +
+				"Cytology_modules" + File.separator() +
+				"Convert_to_tiff.ijm", workingPath + image + imageType + "|" + imageType + "|" + zSeriesOption);
 			open(getDirectory("temp") + "Converted To Tiff.tif");
 			deleted = File.delete(getDirectory("temp") + "Converted To Tiff.tif");
 			getDimensions(width, height, channels, slices, frames);
@@ -61,51 +67,40 @@ macro "Focus Counter" {
 
 		/*
 		------------------------------------------------------------------------
-			CREATE AN IMAGE WITH AN OVERLAY
+			CREATE AN IMAGE WITH AN OVERLAY AND DISPLAY IT WITH DIALOG
 		------------------------------------------------------------------------
 		*/
 
 			open(getDirectory("temp") + "showOverlayTemp.tif");
 			roiManager("Reset");
 			roiManager("Open", obsUnitRoiPath + image + ".zip");
-			do {
-				deleted = false;
-				for (i=0; i<roiManager("Count"); i++) {
-					roiManager("Select", i)
-					name = Roi.getName();
-					if (indexOf(name, "OBS UNIT ") == -1 && indexOf(name, "Submask ") == -1) {
-						roiManager("Delete");
-						deleted = true;
-					}
-				}
-			} while (deleted == true);
+			roiManager("Sort");
 
-			roiObsIndices = newArray();
-			roiObsChoices = newArray();
-			submaskIndices = newArray();
-			obsUnits = newArray();
-			submasks = newArray();
+			obsUnits = newArray(); // OBS Unit number
+			submasks = newArray(); // Submask number
 			for (i=0; i<roiManager("Count"); i++) {
 				roiManager("Select", i);
 				name = Roi.getName();
-				if (indexOf(name, "OBS UNIT ") != -1) {
-					obsUnits = Array.concat(obsUnits, substring(name, lengthOf("OBS UNIT "), lengthOf(name)));
-					roiObsIndices = Array.concat(roiObsIndices, i);
-					roiObsChoices = Array.concat(roiObsChoices, name);
-				} else if (indexOf(name, "Submask ") != -1) {
-					submasks = Array.concat(submasks, substring(name, lengthOf("Submask "), lengthOf(name)));
-					submaskIndices = Array.concat(submaskIndices, i);
+				if (startsWith(name, "OBS UNIT ") == true) {
+					name = substring(name, lengthOf("OBS UNIT "), lengthOf(name));
+					name = parseInt(name);
+					obsUnits = Array.concat(obsUnits, name);
+				} else if (startsWith(name, "Submask ") == true) {
+					name = substring(name, lengthOf("Submask "), lengthOf(name));
+					name = parseInt(name);
+					submasks = Array.concat(submasks, name);
 				}
 			}
 
-			if (submasks.length > 1) {
+			// Translate submasks to correct positions on whole image for overlay
+			if (submasks.length > 0) {
 				xArray = newArray();
 				yArray = newArray();
 				for (i=0; i<obsUnits.length; i++) {
 					for (j=0; j<roiManager("Count"); j++) {
 						roiManager("Select", j)
 						name = Roi.getName();
-						if (name == "OBS UNIT " + obsUnits[i]) {
+						if (name == "OBS UNIT " + toString(IJ.pad(obsUnits[i], 2))) {
 							getSelectionBounds(x, y, width, height);
 							xArray = Array.concat(xArray, x);
 							yArray = Array.concat(yArray, y);
@@ -113,30 +108,27 @@ macro "Focus Counter" {
 						}
 					}
 				}
-
 				for (i=0; i<obsUnits.length; i++) {
-					submaskIndex = -1;
 					for (j=0; j<roiManager("Count"); j++) {
-						roiManager("Select", j)
+						roiManager("Select", j);
 						name = Roi.getName();
-						if (name == "Submask " + obsUnits[i]) {
-							submaskIndex = j;
+						if (name == "Submask " + toString(IJ.pad(obsUnits[i], 2))) {
+							roiManager("translate", xArray[i], yArray[i]);
+							roiManager("Update");
 							j = roiManager("Count");
 						}
-					}
-					if (submaskIndex != -1) {
-						roiManager("Select", submaskIndex);
-						roiManager("translate", xArray[i], yArray[i]);
-						roiManager("Update");
 					}
 				}
 			}
 
 			run("Overlay Options...", "stroke=green width=0 fill=none");
 			run("Labels...", "color=green font=18");
-			for (i=0; i<submaskIndices.length; i++) {
-				roiManager("Select", submaskIndices[i]);
-				run("Add Selection...");
+			for (i=0; i<roiManager("Count"); i++) {
+				roiManager("Select", i);
+				name = Roi.getName();
+				if (startsWith(name, "Submask ") == true) {
+					run("Add Selection...");
+				}
 			}
 			run("RGB Color");
 			run("Flatten");
@@ -145,9 +137,12 @@ macro "Focus Counter" {
 
 			open(getDirectory("temp") + "showOverlayTemp.tif");
 			run("Labels...", "color=green font=18 show use");
-			for (i=0; i<roiObsIndices.length; i++) {
-				roiManager("Select", roiObsIndices[i]);
-				run("Add Selection...");
+			for (i=0; i<roiManager("Count"); i++) {
+				roiManager("Select", i);
+				name = Roi.getName();
+				if (startsWith(name, "OBS UNIT ") == true) {
+					run("Add Selection...");
+				}
 			}
 			run("RGB Color");
 			run("Flatten");
@@ -159,31 +154,21 @@ macro "Focus Counter" {
 			open(getDirectory("temp") + "showOverlayTemp.tif");
 			run("Select None");
 
+			// Continues to loop until the user selects another image or finishes and closes
+			roiObsChoices = newArray(obsUnits.length);
+			for (i=0; i<roiObsChoices.length; i++) {
+				roiObsChoices[i] = "OBS UNIT " + toString(IJ.pad(obsUnits[i], 2));
+			}
 			do {
 				Dialog.create("Choose an observational unit");
 				Dialog.addChoice("Obs unit: ", roiObsChoices, roiObsChoices[0]);
 				Dialog.addChoice("Action:", newArray("Add this Obs unit", "Go to another image", "Finish and close"), "Add this Obs unit");
 				Dialog.show();
-				obsUnit = Dialog.getChoice();
+				obsUnitChoice = Dialog.getChoice();
 				action = Dialog.getChoice();
 				if (action == "Add this Obs unit") {
-					imageIndex = -1;
-					for (i=0; i<imageListNoExt.length; i++) {
-						if (image == imageListNoExt[i]) {
-							imageIndex = i;
-							i = imageListNoExt.length;
-						}
-					}
-					roiObsIndex = -1;
-					for (i=0; i<roiObsChoices.length; i++) {
-						if (obsUnit == roiObsChoices[i]) {
-							roiObsIndex = i;
-							i = roiObsChoices.length;
-						}
-					}
-					calibrationImages = calibrationImages + toString(imageIndex) + "," + toString(roiObsIndex);
-					calibrationImages = calibrationImages + ";";
-					showStatus("Obs unit index " + toString(roiObsIndex) + " from image index " + toString(imageIndex) + " added");
+					calibrationImages = calibrationImages + toString(image) + "," + obsUnitChoice + ";";
+					showStatus(obsUnitChoice + " from image " + image + " added");
 				}
 			} while (action == "Add this Obs unit");
 			run("Close All");
@@ -197,7 +182,10 @@ macro "Focus Counter" {
 			calibrationImages = substring(calibrationImages, 0, lengthOf(calibrationImages) - 1);
 		}
 		showStatus(calibrationImages);
-		runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Clonogenics Configurator.ijm", "change|4|" + toString(0 + 8 * (activeChannel - 1)) + "|" + toString(calibrationImages));
+		runMacro(getDirectory("plugins") +
+			"BB_macros" + File.separator() +
+			"Cytology_modules" + File.separator() +
+			"Cytology_configurator.ijm", "change|4|" + toString(0 + 8 * (activeChannel - 1)) + "|" + toString(calibrationImages));
 
 	/*
 	----------------------------------------------------------------------------
@@ -212,20 +200,22 @@ macro "Focus Counter" {
 		imagesCounted = 0;
 		for (i=0; i<calibrationImages.length; i++) {
 			calibrationImage = split(calibrationImages[i], ",");
-			imageIndex = calibrationImage[0];
-			obsUnitIndex = calibrationImage[1];
-			image = imageList[imageIndex];
-			imageNoExt = substring(image, 0, indexOf(image, imageType));
+			image = calibrationImage[0]; // Image name (no file extension)
+			obsUnit = calibrationImage[1]; // 'OBS UNIT XX'
 			submaskFileIndex = -1;
 			for (j=0; j<zipListNoExt.length; j++) {
-				if (imageNoExt == zipListNoExt[j]) {
+				if (image == zipListNoExt[j]) {
 					submaskFileIndex = j;
 					j = zipListNoExt.length;
 				}
 			}
 			setBatchMode(true);
 
-			runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Convert To Tiff.ijm", workingPath + imageList[imageIndex] + "|" + imageType + "|" + zSeriesOption);
+			// Get the average and median background values
+			runMacro(getDirectory("plugins") +
+				"BB_macros" + File.separator() +
+				"Cytology_modules" + File.separator() +
+				"Convert_to_tiff.ijm", workingPath + image + imageType + "|" + imageType + "|" + zSeriesOption);
 			open(getDirectory("temp") + "Converted To Tiff.tif");
 			deleted = File.delete(getDirectory("temp") + "Converted To Tiff.tif");
 			getDimensions(width, height, channels, slices, frames);
@@ -239,50 +229,51 @@ macro "Focus Counter" {
 
 			open(getDirectory("temp") + "BSub mask.tif");
 			roiManager("Reset");
-			roiManager("Open", obsUnitRoiPath + imageListNoExt[imageIndex] + ".zip");
-			globalMaskRoiIndex = -1;
+			if (File.exists(obsUnitRoiPath + image + ".zip") == true) {
+				roiManager("Open", obsUnitRoiPath + image + ".zip");
+			} else {
+				exit(image + ".zip not found.");
+			}
+
+			run("Set Measurements...", "  mean median redirect=None decimal=3");
+			selectWindow("BSub mask.tif");
+			averageBackground = 0;
+			medianBackground = 0;
 			for (j=0; j<roiManager("Count"); j++) {
 				roiManager("Select", j);
 				name = Roi.getName();
 				if (name == "Global Background mask") {
-					globalMaskRoiIndex = j;
+					run("Measure");
+					averageBackground = parseInt(getResult("Mean"));
+					medianBackground = parseInt(getResult("Median"));
 					j = roiManager("Count");
 				}
 			}
-			run("Set Measurements...", "  mean median redirect=None decimal=3");
-			selectWindow("BSub mask.tif");
-			if (globalMaskRoiIndex != -1) {
-				roiManager("Select", globalMaskRoiIndex);
-				run("Measure");
-				averageBackground = parseInt(getResult("Mean"));
-				medianBackground = parseInt(getResult("Median"));
-			} else {
-				averageBackground = 0;
-				medianBackground = 0;
-			}
+
 			roiManager("Reset");
 			run("Close All");
 
-			extractImage(imageIndex, obsUnitIndex);
+			extractImage(image, obsUnit);
 			open(getDirectory("temp") + "extractedImage.tif");
 			roiManager("Reset");
-			roiManager("Open", obsUnitRoiPath + imageListNoExt[imageIndex] + ".zip");
+			roiManager("Open", obsUnitRoiPath + image + ".zip");
 			submaskRoiIndex = -1;
+			obsUnitNumber = substring(obsUnit, lengthOf("OBS UNIT "), lengthOf(obsUnit));
+			obsUnitNumber = parseInt(obsUnitNumber);
 			for (j=0; j<roiManager("Count"); j++) {
 				roiManager("Select", j);
 				name = Roi.getName();
-				if (indexOf(name, "Submask ") != -1) {
-					name = substring(name, lengthOf("Submask "), lengthOf(name));
-					name = parseInt(name);
-					if (obsUnitIndex == name - 1) {
-						submaskRoiIndex = j;
-						j = roiManager("Count");
-					}
+				if (matches(name, "Submask " + IJ.pad(obsUnitNumber, 2)) == true) {
+					submaskRoiIndex = j;
+					j = roiManager("Count");
 				}
 			}
-			percentComplete = imagesCounted / calibrationImages.length;
+			percentComplete = (imagesCounted + 1) / calibrationImages.length;
 
-			runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Focus Counter Core.ijm", "Single|" + activeChannel + "|" + medianBackground + "|" + averageBackground + "|" + submaskFileIndex + "|" + submaskRoiIndex + "|" + percentComplete);
+			runMacro(getDirectory("plugins") +
+				"BB_macros" + File.separator() +
+				"Cytology_modules" + File.separator() +
+				"Focus_counter_core.ijm", "Single|" + activeChannel + "|" + medianBackground + "|" + averageBackground + "|" + submaskFileIndex + "|" + submaskRoiIndex + "|" + percentComplete);
 
 			exitCommand = File.openAsString(getDirectory("temp") + "FCC exit command.txt");
 			imagesCounted++;
@@ -302,24 +293,46 @@ macro "Focus Counter" {
 	----------------------------------------------------------------------------
 	*/
 
-	} else if (arg == "Count foci and organize data" || arg == "Organize data only") {
+	} else if (arg == "Count foci and organize data" || arg == "Measure submasks only" || arg == "Organize foci data only") {
 
-		if (arg == "Count foci and organize data") {
+		if (arg == "Count foci and organize data" || arg == "Measure submasks only") {
+
+			// Prepare results folders and files, deleting (?!) old results if there are any
 			if (File.exists(resultsPath) != true) {
 				File.makeDirectory(resultsPath);
+			}
+			if (File.exists(resultsPath + "Errors.txt") == true) {
+				deleted = File.delete(resultsPath + "Errors.txt");
 			}
 			if (File.exists(resultsPath + "Raw Data" + File.separator()) != true) {
 				File.makeDirectory(resultsPath + "Raw Data");
 			}
+/*
 			rawDataFileList = getFileListFromDirectory(resultsPath + "Raw Data" + File.separator(), ".txt");
 			for (i=0; i<rawDataFileList.length; i++) {
 				deleted = File.delete(resultsPath + "Raw Data" + File.separator() + rawDataFileList[i]);
 			}
+*/
+			nuclearMeasurements = File.open(resultsPath + "Raw Data" + File.separator() + "Nuclear measurements.txt");
+			print(nuclearMeasurements,
+				"Obs Unit\t" + 
+				"AreaBg\t" + 
+				"IntDenBg\t" + 
+				"AvgBg\t" + 
+				"MedBg\t" + 
+				"AreaROI\t" + 
+				"IntDenROI\t" + 
+				"AvgROI\t" + 
+				"MedROI\t"
+				);
+			File.close(nuclearMeasurements);
 
 			setBatchMode(true);
+
+			// Get the total number of OBS Units to process for progress bar
 			totalImages = 0;
 			imagesCounted = 0;
-			newImage("temp image", "16-bit black", 367, 367, 1);
+			newImage("Dummy", "8-bit black", 100, 100, 1);
 			for (i=0; i<zipList.length; i++) {
 				roiManager("Reset");
 				roiManager("Open", obsUnitRoiPath + zipList[i]);
@@ -327,17 +340,32 @@ macro "Focus Counter" {
 				for (j=0; j<count; j++) {
 					roiManager("Select", j);
 					name = Roi.getName();
-					if (indexOf(name, "OBS UNIT") != -1) { totalImages++; }
+					if (startsWith(name, "OBS UNIT ") == true) { totalImages++; }
 				}
 			}
-
-			nuclearMeasurements = File.open(resultsPath + "Raw Data" + File.separator() + "Nuclear measurements.txt");
-			print(nuclearMeasurements, "Obs Unit\tArea\tIntensity");
-			File.close(nuclearMeasurements);
+			run("Close All");
 
 			for (i=0; i<zipList.length; i++) {
+				// Make sure the expected files exist; the code below will assume that image files and ROI files with the same file names without extension exist.
+				if (File.exists(workingPath + zipListNoExt[i] + imageType) == true) {
+					runMacro(getDirectory("plugins") +
+						"BB_macros" + File.separator() +
+						"Cytology_modules" + File.separator() +
+						"Convert_to_tiff.ijm", workingPath + zipListNoExt[i] + imageType + "|" + imageType + "|" + zSeriesOption);
+				} else {
+					prevErrors = "";
+					if (File.exists(resultsPath + "Errors.txt") == true) {
+						prevErrors = File.openAsString(resultsPath + "Errors.txt");
+					}
+					errors = File.open(resultsPath + "Errors.txt");
+					if (lengthOf(prevErrors) > 0) {
+						print(errors, prevErrors);
+					}
+					print(errors, zipListNoExt[i] + imageType + " not found in image directory, even though it has a corresponding .zip file in the OBS UNIT ROIs directory.");
+					File.close(errors);
+				}
 
-				runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Convert To Tiff.ijm", workingPath + zipListNoExt[i] + imageType + "|" + imageType + "|" + zSeriesOption);
+				// Get the average and median background values
 				open(getDirectory("temp") + "Converted To Tiff.tif");
 				deleted = File.delete(getDirectory("temp") + "Converted To Tiff.tif");
 				getDimensions(width, height, channels, slices, frames);
@@ -351,72 +379,74 @@ macro "Focus Counter" {
 
 				open(getDirectory("temp") + "BSub mask.tif");
 				roiManager("Reset");
-				roiManager("Open", obsUnitRoiPath + zipList[i]);
-				imageIndex = -1;
-				for (j=0; j<imageListNoExt.length; j++) {
-					if (zipListNoExt[i] == imageListNoExt[j]) {
-						imageIndex = j;
-					}
+				if (File.exists(obsUnitRoiPath + zipListNoExt[i] + ".zip") == true) {
+					roiManager("Open", obsUnitRoiPath + zipListNoExt[i] + ".zip");
+				} else {
+					exit(zipListNoExt[i] + ".zip not found.");
 				}
-				submaskFileIndex = i;
-				globalMaskRoiIndex = -1;
-				obsUnitIndices = newArray();
+
+				run("Set Measurements...", "area mean integrated median redirect=None decimal=3");
+				selectWindow("BSub mask.tif");
+				areaBackground = 0;
+				intDenBackground = 0;
+				averageBackground = 0;
+				medianBackground = 0;
 				for (j=0; j<roiManager("Count"); j++) {
 					roiManager("Select", j);
 					name = Roi.getName();
-					print(zipList[i] + "   " + name);
 					if (name == "Global Background mask") {
-						globalMaskRoiIndex = j;
-					} else if (indexOf(name, "OBS UNIT") != -1) {
-						obsUnitIndices = Array.concat(obsUnitIndices, j);
+						run("Measure");
+						areaBackground = parseInt(getResult("Area"));
+						intDenBackground = parseInt(getResult("IntDen"));
+						averageBackground = parseInt(getResult("Mean"));
+						medianBackground = parseInt(getResult("Median"));
+						j = roiManager("Count");
 					}
 				}
-				run("Set Measurements...", "  mean median redirect=None decimal=3");
-				selectWindow("BSub mask.tif");
-				roiManager("Select", globalMaskRoiIndex);
-				run("Measure");
-				averageBackground = parseInt(getResult("Mean"));
-				medianBackground = parseInt(getResult("Median"));
+
+				// Get the number of OBS Units
+				obsUnitCount = 0;
+				for (j=0; j<roiManager("Count"); j++) {
+					roiManager("Select", j);
+					name = Roi.getName();
+					if (startsWith(name, "OBS UNIT ") == true) {
+						obsUnitCount++;
+					}
+				}
+				roiManager("Reset");
 				run("Close All");
 
-				for (j=0; j<obsUnitIndices.length; j++) {
-					extractImage(imageIndex, obsUnitIndices[j]);
+				// Get the submask file index used below
+				submaskFileIndex = i;
+
+				// Run the measurements and focus counter for each OBS Unit within the image
+				for (j=0; j<obsUnitCount; j++) {
+					extractImage(zipListNoExt[i], "OBS UNIT " + IJ.pad(j + 1, 2));
 					open(getDirectory("temp") + "extractedImage.tif");
 					roiManager("Reset");
 					roiManager("Open", obsUnitRoiPath + zipList[i]);
+
 					submaskRoiName = "Submask " + IJ.pad(j + 1, 2);
-					
 					submaskRoiIndex = -1;
 					for (k=0; k<roiManager("Count"); k++) {
 						roiManager("Select", k);
 						name = Roi.getName();
-						if (indexOf(name, submaskRoiName) != -1) {
+						if (matches(name, submaskRoiName) == true) {
 							submaskRoiIndex = k;
 							k = roiManager("Count");
 						}
 					}
 
-					run("Set Measurements...", "area integrated redirect=None decimal=3");
+					run("Set Measurements...", "area mean integrated median redirect=None decimal=3");
 					selectWindow("extractedImage.tif");
-					roiManager("Select", submaskRoiIndex);
-					run("Measure");
-					area = getResult("Area");
-					intDen = getResult("RawIntDen");
-					intDenBSubM = intDen - (area * medianBackground);
-					intDenBSubA = intDen - (area * averageBackground);
 					run("Select None");
-					backendBSub = parseInt(retrieveConfiguration(4, 1 + 8 * (activeChannel - 1)));
-					backendBSub = abs(backendBSub);
-					run("Subtract Background...", "rolling=" + backendBSub);
 					roiManager("Select", submaskRoiIndex);
 					run("Measure");
-					intDenBSubR = getResult("RawIntDen");
-
-					intDenBSub = intDenBSubR;
-
-					close();
-					open(getDirectory("temp") + "extractedImage.tif");
-					string = toString(zipListNoExt[i]) + "-" + IJ.pad(j + 1, 2) + "\t" + area + "\t" + intDenBSub;
+					areaROI = getResult("Area");
+					intDenROI = getResult("RawIntDen");
+					averageROI = getResult("Mean");
+					medianROI = getResult("Median");
+					string = toString(zipListNoExt[i]) + "-" + IJ.pad(j + 1, 2) + "\t" + areaBackground + "\t" + intDenBackground + "\t" + averageBackground + "\t" + medianBackground + "\t" + areaROI + "\t" + intDenROI + "\t" + averageROI + "\t" + medianROI;
 					nuclearMeasurementsExisting = File.openAsString(resultsPath + "Raw Data" + File.separator() + "Nuclear measurements.txt");
 					nuclearMeasurements = File.open(resultsPath + "Raw Data" + File.separator() + "Nuclear measurements.txt");
 					print(nuclearMeasurements, nuclearMeasurementsExisting);
@@ -425,21 +455,38 @@ macro "Focus Counter" {
 
 					percentComplete = imagesCounted / totalImages;
 
-					runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Focus Counter Core.ijm", "Batch|" + activeChannel + "|" + medianBackground + "|" + averageBackground + "|" + submaskFileIndex + "|" + submaskRoiIndex + "|" + percentComplete);
-					
-					fccOutputTemp = File.openAsString(getDirectory("temp") + "FCC output.txt");
-					fccOutput = File.open(resultsPath + "Raw Data" + File.separator() + zipListNoExt[i] + "-" + IJ.pad(j + 1, 2) + " foci.txt");
-					print(fccOutput, fccOutputTemp);
-					File.close(fccOutput);
+					if (arg == "Count foci and organize data") {
+						runMacro(getDirectory("plugins") +
+							"BB_macros" + File.separator() +
+							"Cytology_modules" + File.separator() +
+							"Focus_counter_core.ijm", "Batch|" + activeChannel + "|" + medianBackground + "|" + averageBackground + "|" + submaskFileIndex + "|" + submaskRoiIndex + "|" + percentComplete);
+						
+						fccOutputTemp = File.openAsString(getDirectory("temp") + "FCC output.txt");
+						fccOutput = File.open(resultsPath + "Raw Data" + File.separator() + zipListNoExt[i] + "-" + IJ.pad(j + 1, 2) + " foci.txt");
 
-					deleted = File.delete(getDirectory("temp") + "FCC output.txt");
-					deleted = File.delete(getDirectory("temp") + "FCC exit command.txt");
-					deleted = File.delete(getDirectory("temp") + "extractedImage.tif");
+						if (File.exists(getDirectory("temp") + "fociROIs.zip")) {
+							File.copy(
+								getDirectory("temp") + "fociROIs.zip",
+								resultsPath + "Raw Data" + File.separator() + zipListNoExt[i] + "-" + IJ.pad(j + 1, 2) + " foci.zip"
+								);
+							deleted = File.delete(getDirectory("temp") + "fociROIs.zip");
+						}
+
+						print(fccOutput, fccOutputTemp);
+						File.close(fccOutput);
+
+						deleted = File.delete(getDirectory("temp") + "FCC output.txt");
+						deleted = File.delete(getDirectory("temp") + "FCC exit command.txt");
+						deleted = File.delete(getDirectory("temp") + "extractedImage.tif");
+					} else if (arg == "Measure submasks only") {
+						showProgress(percentComplete);
+					}
 					imagesCounted++;
 				}
 				deleted = File.delete(getDirectory("temp") + "BSub mask.tif");
 			}
-		} else if (arg == "Organize data only") {
+		} else if (arg == "Organize foci data only") {
+			// All this does is check to see if the raw data are actually there
 			if (File.exists(resultsPath + "Raw Data" + File.separator()) != true) {
 				exit("Raw data not found. Please run 'Count foci and organize data'.");
 			} else {
@@ -475,7 +522,26 @@ macro "Focus Counter" {
 
 			// the first block of headers below is identical to those in the Nuclear Measurements above (line 305-ish). If one of these is changed, then the other must be changed too!
 			// the second block of headers below is identical to those in Focus Counter Core.ijm. If one of these is changed, then the other must be changed too! Also, the number of 'null's below must be changed if the length of the headers changes! Also, the field in line 551-ish must be changed!
-			print(allDataFile, "Obs Unit\tAreaBg\tIntDenBg\tAvgBg\tMedBg\tAreaROI\tIntDenROI\tAvgROI\tMedROI\t" + "Focus Area\tFocus Avg Int\tFocus Int\tFocus Upper Dec");
+			print(allDataFile,
+				"Obs Unit\t" +
+				"AreaBg\t" +
+				"IntDenBg\t" +
+				"AvgBg\t" +
+				"MedBg\t" +
+				"AreaROI\t" +
+				"IntDenROI\t" +
+				"AvgROI\t" +
+				"MedROI\t" +
+
+				"Focus Area\t" +
+				"Focus Avg Int\t" +
+				"Focus Int\t" +
+				"Focus Upper Dec\t" +
+				"Focus Area Raw\t" +
+				"Focus Avg Int Raw\t" +
+				"Focus Int Raw\t" +
+				"Focus Upper Dec Raw"
+				);
 			for (i=0; i<fociDataFileList.length; i++) {
 				nextLineBlock01 = nuclearMeasurements[i];
 				dataFile = File.openAsString(resultsPath + "Raw Data" + File.separator() + fociDataFileList[i]);
@@ -488,7 +554,14 @@ macro "Focus Counter" {
 						print(allDataFile, nextLine);
 					}
 				} else {
-					nextLineBlock02 = "null\tnull\tnull\tnull";
+					nextLineBlock02 = 	"null\t" +
+										"null\t" +
+										"null\t" +
+										"null\t" +
+										"null\t" +
+										"null\t" +
+										"null\t" +
+										"null";
 					nextLine = nextLineBlock01 + "\t" + nextLineBlock02;
 					print(allDataFile, nextLine);
 				}
@@ -517,11 +590,11 @@ macro "Focus Counter" {
 			}
 
 			countsFile = File.open(resultsPath + "Ch " + activeChannel + " Focus counts.txt");
-			allDataFile = File.openAsString(resultsPath + "Ch " + activeChannel + " All data.txt");
+			allDataFile = File.openAsString(resultsPath + "Ch " + activeChannel + " All Data.txt");
 			allDataFile = split(allDataFile, "\n");
 			allDataFile = Array.slice(allDataFile, 1, allDataFile.length);
 			allDataFile = Array.sort(allDataFile);
-			print(countsFile, "Group Number\tGroup Name\tOBS Unit\tFoci");
+			print(countsFile, "OBS Unit\tFoci");
 
 			counter = 0;
 			for (i=0; i<allDataFile.length; i++) {
@@ -534,29 +607,31 @@ macro "Focus Counter" {
 				}
 				if (obsUnitInDataFile == nextObsUnitInDataFile) {
 					// keep going until we reach the end of a block of data for the same Obs Unit
-					counter++;
+					counter++; // this does not count the last focus in an OBS UNIT block!
 				} else {
 					if (counter == 0) {
-						// The line below must be changed if the headers were changed! (see lines 487-ish and 305-ish).
+						// The line below must be changed if the headers were changed! (see lines 496-ish and 305-ish).
 						focusArea = getFieldFromTdf(allDataFile[i], 10, true);
 						if (isNaN(focusArea) != true) {
 							counter++;
 						}
-					}
-					for (j=0; j<imageIndex.length; j++) {
-						if (image == getFieldFromTdf(imageIndex[j], 1, false)) {
-							groupNumber = getFieldFromTdf(imageIndex[j], 2, true);
-							for (k=0; k<groupLabels.length; k++) {
-								group = getFieldFromTdf(groupLabels[k], 1, true);
-								if (group == groupNumber) {
-									groupName = getFieldFromTdf(groupLabels[k], 2, false);
-									k = groupLabels.length;
+					} else {
+						for (j=0; j<imageIndex.length; j++) {
+							if (image == getFieldFromTdf(imageIndex[j], 1, false)) {
+								groupNumber = getFieldFromTdf(imageIndex[j], 2, true);
+								for (k=0; k<groupLabels.length; k++) {
+									group = getFieldFromTdf(groupLabels[k], 1, true);
+									if (group == groupNumber) {
+										groupName = getFieldFromTdf(groupLabels[k], 2, false);
+										k = groupLabels.length;
+									}
 								}
+								j = imageIndex.length;
 							}
-							j = imageIndex.length;
 						}
+						counter++;
 					}
-					print(countsFile, groupNumber + "\t" + groupName + "\t" + obsUnitInDataFile + "\t" + counter);
+					print(countsFile, obsUnitInDataFile + "\t" + counter);
 					counter = 0;
 				}
 				showStatus("(2 of 2) Assign focus counts to all Obs Units");
@@ -898,29 +973,20 @@ macro "Focus Counter" {
 --------------------------------------------------------------------------------
 */
 
-function extractImage(imageIndex, obsUnitIndex) {
-	imageList = getFileListFromDirectory(workingPath, imageType);
-	imageName = imageList[imageIndex];
-	imageName = substring(imageName, 0, indexOf(imageName, imageType));
-	imageZipList = getFileListFromDirectory(obsUnitRoiPath, ".zip");
-	imageZipListNoExt = newArray();
-	for (i=0; i<imageZipList.length; i++) {
-		append = substring(imageZipList[i], 0, indexOf(imageZipList[i], ".zip"));
-		imageZipListNoExt = Array.concat(imageZipListNoExt, append);
-	}
-	imageZipIndex = -1;
-	for (i=0; i<imageZipListNoExt.length; i++) {
-		value = toString(imageZipListNoExt[i]);
-		if (imageName == value) {
-			imageZipIndex = i;
-		}
-	}
-	roiManager("Reset");
-	roiManager("Open", obsUnitRoiPath + toString(imageZipList[imageZipIndex]));
+function extractImage(image, obsUnit) {
+	// image = Image name (no file extension)
+	// obsUnit = 'OBS UNIT XX'
 
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Convert To Tiff.ijm", workingPath + imageList[imageIndex] + "|" + imageType + "|" + zSeriesOption);
+	// Open the main image
+	roiManager("Reset");
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Convert_to_tiff.ijm", workingPath + image + imageType + "|" + imageType + "|" + zSeriesOption);
 	open(getDirectory("temp") + "Converted To Tiff.tif");
 	deleted = File.delete(getDirectory("temp") + "Converted To Tiff.tif");
+
+	// Extract the active channel for focus counting
 	getDimensions(width, height, channels, slices, frames);
 	Stack.setPosition(activeChannel, 1, 1);
 	run("Select All");
@@ -930,9 +996,25 @@ function extractImage(imageIndex, obsUnitIndex) {
 	saveAs("Tiff", getDirectory("temp") + "Extracted Channel.tif");
 	run("Close All");
 
+	// Extract the OBS UNIT from the above image
 	open(getDirectory("temp") + "Extracted Channel.tif");
 	deleted = File.delete(getDirectory("temp") + "Extracted Channel.tif");
-	roiManager("Select", obsUnitIndex);
+	if (File.exists(obsUnitRoiPath + image + ".zip") == true) {
+		roiManager("Open", obsUnitRoiPath + image + ".zip");
+	} else {
+		exit(image + ".zip not found.");
+	}
+	run("Select None");
+	for (i=0; i<roiManager("Count"); i++) {
+		roiManager("Select", i);
+		name = Roi.getName();
+		if (name == obsUnit) {
+			i = roiManager("Count");
+		}
+	}
+	if (selectionType == -1) {
+		exit(obsUnit + " not found in " + image + ".zip ROI file.");
+	}
 	getSelectionBounds(x, y, width, height);
 	run("Copy");
 	newImage("Extracted Image.tif", "16-bit black", width, height, 1);
@@ -964,8 +1046,14 @@ function getFileListFromDirectory(directory, extension) {
 
 function getWorkingPaths(pathArg) {
 	pathArgs = newArray("workingPath", "analysisPath", "obsUnitRoiPath", "analysisSetupFile", "imageIndexFile", "groupLabelsFile");
-	if (File.exists(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Global configuration.txt") == true) {
-		runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Global Configurator.ijm", pathArg);
+	if (File.exists(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Global_configuration.txt") == true) {
+		runMacro(getDirectory("plugins") +
+			"BB_macros" + File.separator() +
+			"Cytology_modules" + File.separator() +
+			"Global_configurator.ijm", pathArg);
 		retrieved = File.openAsString(getDirectory("temp") + "temp retrieved value.txt");
 		deleted = File.delete(getDirectory("temp") + "temp retrieved value.txt");
 		retrieved = split(retrieved, "\n");
@@ -976,7 +1064,10 @@ function getWorkingPaths(pathArg) {
 }
 
 function retrieveConfiguration(blockIndex, lineIndex) {
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Clonogenics Configurator.ijm", "retrieve|" + blockIndex + "|" + lineIndex);
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Cytology_configurator.ijm", "retrieve|" + blockIndex + "|" + lineIndex);
 	retrieved = File.openAsString(getDirectory("temp") + "temp retrieved value.txt");
 	deleted = File.delete(getDirectory("temp") + "temp retrieved value.txt");
 	retrieved = split(retrieved, "\n");

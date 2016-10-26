@@ -15,7 +15,10 @@ var delineationChannel = parseInt(retrieveConfiguration(1, 0 + 1 * nChannels));
 */
 
 macro "Obervational Units Selector Startup" {
-	run("Install...", "install=[" + getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Observational Units Selector.ijm]");
+	run("Install...", "install=[" + getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Observational_units_selector.ijm]");
 	cleanup();
 }
 
@@ -25,9 +28,11 @@ macro "Obervational Units Selector Startup" {
 --------------------------------------------------------------------------------
 */
 
-macro "Return to Clonogenics Frontend Action Tool - Ca44F36d6H096f6300" {
+macro "Return to Cytology Frontend Action Tool - Ca44F36d6H096f6300" {
 	cleanup();
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics.ijm");
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology.ijm");
 }
 
 macro "Observational Units Selector Configuration Action Tool - C037T0b10CT8b09fTdb09g" {
@@ -39,8 +44,14 @@ macro "Observational Units Selector Configuration Action Tool - C037T0b10CT8b09f
 	Dialog.show();
 	boxMontagePanels = Dialog.getNumber();
 	randomizeBoolean = Dialog.getCheckbox();
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Global Configurator.ijm", "change|1|0|" + boxMontagePanels);
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Global Configurator.ijm", "change|1|1|" + randomizeBoolean);
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Global_configurator.ijm", "change|1|0|" + boxMontagePanels);
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Global_configurator.ijm", "change|1|1|" + randomizeBoolean);
 }
 
 macro "Set Observational Unit Enclosing Box Size Action Tool - C66eV3355C037R00aaLd0daLc0e0LcaeaL0dadL0c0eLacae" {
@@ -50,78 +61,91 @@ macro "Set Observational Unit Enclosing Box Size Action Tool - C66eV3355C037R00a
 	boxMontagePanels = retrieveGlobalConfiguration(1, 0);
 	randomizeBoolean = retrieveGlobalConfiguration(1, 1);
 	if (boxSize == -1) {
-		boxSize = 920;
+		boxSize = 100;
 	}
 
 	run("Close All");
-	setBatchMode(true);
 
 	imageList = getFileListFromDirectory(workingPath, imageType);
-	if (randomizeBoolean == 1) {
-		shuffledImageList = newArray();
-		do {
-			i = random() * imageList.length;
-			i = floor(i);
-			shuffledImageList = Array.concat(shuffledImageList, imageList[i]);
-			if (i == 0) {
-				imageList = Array.slice(imageList, 1);
-			} else if (i == imageList.length - 1) {
-				imageList = Array.trim(imageList, imageList.length - 1);
-			} else {
-				a1 = Array.trim(imageList, i);
-				a2 = Array.slice(imageList, i + 1);
-				imageList = Array.concat(a1, a2);
+	if (imageList.length > 1) {
+		setBatchMode(true);
+		if (randomizeBoolean == 1) {
+			shuffledImageList = newArray();
+			do {
+				i = random() * imageList.length;
+				i = floor(i);
+				shuffledImageList = Array.concat(shuffledImageList, imageList[i]);
+				if (i == 0) {
+					imageList = Array.slice(imageList, 1);
+				} else if (i == imageList.length - 1) {
+					imageList = Array.trim(imageList, imageList.length - 1);
+				} else {
+					a1 = Array.trim(imageList, i);
+					a2 = Array.slice(imageList, i + 1);
+					imageList = Array.concat(a1, a2);
+				}
+			} while (imageList.length > 0);
+
+			imageList = newArray();
+			for (i=0; i<shuffledImageList.length; i++) {
+				imageList = Array.concat(imageList, shuffledImageList[i]);
 			}
-		} while (imageList.length > 0);
-
-		imageList = newArray();
-		for (i=0; i<shuffledImageList.length; i++) {
-			imageList = Array.concat(imageList, shuffledImageList[i]);
 		}
-	}
 
-	montagePanels = 0;
-	for (i=0; i<imageList.length; i++) {
-		if (i < boxMontagePanels) {
-			runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Convert To Tiff.ijm", workingPath + imageList[i] + "|" + imageType + "|" + zSeriesOption);
-			open(getDirectory("temp") + "Converted To Tiff.tif");
-			deleted = File.delete(getDirectory("temp") + "Converted To Tiff.tif");
-			getDimensions(width, height, channels, slices, frames);
-			selectImage(1);
-			Stack.setPosition(delineationChannel, 1, 1);
-			run("Select All");
-			run("Copy");
-			newImage("Box size temp montage panel " + IJ.pad(i + 1, 2), "16-bit black", width, height, 1, 1, 1);
-			run("Paste");
-			run("Fire");
-			run("Enhance Contrast", "saturated=0.35");
-			setMinAndMax(delineationDisplayMin, delineationDisplayMax);
-			saveAs("Tiff", getDirectory("temp") + "Box size temp montage panel " + IJ.pad(i + 1, 2) + ".tif");
-			run("Close All");
-			montagePanels++;
-		} else {
-			i = imageList.length;
+		montagePanels = 0;
+		for (i=0; i<imageList.length; i++) {
+			if (i < boxMontagePanels) {
+				runMacro(getDirectory("plugins") +
+					"BB_macros" + File.separator() +
+					"Cytology_modules" + File.separator() +
+					"Convert_to_tiff.ijm", workingPath + imageList[i] + "|" + imageType + "|" + zSeriesOption);
+				open(getDirectory("temp") + "Converted To Tiff.tif");
+				deleted = File.delete(getDirectory("temp") + "Converted To Tiff.tif");
+				getDimensions(width, height, channels, slices, frames);
+				selectImage(1);
+				Stack.setPosition(delineationChannel, 1, 1);
+				run("Select All");
+				run("Copy");
+				newImage("Box size temp montage panel " + IJ.pad(i + 1, 2), "16-bit black", width, height, 1, 1, 1);
+				run("Paste");
+				run("Fire");
+				setMinAndMax(delineationDisplayMin, delineationDisplayMax);
+				saveAs("Tiff", getDirectory("temp") + "Box size temp montage panel " + IJ.pad(i + 1, 2) + ".tif");
+				run("Close All");
+				montagePanels++;
+			} else {
+				i = imageList.length;
+			}
+			showProgress(montagePanels / boxMontagePanels);
 		}
-		showProgress(montagePanels / boxMontagePanels);
+
+		for (i=0; i<montagePanels; i++) {
+			open(getDirectory("temp") + "Box size temp montage panel " + IJ.pad(i + 1, 2) + ".tif");
+		}
+
+		rows = round(sqrt(montagePanels));
+		columns = -1 * floor( -1 * sqrt(montagePanels));
+		run("Images to Stack", "name=Stack title=[] use");
+		run("Make Montage...", "columns=" + columns + " rows=" + rows + " scale=1 first=1 last=" + montagePanels + " increment=1 border=0 font=12");
+		saveAs("Tiff", getDirectory("temp") + "Box size temp montage.tif");
+		run("Close All");
+
+		for (i=0; i<montagePanels; i++) {
+			deleted = File.delete(getDirectory("temp") + "Box size temp montage panel " + IJ.pad(i + 1, 2) + ".tif");
+		}
+
+		setBatchMode(false);
+		open(getDirectory("temp") + "Box size temp montage.tif");
+	} else {
+		runMacro(getDirectory("plugins") +
+			"BB_macros" + File.separator() +
+			"Cytology_modules" + File.separator() +
+			"Convert_to_tiff.ijm", workingPath + imageList[0] + "|" + imageType + "|" + zSeriesOption);
+		open(getDirectory("temp") + "Converted To Tiff.tif");
+		deleted = File.delete(getDirectory("temp") + "Converted To Tiff.tif");
+		run("Fire");
+		setMinAndMax(delineationDisplayMin, delineationDisplayMax);
 	}
-
-	for (i=0; i<montagePanels; i++) {
-		open(getDirectory("temp") + "Box size temp montage panel " + IJ.pad(i + 1, 2) + ".tif");
-	}
-
-	rows = round(sqrt(montagePanels));
-	columns = -1 * floor( -1 * sqrt(montagePanels));
-	run("Images to Stack", "name=Stack title=[] use");
-	run("Make Montage...", "columns=" + columns + " rows=" + rows + " scale=1 first=1 last=" + montagePanels + " increment=1 border=0 font=12");
-	saveAs("Tiff", getDirectory("temp") + "Box size temp montage.tif");
-	run("Close All");
-
-	for (i=0; i<montagePanels; i++) {
-		deleted = File.delete(getDirectory("temp") + "Box size temp montage panel " + IJ.pad(i + 1, 2) + ".tif");
-	}
-
-	setBatchMode(false);
-	open(getDirectory("temp") + "Box size temp montage.tif");
 
 	setTool("rectangle");
 	selectImage(1);
@@ -136,7 +160,10 @@ macro "Set Observational Unit Enclosing Box Size Action Tool - C66eV3355C037R00a
 	close();
 	deleted = File.delete(getDirectory("temp") + "Box size temp montage.tif");
 
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Clonogenics Configurator.ijm", "change|3|0|" + newBoxSize);
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Cytology_configurator.ijm", "change|3|0|" + newBoxSize);
 	if (boxSize == newBoxSize) {
 		showStatus("Previous box size of " + newBoxSize + " left unchanged.");
 	} else {
@@ -304,8 +331,14 @@ function getFileListFromDirectory(directory, extension) {
 
 function getWorkingPaths(pathArg) {
 	pathArgs = newArray("workingPath", "analysisPath", "obsUnitRoiPath", "analysisSetupFile", "imageIndexFile", "groupLabelsFile");
-	if (File.exists(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Global configuration.txt") == true) {
-		runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Global Configurator.ijm", pathArg);
+	if (File.exists(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Global_configuration.txt") == true) {
+		runMacro(getDirectory("plugins") +
+			"BB_macros" + File.separator() +
+			"Cytology_modules" + File.separator() +
+			"Global_configurator.ijm", pathArg);
 		retrieved = File.openAsString(getDirectory("temp") + "temp retrieved value.txt");
 		deleted = File.delete(getDirectory("temp") + "temp retrieved value.txt");
 		retrieved = split(retrieved, "\n");
@@ -351,7 +384,10 @@ function loadNextImage() {
 		setBatchMode(true);
 
 		imageName = substring(imageList[imageListIndex], 0, indexOf(imageList[imageListIndex], imageType));
-		runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Convert To Tiff.ijm", workingPath + imageList[imageListIndex] + "|" + imageType + "|" + zSeriesOption);
+		runMacro(getDirectory("plugins") +
+			"BB_macros" + File.separator() +
+			"Cytology_modules" + File.separator() +
+			"Convert_to_tiff.ijm", workingPath + imageList[imageListIndex] + "|" + imageType + "|" + zSeriesOption);
 		open(getDirectory("temp") + "Converted To Tiff.tif");
 		deleted = File.delete(getDirectory("temp") + "Converted To Tiff.tif");
 		getDimensions(width, height, channels, slices, frames);
@@ -374,7 +410,10 @@ function loadNextImage() {
 }
 
 function retrieveConfiguration(blockIndex, lineIndex) {
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Clonogenics Configurator.ijm", "retrieve|" + blockIndex + "|" + lineIndex);
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Cytology_configurator.ijm", "retrieve|" + blockIndex + "|" + lineIndex);
 	retrieved = File.openAsString(getDirectory("temp") + "temp retrieved value.txt");
 	deleted = File.delete(getDirectory("temp") + "temp retrieved value.txt");
 	retrieved = split(retrieved, "\n");
@@ -382,7 +421,10 @@ function retrieveConfiguration(blockIndex, lineIndex) {
 }
 
 function retrieveGlobalConfiguration(blockIndex, lineIndex) {
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Global Configurator.ijm", "retrieve|" + blockIndex + "|" + lineIndex);
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Global_configurator.ijm", "retrieve|" + blockIndex + "|" + lineIndex);
 	retrieved = File.openAsString(getDirectory("temp") + "temp retrieved value.txt");
 	deleted = File.delete(getDirectory("temp") + "temp retrieved value.txt");
 	retrieved = split(retrieved, "\n");

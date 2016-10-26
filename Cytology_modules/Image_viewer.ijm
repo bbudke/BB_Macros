@@ -16,7 +16,10 @@ var zSeriesOption = retrieveConfiguration(0, 3);
 */
 
 macro "Image Viewer Startup" {
-	run("Install...", "install=[" + getDirectory("plugins") + "BB Macros" + File.separator() + "Cytology Modules" + File.separator() + "Image Viewer.ijm]");
+	run("Install...", "install=[" + getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Image_viewer.ijm]");
 	cleanup();
 }
 
@@ -28,7 +31,9 @@ macro "Image Viewer Startup" {
 
 macro "Return to Cytology Frontend Action Tool - Ca44F36d6H096f6300" {
 	cleanup();
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Cytology.ijm");
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology.ijm");
 }
 
 macro "Image Viewer Configuration Action Tool - C037T0b10CT8b09fTdb09g" {
@@ -100,17 +105,47 @@ macro "Image Viewer Configuration Action Tool - C037T0b10CT8b09fTdb09g" {
 	globalMaskChoice = Dialog.getCheckbox();
 	submaskChoice = Dialog.getCheckbox();
 	showRoiManagerChoice = Dialog.getCheckbox();
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Cytology Modules" + File.separator() + "Cytology Configurator.ijm", "change|2|" + toString(0 + 5 * nChannels) + "|" + displayChoice);
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Cytology Modules" + File.separator() + "Cytology Configurator.ijm", "change|2|" + toString(1 + 5 * nChannels) + "|" + obsUnitBoxChoice);
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Cytology Modules" + File.separator() + "Cytology Configurator.ijm", "change|2|" + toString(2 + 5 * nChannels) + "|" + globalMaskChoice);
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Cytology Modules" + File.separator() + "Cytology Configurator.ijm", "change|2|" + toString(3 + 5 * nChannels) + "|" + submaskChoice);
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Cytology Modules" + File.separator() + "Global Configurator.ijm", "change|1|6|" + showRoiManagerChoice);
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Cytology_configurator.ijm", "change|2|" + toString(0 + 5 * nChannels) + "|" + displayChoice);
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Cytology_configurator.ijm", "change|2|" + toString(1 + 5 * nChannels) + "|" + obsUnitBoxChoice);
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Cytology_configurator.ijm", "change|2|" + toString(2 + 5 * nChannels) + "|" + globalMaskChoice);
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Cytology_configurator.ijm", "change|2|" + toString(3 + 5 * nChannels) + "|" + submaskChoice);
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Global_configurator.ijm", "change|1|6|" + showRoiManagerChoice);
 	for (i=0; i<nChannels; i++) {
-		runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Cytology Modules" + File.separator() + "Cytology Configurator.ijm", "change|2|" + toString(0 + 5 * i) + "|" + Dialog.getChoice());
-		runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Cytology Modules" + File.separator() + "Cytology Configurator.ijm", "change|2|" + toString(1 + 5 * i) + "|" + Dialog.getNumber());
-		runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Cytology Modules" + File.separator() + "Cytology Configurator.ijm", "change|2|" + toString(2 + 5 * i) + "|" + Dialog.getNumber());
-		runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Cytology Modules" + File.separator() + "Cytology Configurator.ijm", "change|2|" + toString(3 + 5 * i) + "|" + Dialog.getNumber());
-		runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Cytology Modules" + File.separator() + "Cytology Configurator.ijm", "change|2|" + toString(4 + 5 * i) + "|" + Dialog.getNumber());
+		runMacro(getDirectory("plugins") +
+			"BB_macros" + File.separator() +
+			"Cytology_modules" + File.separator() +
+			"Cytology_configurator.ijm", "change|2|" + toString(0 + 5 * i) + "|" + Dialog.getChoice());
+		runMacro(getDirectory("plugins") +
+			"BB_macros" + File.separator() +
+			"Cytology_modules" + File.separator() +
+			"Cytology_configurator.ijm", "change|2|" + toString(1 + 5 * i) + "|" + Dialog.getNumber());
+		runMacro(getDirectory("plugins") +
+			"BB_macros" + File.separator() +
+			"Cytology_modules" + File.separator() +
+			"Cytology_configurator.ijm", "change|2|" + toString(2 + 5 * i) + "|" + Dialog.getNumber());
+		runMacro(getDirectory("plugins") +
+			"BB_macros" + File.separator() +
+			"Cytology_modules" + File.separator() +
+			"Cytology_configurator.ijm", "change|2|" + toString(3 + 5 * i) + "|" + Dialog.getNumber());
+		runMacro(getDirectory("plugins") +
+			"BB_macros" + File.separator() +
+			"Cytology_modules" + File.separator() +
+			"Cytology_configurator.ijm", "change|2|" + toString(4 + 5 * i) + "|" + Dialog.getNumber());
 	}
 
 	// Get the new settings to see if the settings got changed
@@ -362,7 +397,10 @@ function displayImage(image) {
 	globalMaskChoice = retrieveConfiguration(2, 2 + 5 * nChannels);
 	submaskChoice = retrieveConfiguration(2, 3 + 5 * nChannels);
 	showRoiManager = retrieveGlobalConfiguration(1, 6);
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Cytology Modules" + File.separator() + "Convert To Tiff.ijm", workingPath + image + imageType + "|" + imageType + "|" + zSeriesOption);
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Convert_to_tiff.ijm", workingPath + image + imageType + "|" + imageType + "|" + zSeriesOption);
 	open(getDirectory("temp") + "Converted To Tiff.tif");
 	deleted = File.delete(getDirectory("temp") + "Converted To Tiff.tif");
 	alert = "";
@@ -621,8 +659,14 @@ function getFileListFromDirectory(directory, extension) {
 
 function getWorkingPaths(pathArg) {
 	pathArgs = newArray("workingPath", "analysisPath", "obsUnitRoiPath", "analysisSetupFile", "imageIndexFile", "groupLabelsFile");
-	if (File.exists(getDirectory("plugins") + "BB Macros" + File.separator() + "Cytology Modules" + File.separator() + "Global configuration.txt") == true) {
-		runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Cytology Modules" + File.separator() + "Global Configurator.ijm", pathArg);
+	if (File.exists(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Global_configuration.txt") == true) {
+		runMacro(getDirectory("plugins") +
+			"BB_macros" + File.separator() +
+			"Cytology_modules" + File.separator() +
+			"Global_configurator.ijm", pathArg);
 		retrieved = File.openAsString(getDirectory("temp") + "temp retrieved value.txt");
 		deleted = File.delete(getDirectory("temp") + "temp retrieved value.txt");
 		retrieved = split(retrieved, "\n");
@@ -633,7 +677,10 @@ function getWorkingPaths(pathArg) {
 }
 
 function retrieveConfiguration(blockIndex, lineIndex) {
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Cytology Modules" + File.separator() + "Cytology Configurator.ijm", "retrieve|" + blockIndex + "|" + lineIndex);
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Cytology_configurator.ijm", "retrieve|" + blockIndex + "|" + lineIndex);
 	retrieved = File.openAsString(getDirectory("temp") + "temp retrieved value.txt");
 	deleted = File.delete(getDirectory("temp") + "temp retrieved value.txt");
 	retrieved = split(retrieved, "\n");
@@ -641,7 +688,10 @@ function retrieveConfiguration(blockIndex, lineIndex) {
 }
 
 function retrieveGlobalConfiguration(blockIndex, lineIndex) {
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Cytology Modules" + File.separator() + "Global Configurator.ijm", "retrieve|" + blockIndex + "|" + lineIndex);
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Cytology_modules" + File.separator() +
+		"Global_configurator.ijm", "retrieve|" + blockIndex + "|" + lineIndex);
 	retrieved = File.openAsString(getDirectory("temp") + "temp retrieved value.txt");
 	deleted = File.delete(getDirectory("temp") + "temp retrieved value.txt");
 	retrieved = split(retrieved, "\n");
