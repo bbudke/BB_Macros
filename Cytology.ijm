@@ -1,8 +1,37 @@
-var wdCmds = newMenu("Working Directory Menu Tool", newArray("Set working directory", "Show working directory"));
-var ouCmds = newMenu("Observational Units Menu Tool", newArray("Select observational units", "Add global background masks", "Add submasks", "-", "Remove submasks", "Update ROI zip files"));
-var fcCmds = newMenu("Focus Counter Menu Tool", newArray("Change channel to be measured", "Show channel to be measured", "-", "Select calibration images", "-", "Calibrate focus counter", "-", "Count foci and organize data", "Measure submasks only", "Organize foci data only", "-", "Colocalization"));
-var ivCmds = newMenu("Image Viewer Menu Tool", newArray("Change image viewer settings", "View image"));
-var amCmds = newMenu("Auto Montage Menu Tool", newArray("Change auto montage settings", "Create montages"));
+var wdCmds = newMenu(
+	"Working Directory Menu Tool",
+	newArray("Set working directory",
+			 "Show working directory"));
+var ouCmds = newMenu(
+	"Observational Units Menu Tool",
+	newArray("Select observational units",
+			 "Add global background masks",
+			 "Add submasks",
+			 "-",
+			 "Remove submasks",
+			 "Update ROI zip files"));
+var fcCmds = newMenu(
+	"Focus Counter Menu Tool",
+	newArray("Change channel to be measured",
+			 "Show channel to be measured",
+			 "-",
+			 "Select calibration images",
+			 "-",
+			 "Calibrate focus counter",
+			 "-",
+			 "Count foci and organize data",
+			 "Measure submasks only",
+			 "Organize foci data only",
+			 "-",
+			 "Colocalization"));
+var ivCmds = newMenu(
+	"Image Viewer Menu Tool",
+	newArray("Change image viewer settings",
+			 "View image"));
+var amCmds = newMenu(
+	"Auto Montage Menu Tool",
+	newArray("Change auto montage settings",
+			 "Create montages"));
 
 /*
 --------------------------------------------------------------------------------
