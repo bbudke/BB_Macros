@@ -129,7 +129,10 @@ macro "Observational Units Menu Tool - CaaaR00aaC00cV2266CaaaR83aaC00cVb666CaaaR
 
 macro "Focus Counter Menu Tool - C037O00ffC703V3344V8444V5944" {
 	cmd = getArgument();
-	if (File.exists(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Global configuration.txt") == true) {
+	if (File.exists(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Clonogenics_modules" + File.separator() +
+		"Global_configuration.txt") == true) {
 		if (File.exists(getWorkingPaths("workingPath")) == true) {
 			if (File.exists(getWorkingPaths("analysisSetupFile")) == true) {
 				nChannels = retrieveConfiguration(0, 1);
@@ -149,17 +152,29 @@ macro "Focus Counter Menu Tool - C037O00ffC703V3344V8444V5944" {
 					choice = Dialog.getChoice();
 					choice = substring(choice, lengthOf("Channel "), lengthOf(choice));
 					choice = substring(choice, 0, indexOf(choice, ":"));
-					runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Clonogenics Configurator.ijm", "change|4|" + toString(0 + 8 * nChannels) + "|" + choice);
+					runMacro(getDirectory("plugins") +
+						"BB_macros" + File.separator() +
+						"Clonogenics_modules" + File.separator() +
+						"Clonogenics_configurator.ijm", "change|4|" + toString(0 + 8 * nChannels) + "|" + choice);
 					showStatus("Active channel for focus counting changed to Channel " + choice + ": " + retrieveConfiguration(1, 0 + 1 * (-1 + choice)));
 				} else if (activeChannel != -1) {
 					if (cmd == "Show channel to be measured") {
 						showStatus("Active channel for focus counting is Channel " + activeChannel + ": " + retrieveConfiguration(1, 0 + 1 * (-1 + activeChannel)));
 					} else if (cmd == "Select calibration images") {
-						runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Focus Counter.ijm", "Select calibration images");
+						runMacro(getDirectory("plugins") +
+							"BB_macros" + File.separator() +
+							"Clonogenics_modules" + File.separator() +
+							"Focus_counter.ijm", "Select calibration images");
 					} else if (cmd == "Calibrate focus counter") {
-						runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Focus Counter.ijm", "Calibrate focus counter");
+						runMacro(getDirectory("plugins") +
+							"BB_macros" + File.separator() +
+							"Clonogenics_modules" + File.separator() +
+							"Focus_counter.ijm", "Calibrate focus counter");
 					}else if (cmd == "Count foci and organize data" || cmd == "Organize data only") {
-						runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Focus Counter.ijm", cmd);
+						runMacro(getDirectory("plugins") +
+							"BB_macros" + File.separator() +
+							"Clonogenics_modules" + File.separator() +
+							"Focus_counter.ijm", cmd);
 					}
 				} else {
 					showStatus("Active channel for focus counting has not been set.");
@@ -176,13 +191,19 @@ macro "Focus Counter Menu Tool - C037O00ffC703V3344V8444V5944" {
 }
 
 macro "Auto Montage Action Tool - C037F0055C307F6055C370Fc055C031F0655C604F6655C440Fc655" {
-	if (File.exists(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Global configuration.txt") == true) {
+	if (File.exists(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Clonogenics_modules" + File.separator() +
+		"Global_configuration.txt") == true) {
 		if (File.exists(getWorkingPaths("workingPath")) == true) {
 			if (File.exists(getWorkingPaths("analysisSetupFile")) == true) {
 				if (File.exists(getWorkingPaths("obsUnitRoiPath")) == true) {
 					zipList = getFileListFromDirectory(getWorkingPaths("obsUnitRoiPath"), ".zip");
 					if (zipList.length > 0) {
-						runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Auto Montage.ijm");
+						runMacro(getDirectory("plugins") +
+							"BB_macros" + File.separator() +
+							"Clonogenics_modules" + File.separator() +
+							"Auto_montage.ijm");
 					} else {
 						showStatus("No ROI zip files found in the OBS UNIT ROIs folder. Please select observational units.");
 					}
@@ -264,8 +285,14 @@ function getFileListFromDirectory(directory, extension) {
 
 function getWorkingPaths(pathArg) {
 	pathArgs = newArray("workingPath", "analysisPath", "obsUnitRoiPath", "analysisSetupFile", "imageIndexFile", "groupLabelsFile");
-	if (File.exists(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Global configuration.txt") == true) {
-		runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Global Configurator.ijm", pathArg);
+	if (File.exists(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Clonogenics_modules" + File.separator() +
+		"Global_configuration.txt") == true) {
+		runMacro(getDirectory("plugins") +
+			"BB_macros" + File.separator() +
+			"Clonogenics_modules" + File.separator() +
+			"Global_configurator.ijm", pathArg);
 		retrieved = File.openAsString(getDirectory("temp") + "temp retrieved value.txt");
 		deleted = File.delete(getDirectory("temp") + "temp retrieved value.txt");
 		retrieved = split(retrieved, "\n");
@@ -276,7 +303,10 @@ function getWorkingPaths(pathArg) {
 }
 
 function retrieveConfiguration(blockIndex, lineIndex) {
-	runMacro(getDirectory("plugins") + "BB Macros" + File.separator() + "Clonogenics Modules" + File.separator() + "Clonogenics Configurator.ijm", "retrieve|" + blockIndex + "|" + lineIndex);
+	runMacro(getDirectory("plugins") +
+		"BB_macros" + File.separator() +
+		"Clonogenics_modules" + File.separator() +
+		"Clonogenics_configurator.ijm", "retrieve|" + blockIndex + "|" + lineIndex);
 	retrieved = File.openAsString(getDirectory("temp") + "temp retrieved value.txt");
 	deleted = File.delete(getDirectory("temp") + "temp retrieved value.txt");
 	retrieved = split(retrieved, "\n");
