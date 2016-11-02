@@ -5,11 +5,6 @@ var g_setup_file_headers = newArray(
     "--------------------------------------------------------------------------------\n" +
         "\tPATHS\n" +
     "--------------------------------------------------------------------------------\n" +
-    "\n",
-    "\n" +
-    "--------------------------------------------------------------------------------\n" +
-        "\tTEST BLOCK\n" +
-    "--------------------------------------------------------------------------------\n" +
     "\n");
 
 // PATHS
@@ -23,13 +18,6 @@ var g_setup_block_01_defaults = newArray("",
                                          "",
                                          "");
 
-// TEST BLOCK
-var g_setup_block_02_labels = newArray("Test value 1: ",
-                                       "Test value 2: ");
-
-var g_setup_block_02_defaults = newArray("1",
-                                         "2");
-
 var temp_directory = getDirectory("temp") +
                      "BB_macros" + File.separator() +
                      "Fibers" + File.separator();
@@ -40,7 +28,7 @@ var temp_directory = getDirectory("temp") +
 --------------------------------------------------------------------------------
 */
 
-macro "Global_configurator_fibers.ijm" {
+macro "Global_configurator_fibers" {
     args = getArgument();
     args = split(args, "|");
     /*
@@ -81,9 +69,9 @@ macro "Global_configurator_fibers.ijm" {
 
         if (File.exists(global_configuration_file)) {
             first_time_setup = false;
-            last_block_02_settings = get_global_configuration(2, "all");
             // Retrieve anything below Block 01 for writing to the new file,
             //     as everything will have to be written fresh.
+            //last_block_02_settings = get_global_configuration(2, "all");
         } else {
             first_time_setup = true;
         }
@@ -97,8 +85,8 @@ macro "Global_configurator_fibers.ijm" {
                               "Setup.txt";
         global_setup_block_01_choices = newArray(working_path,
                                                  analysis_path,
-                                                 obsUnitRoi_path,
-                                                 analysisSetupFile);
+                                                 obs_unit_ROI_path,
+                                                 analysis_setup_file);
 
         global_configuration = File.open(global_configuration_file);
         print(global_configuration, g_setup_file_headers[0]);
@@ -107,6 +95,7 @@ macro "Global_configurator_fibers.ijm" {
                   g_setup_block_01_labels[i] + "\t" +
                   global_setup_block_01_choices[i]);
         }
+        /*
         print(global_configuration, g_setup_file_headers[1]);
         if (first_time_setup) {
             for (i=0; i<g_setup_block_02_labels.length; i++) {
@@ -121,6 +110,7 @@ macro "Global_configurator_fibers.ijm" {
                       last_block_02_settings[i]);
             }
         }
+        */
         File.close(global_configuration);
 
     } else if (args[0] == "change") {
@@ -218,12 +208,12 @@ function get_global_configuration(block_index, line_index) {
     if (matches(line_index, "all")) {
         return trimmed_result;
     } else {
-        if (line_index < 1 || line_index > trimmed_result.length)
+        if ((line_index + 1) < 1 || (line_index + 1) > trimmed_result.length)
             exit("line_index = " + (line_index + 1) + " was passed to\n" +
                  "get_global_configuration().\n" +
                  "\n" +
                  "If line_index is a number, it must be a positive\n" +
-                 "integer between 1 and " trimmed_result.length + ".");
+                 "integer between 1 and " + trimmed_result.length + ".");
         return trimmed_result[line_index];
     }
 }
