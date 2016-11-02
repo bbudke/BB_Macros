@@ -37,7 +37,8 @@ macro "Measure_fiber" {
         fiber = args;
     }
 
-    result = File.open(getDirectory("temp") + "Measure_fiber_result.txt");
+    result = File.open(getDirectory("temp") +
+                       "Measure_fiber_result.txt");
     print(result,
         "image\t" +
         "fiber\t" +

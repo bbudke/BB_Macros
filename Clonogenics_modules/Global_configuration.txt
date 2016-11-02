@@ -5,12 +5,12 @@ Do not modify unless you know exactly what you are doing.
 	PATHS
 --------------------------------------------------------------------------------
 
-Working Path: 	/media/sf_Brian_Budke/Clonogenics/CL 2016-10-14 Tyk Hey 4 drug titrations/Plate images Hey/
-Analysis Path: 	/media/sf_Brian_Budke/Clonogenics/CL 2016-10-14 Tyk Hey 4 drug titrations/Plate images Hey/Analysis/
-Obs Unit Roi Path: 	/media/sf_Brian_Budke/Clonogenics/CL 2016-10-14 Tyk Hey 4 drug titrations/Plate images Hey/Analysis/OBS UNIT ROIs/
-Analysis Setup File: 	/media/sf_Brian_Budke/Clonogenics/CL 2016-10-14 Tyk Hey 4 drug titrations/Plate images Hey/Analysis/Setup.txt
-Image Index File: 	/media/sf_Brian_Budke/Clonogenics/CL 2016-10-14 Tyk Hey 4 drug titrations/Plate images Hey/Analysis/Image index.txt
-Group Labels File: 	/media/sf_Brian_Budke/Clonogenics/CL 2016-10-14 Tyk Hey 4 drug titrations/Plate images Hey/Analysis/Group labels.txt
+Working Path: 	/media/sf_Brian_Budke/Clonogenics/CL 2016-10-21 Caov SKOV 4 drug titrations/Plate images SKOV/
+Analysis Path: 	/media/sf_Brian_Budke/Clonogenics/CL 2016-10-21 Caov SKOV 4 drug titrations/Plate images SKOV/Analysis/
+Obs Unit Roi Path: 	/media/sf_Brian_Budke/Clonogenics/CL 2016-10-21 Caov SKOV 4 drug titrations/Plate images SKOV/Analysis/OBS UNIT ROIs/
+Analysis Setup File: 	/media/sf_Brian_Budke/Clonogenics/CL 2016-10-21 Caov SKOV 4 drug titrations/Plate images SKOV/Analysis/Setup.txt
+Image Index File: 	/media/sf_Brian_Budke/Clonogenics/CL 2016-10-21 Caov SKOV 4 drug titrations/Plate images SKOV/Analysis/Image index.txt
+Group Labels File: 	/media/sf_Brian_Budke/Clonogenics/CL 2016-10-21 Caov SKOV 4 drug titrations/Plate images SKOV/Analysis/Group labels.txt
 
 --------------------------------------------------------------------------------
 	SETTINGS

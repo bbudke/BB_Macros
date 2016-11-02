@@ -74,7 +74,7 @@ macro "Working Directory Menu Tool - C037L02f2L5270L70c0Lc0f2L020cLf2fcL0cfc" {
 }
 
 macro "Cytology Configuration Action Tool - C037T0b10CT8b09fTdb09g" {
-    if (File.exists(getDirectory("plugins") 
+    if (File.exists(getDirectory("plugins") + 
      "BB_macros" + File.separator() +
      "Cytology_modules" + File.separator() +
      "Global_configuration.txt") == true) {
