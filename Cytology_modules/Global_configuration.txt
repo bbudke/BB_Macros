@@ -5,12 +5,12 @@ Do not modify unless you know exactly what you are doing.
 	PATHS
 --------------------------------------------------------------------------------
 
-Working Path: 	/media/sf_Brian_Budke/DNA fibers/slide 29/
-Analysis Path: 	/media/sf_Brian_Budke/DNA fibers/slide 29/Analysis/
-Obs Unit Roi Path: 	/media/sf_Brian_Budke/DNA fibers/slide 29/Analysis/OBS UNIT ROIs/
-Analysis Setup File: 	/media/sf_Brian_Budke/DNA fibers/slide 29/Analysis/Setup.txt
-Image Index File: 	/media/sf_Brian_Budke/DNA fibers/slide 29/Analysis/Image index.txt
-Group Labels File: 	/media/sf_Brian_Budke/DNA fibers/slide 29/Analysis/Group labels.txt
+Working Path: 	D:\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\DNA fibers\Fibers 2016-10-05\Images\
+Analysis Path: 	D:\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\DNA fibers\Fibers 2016-10-05\Images\Analysis\
+Obs Unit Roi Path: 	D:\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\DNA fibers\Fibers 2016-10-05\Images\Analysis\OBS UNIT ROIs\
+Analysis Setup File: 	D:\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\DNA fibers\Fibers 2016-10-05\Images\Analysis\Setup.txt
+Image Index File: 	D:\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\DNA fibers\Fibers 2016-10-05\Images\Analysis\Image index.txt
+Group Labels File: 	D:\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\DNA fibers\Fibers 2016-10-05\Images\Analysis\Group labels.txt
 
 --------------------------------------------------------------------------------
 	SETTINGS
