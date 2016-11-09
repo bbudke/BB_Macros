@@ -68,8 +68,13 @@ var analysis_path       = get_working_paths("analysis_path");
 var analysis_setup_file = get_working_paths("analysis_setup_file");
 
 var temp_directory = getDirectory("temp") +
+<<<<<<< HEAD
                     "BB_macros" + File.separator() +
                     "Fibers" + File.separator();
+=======
+                     "BB_macros" + File.separator() +
+                     "Fibers" + File.separator();
+>>>>>>> 1877a698bb4adc0d7998138a9bb2ff013c799f9c
 
 /*
 --------------------------------------------------------------------------------
@@ -454,6 +459,9 @@ function get_file_list_from_directory(directory, extension) {
 //     to a text file in the temp directory. This result is read back and
 //     returned by the function and the temp file is deleted.
 function get_working_paths(path_arg) {
+    temp_directory = getDirectory("temp") +
+                     "BB_macros" + File.separator() +
+                     "Fibers" + File.separator();
     valid_path_args = newArray("working_path",
                                "analysis_path",
                                "obs_unit_ROI_path",
@@ -486,16 +494,25 @@ function get_working_paths(path_arg) {
     }
 }
 
-function modify_setup_file(block_index, line_index, newValue) {
-    // First make sure that whatever called this function passed indices that exist in this macro
-    error = false;
+// Change a single value in the Setup.txt file.
+function modify_setup_file(block_index, line_index, new_value) {
+    // First make sure that whatever called this function
+    //     passed indices that exist in this macro.
     if (block_index > setup_file_headers.length - 1) {
-        exit("Fibers Configurator", "Invalid Block Index passed to modify_setup_file()");
+        exit("Fibers Configurator",
+             "Invalid Block Index passed to modify_setup_file()\n" +
+             "in Fibers_configurator.ijm.");
     }
 
+<<<<<<< HEAD
     last_block_01_settings = get_configuration(0, -1);
     last_block_02_settings = get_configuration(1, -1);
     last_block_03_settings = get_configuration(2, -1);
+=======
+    last_block_01_settings = get_configuration(1, "all");
+    last_block_02_settings = get_configuration(2, "all");
+    last_block_03_settings = get_configuration(3, "all");
+>>>>>>> 1877a698bb4adc0d7998138a9bb2ff013c799f9c
 
     setup_file = File.open(analysis_setup_file);
 
@@ -505,15 +522,16 @@ function modify_setup_file(block_index, line_index, newValue) {
     ----------------------------------------------------------------------------
     */
 
+    // Continue to auto-detect and change n_channels.
     print(setup_file, setup_file_headers[0]);
-    for (i=0; i<setup_block_01_labels.length; i++) {
+    for (i = 0; i < setup_block_01_labels.length; i++) {
         if (block_index == 0 && line_index == i) {
-            print(setup_file, setup_block_01_labels[i] +    "\t" + newValue);
+            print(setup_file, setup_block_01_labels[i] + "\t" + new_value);
             if (setup_block_01_labels[i] == "Channels (auto-detected):") {
-                n_channels = newValue;
+                n_channels = new_value;
             }
         } else {
-            print(setup_file, setup_block_01_labels[i] +    "\t" + last_block_01_settings[i]);
+            print(setup_file, setup_block_01_labels[i] + "\t" + last_block_01_settings[i]);
             if (setup_block_01_labels[i] == "Channels (auto-detected):") {
                 n_channels = last_block_01_settings[i];
             }
@@ -527,23 +545,33 @@ function modify_setup_file(block_index, line_index, newValue) {
     */
 
     print(setup_file, setup_file_headers[1]);
-    for (i=0; i<setup_block_02_labels.length; i++) {
-        if (i < 1) {
-            for (j=0; j<n_channels; j++) {
-                for (k=0; k<1; k++) {
-                    if (block_index == 1 && line_index == k + (j * 1)) {
-                        print(setup_file, "Channel " + toString(j + 1) +     "\t" + setup_block_02_labels[k] +  "\t" + newValue);
+    for (block_line = 0; block_line < setup_block_02_labels.length; block_line++) {
+        if (block_line < 1) {
+            for (channel = 0; channel < n_channels; channel++) {
+                for (channel_line = 0; channel_line < 1; channel_line++) {
+                    if (block_index == 1 && line_index == channel_line + (channel * 1)) {
+                        print(setup_file,
+                              "Channel " + toString(channel + 1) + "\t" +
+                              setup_block_02_labels[channel_line] +  "\t" +
+                              new_value);
                     } else {
-                        print(setup_file, "Channel " + toString(j + 1) +     "\t" + setup_block_02_labels[k] +  "\t" + last_block_02_settings[k + (j * 1)]);
+                        print(setup_file,
+                              "Channel " + toString(channel + 1) + "\t" +
+                              setup_block_02_labels[channel_line] +  "\t" +
+                              last_block_02_settings[channel_line + (channel * 1)]);
                     }
                 }
             }
             i = 0;
         } else {
-            if (block_index == 1 && line_index == i + (1 * (-1 + n_channels))) {
-                print(setup_file, setup_block_02_labels[i] +    "\t" + newValue);
+            if (block_index == 1 && line_index == block_line + (1 * (n_channels - 1))) {
+                print(setup_file,
+                      setup_block_02_labels[block_line] + "\t" +
+                      new_value);
             } else {
-                print(setup_file, setup_block_02_labels[i] +    "\t" + last_block_02_settings[i + (1 * (-1 + n_channels))]);
+                print(setup_file,
+                      setup_block_02_labels[block_line] + "\t" +
+                      last_block_02_settings[block_line + (1 * (n_channels - 1))]);
             }
         }
     }
@@ -555,97 +583,34 @@ function modify_setup_file(block_index, line_index, newValue) {
     */
 
     print(setup_file, setup_file_headers[2]);
-    for (i=0; i<setup_block_03_labels.length; i++) {
-        if (i < 5) {
-            for (j=0; j<n_channels; j++) {
-                for (k=0; k<5; k++) {
-                    if (block_index == 2 && line_index == k + (j * 5)) {
-                        print(setup_file, "Channel " + toString(j + 1) +     "\t" + setup_block_03_labels[k] +  "\t" + newValue);
+    for (block_line = 0; block_line < setup_block_03_labels.length; block_line++) {
+        if (block_line < 5) {
+            for (channel = 0; channel < n_channels; channel++) {
+                for (channel_line = 0; channel_line < 5; channel_line++) {
+                    if (block_index == 2 && line_index == channel_line + (channel * 5)) {
+                        print(setup_file,
+                              "Channel " + toString(channel + 1) + "\t" +
+                              setup_block_03_labels[channel_line] +  "\t" +
+                              new_value);
                     } else {
-                        print(setup_file, "Channel " + toString(j + 1) +     "\t" + setup_block_03_labels[k] +  "\t" + last_block_03_settings[k + (j * 5)]);
+                        print(setup_file,
+                              "Channel " + toString(channel + 1) + "\t" +
+                              setup_block_03_labels[channel_line] +  "\t" +
+                              last_block_03_settings[channel_line + (channel * 5)]);
                     }
                 }
             }
             i = 4;
         } else {
-            if (block_index == 2 && line_index == i + (5 * (-1 + n_channels))) {
-                print(setup_file, setup_block_03_labels[i] +    "\t" + newValue);
+            if (block_index == 2 && line_index == block_line + (5 * (n_channels - 1))) {
+                print(setup_file,
+                      setup_block_03_labels[block_line] + "\t" +
+                      new_value);
             } else {
-                print(setup_file, setup_block_03_labels[i] +    "\t" + last_block_03_settings[i + (5 * (-1 + n_channels))]);
+                print(setup_file,
+                      setup_block_03_labels[block_line] + "\t" +
+                      last_block_03_settings[block_line + (5 * (n_channels - 1))]);
             }
-        }
-    }
-
-    /*
-    ----------------------------------------------------------------------------
-        BLOCK 4
-    ----------------------------------------------------------------------------
-    */
-
-    print(setup_file, setup_file_headers[3]);
-    for (i=0; i<setupBlock04Labels.length; i++) {
-        if (block_index == 3 && line_index == i) {
-            print(setup_file, setupBlock04Labels[i] +    "\t" + newValue);
-        } else {
-            print(setup_file, setupBlock04Labels[i] +    "\t" + lastBlock04Settings[i]);
-        }
-    }
-
-    /*
-    ----------------------------------------------------------------------------
-        BLOCK 5
-    ----------------------------------------------------------------------------
-    */
-
-    print(setup_file, setup_file_headers[4]);
-    for (i=0; i<setupBlock05Labels.length; i++) {
-        if (i < 8) {
-            for (j=0; j<n_channels; j++) {
-                for (k=0; k<8; k++) {
-                    if (block_index == 4 && line_index == k + (j * 8)) {
-                        print(setup_file, "Channel " + toString(j + 1) +     "\t" + setupBlock05Labels[k] +  "\t" + newValue);
-                    } else {
-                        print(setup_file, "Channel " + toString(j + 1) +     "\t" + setupBlock05Labels[k] +  "\t" + lastBlock05Settings[k + (j * 8)]);
-                    }
-                }
-            }
-            i = 7;
-        } else {
-            if (block_index == 4 && line_index == i + (8 * (-1 + n_channels))) {
-                print(setup_file, setupBlock05Labels[i] +    "\t" + newValue);
-            } else {
-                print(setup_file, setupBlock05Labels[i] +    "\t" + lastBlock05Settings[i + (8 * (-1 + n_channels))]);
-            }
-        }
-    }
-
-    /*
-    ----------------------------------------------------------------------------
-        BLOCK 6
-    ----------------------------------------------------------------------------
-    */
-
-    print(setup_file, setup_file_headers[5]);
-    for (i=0; i<setupBlock06Labels.length; i++) {
-        if (block_index == 5 && line_index == i) {
-            print(setup_file, setupBlock06Labels[i] +    "\t" + newValue);
-        } else {
-            print(setup_file, setupBlock06Labels[i] +    "\t" + lastBlock06Settings[i]);
-        }
-    }
-
-    /*
-    ----------------------------------------------------------------------------
-        BLOCK 7
-    ----------------------------------------------------------------------------
-    */
-
-    print(setup_file, setup_file_headers[6]);
-    for (i=0; i<setupBlock07Labels.length; i++) {
-        if (block_index == 6 && line_index == i) {
-            print(setup_file, setupBlock07Labels[i] +    "\t" + newValue);
-        } else {
-            print(setup_file, setupBlock07Labels[i] +    "\t" + lastBlock07Settings[i]);
         }
     }
 
