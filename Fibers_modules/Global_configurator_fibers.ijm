@@ -272,7 +272,7 @@ function modify_global_setup_file(block_index, line_index, new_value) {
 //    result to the temp file.
 function write_retrieved_to_temp(block_index, line_index) {
     retrieved = get_global_configuration(block_index, line_index);
-    retrieved_temp = File.open(temp_directory + "Global_configurator_fibers_temp.txt");
+    retrieved_temp = File.open(temp_directory + "g_config_temp.txt");
     print(retrieved_temp, retrieved);
     File.close(retrieved_temp);
 }

@@ -93,8 +93,8 @@ function get_working_paths(path_arg) {
 			     "BB_macros" + File.separator() +
 			     "Fibers_modules" + File.separator() +
 			     "Global_configurator_fibers.ijm", path_arg);
-		retrieved = File.openAsString(temp_directory + "Global_configurator_fibers_temp.txt");
-		deleted = File.delete(temp_directory + "Global_configurator_fibers_temp.txt");
+		retrieved = File.openAsString(temp_directory + "g_config_temp.txt");
+		deleted = File.delete(temp_directory + "g_config_temp.txt");
 		retrieved = split(retrieved, "\n");
 		return retrieved[0];
 	} else {

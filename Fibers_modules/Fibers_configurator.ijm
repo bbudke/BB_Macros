@@ -67,6 +67,10 @@ var working_path        = get_working_paths("working_path");
 var analysis_path       = get_working_paths("analysis_path");
 var analysis_setup_file = get_working_paths("analysis_setup_file");
 
+var temp_directory = getDirectory("temp") +
+                    "BB_macros" + File.separator() +
+                    "Fibers" + File.separator();
+
 /*
 --------------------------------------------------------------------------------
     MACRO
@@ -473,8 +477,8 @@ function get_working_paths(path_arg) {
                  "BB_macros" + File.separator() +
                  "Fibers_modules" + File.separator() +
                  "Global_configurator_fibers.ijm", path_arg);
-        retrieved = File.openAsString(temp_directory + "Global_configurator_fibers_temp.txt");
-        deleted = File.delete(temp_directory + "Global_configurator_fibers_temp.txt");
+        retrieved = File.openAsString(temp_directory + "config_temp.txt");
+        deleted = File.delete(temp_directory + "config_temp.txt");
         retrieved = split(retrieved, "\n");
         return retrieved[0];
     } else {
@@ -492,10 +496,6 @@ function modify_setup_file(block_index, line_index, newValue) {
     last_block_01_settings = get_configuration(0, -1);
     last_block_02_settings = get_configuration(1, -1);
     last_block_03_settings = get_configuration(2, -1);
-    lastBlock04Settings = get_configuration(3, -1);
-    lastBlock05Settings = get_configuration(4, -1);
-    lastBlock06Settings = get_configuration(5, -1);
-    lastBlock07Settings = get_configuration(6, -1);
 
     setup_file = File.open(analysis_setup_file);
 
@@ -656,7 +656,7 @@ function modify_setup_file(block_index, line_index, newValue) {
 //    result to the temp file.
 function write_retrieved_to_temp(block_index, line_index) {
     retrieved = get_global_configuration(block_index, line_index);
-    retrieved_temp = File.open(temp_directory + "Global_configurator_fibers_temp.txt");
+    retrieved_temp = File.open(temp_directory + "g_config_temp.txt");
     print(retrieved_temp, retrieved);
     File.close(retrieved_temp);
 }
