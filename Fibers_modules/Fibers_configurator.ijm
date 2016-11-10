@@ -480,8 +480,8 @@ function get_working_paths(path_arg) {
                  "BB_macros" + File.separator() +
                  "Fibers_modules" + File.separator() +
                  "Global_configurator_fibers.ijm", path_arg);
-        retrieved = File.openAsString(temp_directory + "config_temp.txt");
-        deleted = File.delete(temp_directory + "config_temp.txt");
+        retrieved = File.openAsString(temp_directory + "g_config_temp.txt");
+        deleted = File.delete(temp_directory + "g_config_temp.txt");
         retrieved = split(retrieved, "\n");
         return retrieved[0];
     } else {
@@ -502,7 +502,7 @@ function modify_setup_file(block_index, line_index, new_value) {
     last_block_01_settings = get_configuration(1, "all");
     last_block_02_settings = get_configuration(2, "all");
     last_block_03_settings = get_configuration(3, "all");
-    
+
     setup_file = File.open(analysis_setup_file);
 
     /*
