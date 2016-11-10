@@ -457,7 +457,7 @@ function display_image(image) {
                 } else {
                     y = 502;
                 }
-//              eval("script", frameScript(image + " " + channel + " " + labels[i] + ".tif", width, height, x, y));
+                eval("script", frameScript(image + " " + channel + " " + labels[i] + ".tif", width, height, x, y));
                 run("Scale to Fit");
                 run("Select None");
             }
@@ -528,7 +528,7 @@ function display_image(image) {
 }
 
 function frameScript(title, width, height, x, y) {
-    return "frame = WindowManager.getFrame(\"" + title + "\"); if (frame != null) {frame.setSize(" + width + ", " + height + "); frame.setLocation(" + x + ", " + y + ");}";
+    return "frame = WindowManager.getWindow(\"" + title + "\"); if (frame != null) {frame.setSize(" + width + ", " + height + "); frame.setLocation(" + x + ", " + y + ");}";
 }
 
 function getFieldFromTdf(inputString, field, isNumberBoolean) {
