@@ -1,10 +1,6 @@
-<<<<<<< HEAD
 var working_path        = get_working_paths("working_path");
 var obs_unit_ROI_path   = get_working_paths("obs_unit_ROI_path");
-=======
-var working_path = get_working_paths("working_path");
-var obs_unit_ROI_path = get_working_paths("obs_unit_ROI_path");
->>>>>>> 1877a698bb4adc0d7998138a9bb2ff013c799f9c
+
 var current_image_index = -1;
 var in_use = false;
 var alerts = newArray("No corresponding ROI zip file found for this image.",
@@ -19,17 +15,12 @@ var color_choices = newArray("Unused",
                              "Magenta",
                              "Yellow");
 
-<<<<<<< HEAD
-var image_type    = retrieve_configuration(1, 1);
-var nChannels     = retrieve_configuration(1, 2);
-
 var temp_directory = getDirectory("temp") +
                      "BB_macros" + File.separator() +
                      "Fibers" + File.separator();
-=======
+
 var image_type = retrieve_configuration(1, 1);
 var n_channels = retrieve_configuration(1, 2);
->>>>>>> 1877a698bb4adc0d7998138a9bb2ff013c799f9c
 
 /*
 --------------------------------------------------------------------------------
@@ -62,39 +53,14 @@ macro "Image Viewer Configuration Action Tool - C037T0b10CT8b09fTdb09g" {
 
     // Get the old settings to see if the settings get changed
     // This code is almost-exactly repeated below for new settings
-<<<<<<< HEAD
-    allOldSettings = newArray(4 + 5 * nChannels);
-    for (i=0; i<nChannels; i++) {
-=======
     allOldSettings = newArray(4 + 5 * n_channels);
     for (i=0; i<n_channels; i++) {
->>>>>>> 1877a698bb4adc0d7998138a9bb2ff013c799f9c
         for (j=0; j<5; j++) {
             value = retrieve_configuration(2, j + 5 * i);
             allOldSettings[j + 5 * i] = value;
         }
     }
     for (i=0; i<4; i++) {
-<<<<<<< HEAD
-        value = retrieve_configuration(2, i + 5 * nChannels);
-        allOldSettings[i + 5 * nChannels] = value;
-    }
-    value = retrieve_g_configuration(1, 6); // option to show ROI manager
-    allOldSettings = Array.concat(allOldSettings, value);
-
-    displayChoices = newArray("RGB Composite", "Single Monochrome Images", "Single Heatmap Images");
-    displayDefault = retrieve_configuration(2, 0 + 5 * nChannels);
-    obsUnitBoxDefault = retrieve_configuration(2, 1 + 5 * nChannels);
-    globalMaskDefault = retrieve_configuration(2, 2 + 5 * nChannels);
-    submaskDefault = retrieve_configuration(2, 3 + 5 * nChannels);
-    showRoiManagerDefault = retrieve_g_configuration(1, 6);
-    colorDefaults = newArray(nChannels);
-    monoMinDefaults = newArray(nChannels);
-    monoMaxDefaults = newArray(nChannels);
-    heatMinDefaults = newArray(nChannels);
-    heatMaxDefaults = newArray(nChannels);
-    for (i=0; i<nChannels; i++) {
-=======
         value = retrieve_configuration(2, i + 5 * n_channels);
         allOldSettings[i + 5 * n_channels] = value;
     }
@@ -113,7 +79,6 @@ macro "Image Viewer Configuration Action Tool - C037T0b10CT8b09fTdb09g" {
     heatMinDefaults = newArray(n_channels);
     heatMaxDefaults = newArray(n_channels);
     for (i=0; i<n_channels; i++) {
->>>>>>> 1877a698bb4adc0d7998138a9bb2ff013c799f9c
         value = retrieve_configuration(2, 0 + 5 * i);
         colorDefaults[i] = value;
         value = retrieve_configuration(2, 1 + 5 * i);
@@ -135,11 +100,8 @@ macro "Image Viewer Configuration Action Tool - C037T0b10CT8b09fTdb09g" {
     Dialog.addCheckbox("Show submasks", submaskDefault);
     Dialog.addCheckbox("Show ROI Manager\n(must select at least one box above for this to work)", showRoiManagerDefault);
     Dialog.addMessage("Channel options");
-<<<<<<< HEAD
-    for (i=0; i<nChannels; i++) {
-=======
+
     for (i=0; i<n_channels; i++) {
->>>>>>> 1877a698bb4adc0d7998138a9bb2ff013c799f9c
         Dialog.setInsets(0, 20, 0);
         Dialog.addChoice("Display color:", color_choices, colorDefaults[i]);
         Dialog.setInsets(0, 20, 0);
@@ -160,21 +122,6 @@ macro "Image Viewer Configuration Action Tool - C037T0b10CT8b09fTdb09g" {
     runMacro(getDirectory("plugins") +
         "BB_macros" + File.separator() +
         "Cytology_modules" + File.separator() +
-<<<<<<< HEAD
-        "Cytology_configurator.ijm", "change|2|" + toString(0 + 5 * nChannels) + "|" + displayChoice);
-    runMacro(getDirectory("plugins") +
-        "BB_macros" + File.separator() +
-        "Cytology_modules" + File.separator() +
-        "Cytology_configurator.ijm", "change|2|" + toString(1 + 5 * nChannels) + "|" + obsUnitBoxChoice);
-    runMacro(getDirectory("plugins") +
-        "BB_macros" + File.separator() +
-        "Cytology_modules" + File.separator() +
-        "Cytology_configurator.ijm", "change|2|" + toString(2 + 5 * nChannels) + "|" + globalMaskChoice);
-    runMacro(getDirectory("plugins") +
-        "BB_macros" + File.separator() +
-        "Cytology_modules" + File.separator() +
-        "Cytology_configurator.ijm", "change|2|" + toString(3 + 5 * nChannels) + "|" + submaskChoice);
-=======
         "Cytology_configurator.ijm", "change|2|" + toString(0 + 5 * n_channels) + "|" + displayChoice);
     runMacro(getDirectory("plugins") +
         "BB_macros" + File.separator() +
@@ -188,16 +135,12 @@ macro "Image Viewer Configuration Action Tool - C037T0b10CT8b09fTdb09g" {
         "BB_macros" + File.separator() +
         "Cytology_modules" + File.separator() +
         "Cytology_configurator.ijm", "change|2|" + toString(3 + 5 * n_channels) + "|" + submaskChoice);
->>>>>>> 1877a698bb4adc0d7998138a9bb2ff013c799f9c
     runMacro(getDirectory("plugins") +
         "BB_macros" + File.separator() +
         "Cytology_modules" + File.separator() +
         "Global_configurator.ijm", "change|1|6|" + showRoiManagerChoice);
-<<<<<<< HEAD
-    for (i=0; i<nChannels; i++) {
-=======
+
     for (i=0; i<n_channels; i++) {
->>>>>>> 1877a698bb4adc0d7998138a9bb2ff013c799f9c
         runMacro(getDirectory("plugins") +
             "BB_macros" + File.separator() +
             "Cytology_modules" + File.separator() +
@@ -222,30 +165,18 @@ macro "Image Viewer Configuration Action Tool - C037T0b10CT8b09fTdb09g" {
 
     // Get the new settings to see if the settings got changed
     // This code is almost-exactly repeated above for old settings
-<<<<<<< HEAD
-    allNewSettings = newArray(4 + 5 * nChannels);
-    for (i=0; i<nChannels; i++) {
-=======
     allNewSettings = newArray(4 + 5 * n_channels);
     for (i=0; i<n_channels; i++) {
->>>>>>> 1877a698bb4adc0d7998138a9bb2ff013c799f9c
         for (j=0; j<5; j++) {
             value = retrieve_configuration(2, j + 5 * i);
             allNewSettings[j + 5 * i] = value;
         }
     }
     for (i=0; i<4; i++) {
-<<<<<<< HEAD
-        value = retrieve_configuration(2, i + 5 * nChannels);
-        allNewSettings[i + 5 * nChannels] = value;
-    }
-    value = retrieve_g_configuration(1, 6);
-=======
         value = retrieve_configuration(2, i + 5 * n_channels);
         allNewSettings[i + 5 * n_channels] = value;
     }
     value = retrieveGlobalConfiguration(1, 6);
->>>>>>> 1877a698bb4adc0d7998138a9bb2ff013c799f9c
     allNewSettings = Array.concat(allNewSettings, value);
     changed = false;
 
@@ -257,11 +188,7 @@ macro "Image Viewer Configuration Action Tool - C037T0b10CT8b09fTdb09g" {
     if (changed == true) {
         in_use = true;
         cleanup();
-<<<<<<< HEAD
-        imageList = getFileListFromDirectory(workingPath, image_type);
-=======
         imageList = getFileListFromDirectory(working_path, image_type);
->>>>>>> 1877a698bb4adc0d7998138a9bb2ff013c799f9c
         imageListNoExt = newArray();
         for (i=0; i<imageList.length; i++) {
             append = substring(imageList[i], 0, indexOf(imageList[i], image_type));
@@ -281,11 +208,7 @@ macro "Load Previous Image (Shortcut Key is F1) Action Tool - C22dF36c6H096f6300
     if (in_use == false) {
         in_use = true;
         cleanup();
-<<<<<<< HEAD
-        imageList = getFileListFromDirectory(workingPath, image_type);
-=======
         imageList = getFileListFromDirectory(working_path, image_type);
->>>>>>> 1877a698bb4adc0d7998138a9bb2ff013c799f9c
         imageListNoExt = newArray();
         for (i=0; i<imageList.length; i++) {
             append = substring(imageList[i], 0, indexOf(imageList[i], image_type));
@@ -304,11 +227,7 @@ macro "Load Previous Image (Shortcut Key is F1) Action Tool - C22dF36c6H096f6300
 macro "Load Image Action Tool - C037T0707LT4707OT9707ATe707DT2f08IT5f08MTcf08G" {
     in_use = false;
     cleanup();
-<<<<<<< HEAD
-    imageList = getFileListFromDirectory(workingPath, image_type);
-=======
     imageList = getFileListFromDirectory(working_path, image_type);
->>>>>>> 1877a698bb4adc0d7998138a9bb2ff013c799f9c
     imageListNoExt = newArray();
     for (i=0; i<imageList.length; i++) {
         append = substring(imageList[i], 0, indexOf(imageList[i], image_type));
@@ -333,11 +252,7 @@ macro "Load Next Image (Shortcut Key is F2) Action Tool - C22dF06c6Hf9939f00" {
     if (in_use == false) {
         in_use = true;
         cleanup();
-<<<<<<< HEAD
-        imageList = getFileListFromDirectory(workingPath, image_type);
-=======
         imageList = getFileListFromDirectory(working_path, image_type);
->>>>>>> 1877a698bb4adc0d7998138a9bb2ff013c799f9c
         imageListNoExt = newArray();
         for (i=0; i<imageList.length; i++) {
             append = substring(imageList[i], 0, indexOf(imageList[i], image_type));
@@ -355,11 +270,7 @@ macro "Load Next Image (Shortcut Key is F2) Action Tool - C22dF06c6Hf9939f00" {
 
 macro "Get Panel Action Tool - C037F0055C307F6055C370Fc055C031F0855C604F6b55C440Fce55" {
     analysisPath = get_working_paths("analysisPath");
-<<<<<<< HEAD
-    imageList = getFileListFromDirectory(workingPath, image_type);
-=======
     imageList = getFileListFromDirectory(working_path, image_type);
->>>>>>> 1877a698bb4adc0d7998138a9bb2ff013c799f9c
     imageListNoExt = newArray();
     for (i=0; i<imageList.length; i++) {
         append = substring(imageList[i], 0, indexOf(imageList[i], image_type));
@@ -392,11 +303,7 @@ macro "Batch Get Panel Action Tool - C037F0055C307F6055C370Fc055C031F0655C604F66
     */
     if (!File.exists(analysisPath + "Panels.txt")) {
         showMessage("No Panels.txt file found.\nGoing through all images files instead.");
-<<<<<<< HEAD
-        imageList = getFileListFromDirectory(workingPath, image_type);
-=======
         imageList = getFileListFromDirectory(working_path, image_type);
->>>>>>> 1877a698bb4adc0d7998138a9bb2ff013c799f9c
         imageListNoExt = newArray();
         for (i=0; i<imageList.length; i++) {
             append = substring(imageList[i], 0, indexOf(imageList[i], image_type));
@@ -449,11 +356,7 @@ macro "Load Previous Image [f1]" {
     if (in_use == false) {
         in_use = true;
         cleanup();
-<<<<<<< HEAD
-        imageList = getFileListFromDirectory(workingPath, image_type);
-=======
         imageList = getFileListFromDirectory(working_path, image_type);
->>>>>>> 1877a698bb4adc0d7998138a9bb2ff013c799f9c
         imageListNoExt = newArray();
         for (i=0; i<imageList.length; i++) {
             append = substring(imageList[i], 0, indexOf(imageList[i], image_type));
@@ -473,11 +376,7 @@ macro "Load Next Image [f2]" {
     if (in_use == false) {
         in_use = true;
         cleanup();
-<<<<<<< HEAD
-        imageList = getFileListFromDirectory(workingPath, image_type);
-=======
         imageList = getFileListFromDirectory(working_path, image_type);
->>>>>>> 1877a698bb4adc0d7998138a9bb2ff013c799f9c
         imageListNoExt = newArray();
         for (i=0; i<imageList.length; i++) {
             append = substring(imageList[i], 0, indexOf(imageList[i], image_type));
@@ -508,17 +407,6 @@ function cleanup() {
 
 function displayImage(image) {
     setBatchMode(true);
-<<<<<<< HEAD
-    displayChoice = retrieve_configuration(2, 0 + 5 * nChannels);
-    obsUnitBoxChoice = retrieve_configuration(2, 1 + 5 * nChannels);
-    globalMaskChoice = retrieve_configuration(2, 2 + 5 * nChannels);
-    submaskChoice = retrieve_configuration(2, 3 + 5 * nChannels);
-    showRoiManager = retrieve_g_configuration(1, 6);
-    runMacro(getDirectory("plugins") +
-        "BB_macros" + File.separator() +
-        "Cytology_modules" + File.separator() +
-        "Convert_to_tiff.ijm", workingPath + image + image_type + "|" + image_type + "|" + zSeriesOption);
-=======
     displayChoice = retrieve_configuration(2, 0 + 5 * n_channels);
     obsUnitBoxChoice = retrieve_configuration(2, 1 + 5 * n_channels);
     globalMaskChoice = retrieve_configuration(2, 2 + 5 * n_channels);
@@ -528,7 +416,6 @@ function displayImage(image) {
         "BB_macros" + File.separator() +
         "Cytology_modules" + File.separator() +
         "Convert_to_tiff.ijm", working_path + image + image_type + "|" + image_type + "|" + zSeriesOption);
->>>>>>> 1877a698bb4adc0d7998138a9bb2ff013c799f9c
     open(getDirectory("temp") + "Converted To Tiff.tif");
     deleted = File.delete(getDirectory("temp") + "Converted To Tiff.tif");
     alert = "";
@@ -616,11 +503,7 @@ function displayImage(image) {
     mins = newArray();
     maxes = newArray();
     getDimensions(width, height, channels, slices, frames);
-<<<<<<< HEAD
-    for (i=0; i<nChannels; i++) {
-=======
     for (i=0; i<n_channels; i++) {
->>>>>>> 1877a698bb4adc0d7998138a9bb2ff013c799f9c
         label = retrieve_configuration(1, i);
         color = retrieve_configuration(2, 0 + 5 * i);
         if (color != "Unused") {
@@ -789,7 +672,6 @@ function getFileListFromDirectory(directory, extension) {
     return fileList;
 }
 
-<<<<<<< HEAD
 // Runs the global configurator macro, which writes the resulting path
 //     to a text file in the temp directory. This result is read back and
 //     returned by the function and the temp file is deleted.
@@ -819,20 +701,6 @@ function get_working_paths(path_arg) {
                  "Global_configurator_fibers.ijm", path_arg);
         retrieved = File.openAsString(temp_directory + "g_config_temp.txt");
         deleted = File.delete(temp_directory + "g_config_temp.txt");
-=======
-function get_working_paths(pathArg) {
-    pathArgs = newArray("working_path", "analysisPath", "obs_unit_ROI_path", "analysisSetupFile", "imageIndexFile", "groupLabelsFile");
-    if (File.exists(getDirectory("plugins") +
-        "BB_macros" + File.separator() +
-        "Cytology_modules" + File.separator() +
-        "Global_configuration.txt") == true) {
-        runMacro(getDirectory("plugins") +
-            "BB_macros" + File.separator() +
-            "Cytology_modules" + File.separator() +
-            "Global_configurator.ijm", pathArg);
-        retrieved = File.openAsString(getDirectory("temp") + "temp retrieved value.txt");
-        deleted = File.delete(getDirectory("temp") + "temp retrieved value.txt");
->>>>>>> 1877a698bb4adc0d7998138a9bb2ff013c799f9c
         retrieved = split(retrieved, "\n");
         return retrieved[0];
     } else {
@@ -840,7 +708,6 @@ function get_working_paths(pathArg) {
     }
 }
 
-<<<<<<< HEAD
 function retrieve_configuration(block_index, line_index) {
     runMacro(getDirectory("plugins") +
              "BB_macros" + File.separator() +
@@ -849,20 +716,10 @@ function retrieve_configuration(block_index, line_index) {
              "retrieve|" + block_index + "|" + line_index);
     retrieved = File.openAsString(temp_directory + "config_temp.txt");
     deleted = File.delete(temp_directory + "config_temp.txt");
-=======
-function retrieve_configuration(blockIndex, lineIndex) {
-    runMacro(getDirectory("plugins") +
-        "BB_macros" + File.separator() +
-        "Cytology_modules" + File.separator() +
-        "Cytology_configurator.ijm", "retrieve|" + blockIndex + "|" + lineIndex);
-    retrieved = File.openAsString(getDirectory("temp") + "temp retrieved value.txt");
-    deleted = File.delete(getDirectory("temp") + "temp retrieved value.txt");
->>>>>>> 1877a698bb4adc0d7998138a9bb2ff013c799f9c
     retrieved = split(retrieved, "\n");
     return retrieved[0];
 }
 
-<<<<<<< HEAD
 function retrieve_g_configuration(block_index, line_index) {
     runMacro(getDirectory("plugins") +
              "BB_macros" + File.separator() +
@@ -871,15 +728,6 @@ function retrieve_g_configuration(block_index, line_index) {
              "retrieve|" + block_index + "|" + line_index);
     retrieved = File.openAsString(temp_directory + "g_config_temp.txt");
     deleted = File.delete(temp_directory + "g_config_temp.txt");
-=======
-function retrieveGlobalConfiguration(blockIndex, lineIndex) {
-    runMacro(getDirectory("plugins") +
-        "BB_macros" + File.separator() +
-        "Cytology_modules" + File.separator() +
-        "Global_configurator.ijm", "retrieve|" + blockIndex + "|" + lineIndex);
-    retrieved = File.openAsString(getDirectory("temp") + "temp retrieved value.txt");
-    deleted = File.delete(getDirectory("temp") + "temp retrieved value.txt");
->>>>>>> 1877a698bb4adc0d7998138a9bb2ff013c799f9c
     retrieved = split(retrieved, "\n");
     return retrieved[0];
 }

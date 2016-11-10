@@ -68,13 +68,8 @@ var analysis_path       = get_working_paths("analysis_path");
 var analysis_setup_file = get_working_paths("analysis_setup_file");
 
 var temp_directory = getDirectory("temp") +
-<<<<<<< HEAD
-                    "BB_macros" + File.separator() +
-                    "Fibers" + File.separator();
-=======
                      "BB_macros" + File.separator() +
                      "Fibers" + File.separator();
->>>>>>> 1877a698bb4adc0d7998138a9bb2ff013c799f9c
 
 /*
 --------------------------------------------------------------------------------
@@ -504,16 +499,10 @@ function modify_setup_file(block_index, line_index, new_value) {
              "in Fibers_configurator.ijm.");
     }
 
-<<<<<<< HEAD
-    last_block_01_settings = get_configuration(0, -1);
-    last_block_02_settings = get_configuration(1, -1);
-    last_block_03_settings = get_configuration(2, -1);
-=======
     last_block_01_settings = get_configuration(1, "all");
     last_block_02_settings = get_configuration(2, "all");
     last_block_03_settings = get_configuration(3, "all");
->>>>>>> 1877a698bb4adc0d7998138a9bb2ff013c799f9c
-
+    
     setup_file = File.open(analysis_setup_file);
 
     /*

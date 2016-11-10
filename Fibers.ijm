@@ -113,7 +113,6 @@ macro "Image Viewer Action Tool - C037R00eeL707eL07e7C22fV2244C2c2V9244C0f0V2944
 //     to a text file in the temp directory. This result is read back and
 //     returned by the function and the temp file is deleted.
 function get_working_paths(path_arg) {
-<<<<<<< HEAD
 	valid_path_args = newArray("working_path",
 							   "analysis_path",
 							   "obs_unit_ROI_path",
@@ -144,36 +143,4 @@ function get_working_paths(path_arg) {
 	} else {
 		exit("Global configuration not found.");
 	}
-=======
-    valid_path_args = newArray("working_path",
-                               "analysis_path",
-                               "obs_unit_ROI_path",
-                               "analysis_setup_file");
-    valid_arg = false;
-    for (i = 0; i < valid_path_args.length; i++) {
-        if (matches(path_arg, valid_path_args[i])) {
-            valid_arg = true;
-            i = valid_path_args.length;
-        }
-    }
-    if (!valid_arg) {
-        exit(path_arg + " is not recognized as\n" +
-             "a valid argument for get_working_paths.");
-    }
-    if (File.exists(getDirectory("plugins") +
-                    "BB_macros" + File.separator() +
-                    "Fibers_modules" + File.separator() +
-                    "Global_configuration_fibers.txt") == true) {
-        runMacro(getDirectory("plugins") +
-                 "BB_macros" + File.separator() +
-                 "Fibers_modules" + File.separator() +
-                 "Global_configurator_fibers.ijm", path_arg);
-        retrieved = File.openAsString(temp_directory + "Global_configurator_fibers_temp.txt");
-        deleted = File.delete(temp_directory + "Global_configurator_fibers_temp.txt");
-        retrieved = split(retrieved, "\n");
-        return retrieved[0];
-    } else {
-        exit("Global configuration not found.");
-    }
->>>>>>> 1877a698bb4adc0d7998138a9bb2ff013c799f9c
 }
