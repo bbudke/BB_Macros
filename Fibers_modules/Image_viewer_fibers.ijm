@@ -676,6 +676,9 @@ function getFileListFromDirectory(directory, extension) {
 //     to a text file in the temp directory. This result is read back and
 //     returned by the function and the temp file is deleted.
 function get_working_paths(path_arg) {
+    temp_directory = getDirectory("temp") +
+                     "BB_macros" + File.separator() +
+                     "Fibers" + File.separator();
     valid_path_args = newArray("working_path",
                                "analysis_path",
                                "obs_unit_ROI_path",
