@@ -457,7 +457,7 @@ function display_image(image) {
                 } else {
                     y = 502;
                 }
-                eval("script", frameScript(image + " " + channel + " " + labels[i] + ".tif", width, height, x, y));
+                eval("script", frame_script(image + " " + channel + " " + labels[i] + ".tif", width, height, x, y));
                 run("Scale to Fit");
                 run("Select None");
             }
@@ -465,85 +465,80 @@ function display_image(image) {
         } else if (display_choice == "RGB Composite") {
 
             temp_files = get_file_list_from_directory(getDirectory("temp"), " temp image.tif");
-            for (i=0; i<temp_files.length; i++) {
-                open(getDirectory("temp") + temp_files[i]);
-                deleted = File.delete(getDirectory("temp") + temp_files[i]);
+            for (i = 0; i < temp_files.length; i++) {
+                open(temp_directory_fibers + temp_files[i]);
+                deleted = File.delete(temp_directory_fibers + temp_files[i]);
                 title = image + " " + labels[i] + ".tif";
                 selectImage(nImages());
                 rename(title);
                 setMinAndMax(mins[i], maxes[i]);
             }
 
-            mergeChannelsString = "";
-            for (i=1; i<color_choices.length; i++) {
-                for (j=0; j<colors.length; j++) {
+            merge_channels_str = "";
+            for (i = 1; i < color_choices.length; i++) {
+                for (j = 0; j < colors.length; j++) {
                     if (color_choices[i] == colors[j]) {
-                        mergeChannelsString = mergeChannelsString + "c" + i + "=[" + image + " " + labels[j] + ".tif] ";
+                        merge_channels_str = merge_channels_str + "c" + i + "=[" + image + " " + labels[j] + ".tif] ";
                         break;
                     }
                 }
             }
-            mergeChannelsString = mergeChannelsString + "create";
-            run("Merge Channels...", mergeChannelsString);
+            merge_channels_str = merge_channels_str + "create";
+            run("Merge Channels...", merge_channels_str);
             run("RGB Color");
             selectImage(nImages());
-            saveAs(getDirectory("temp") + "RGB composite temp image.tif");
+            saveAs(temp_directory_fibers + "RGB_composite_image_temp.tif");
             run("Close All");
 
-            open(getDirectory("temp") + "RGB composite temp image.tif");
-            deleted = File.delete(getDirectory("temp") + "RGB composite temp image.tif");
-            if (show_traces_choice == 1 || globalMaskChoice == 1 ||  submaskChoice == 1) {
-                if (File.exists(getDirectory("temp") + "overlay_rois_temp.zip") == true) {
+            open(temp_directory_fibers + "RGB_composite_image_temp.tif");
+            deleted = File.delete(temp_directory_fibers + "RGB_composite_image_temp.tif");
+            if (show_traces_choice == 1) {
+                if (File.exists(temp_directory_fibers + "overlay_rois_temp.zip") == true) {
                     roiManager("Reset");
-                    roiManager("Open", getDirectory("temp") + "overlay_rois_temp.zip");
+                    roiManager("Open", temp_directory_fibers + "overlay_rois_temp.zip");
                     run("Overlay Options...", "stroke=#FFFFFFFF width=0 fill=none");
-                    for (j=0; j<roiManager("Count"); j++) {
+                    for (j = 0; j < roiManager("Count"); j++) {
                         roiManager("Select", j);
                         run("Add Selection...");
                     }
                     run("Select None");
                 }
             }
-            saveAs(getDirectory("temp") + "RGB composite temp image.tif");
+            saveAs(temp_directory_fibers + "RGB_composite_image_temp.tif");
             run("Close All");
 
             setBatchMode(false);
-            open(getDirectory("temp") + "RGB composite temp image.tif");
-            deleted = File.delete(getDirectory("temp") + "RGB composite temp image.tif");
+            open(temp_directory_fibers + "RGB_composite_image_temp.tif");
+            deleted = File.delete(temp_directory_fibers + "RGB_composite_image_temp.tif");
             title = image + " RGB Composite";
             rename(title);
         }
         
     }
     if (isOpen("ROI Manager")) { selectWindow("ROI Manager"); run("Close"); }
-    if (showRoiManager == 1 && File.exists(obs_unit_ROI_path + image + ".zip") == true) {
-        if (File.exists(getDirectory("temp") + "overlay_rois_temp.zip") == true) {
-            roiManager("Open", getDirectory("temp") + "overlay_rois_temp.zip");
+    if (File.exists(obs_unit_ROI_path + image + ".zip")) {
+        if (File.exists(temp_directory_fibers + "overlay_rois_temp.zip")) {
+            roiManager("Open", temp_directory_fibers + "overlay_rois_temp.zip");
         }
     }
-    if (File.exists(getDirectory("temp") + "overlay_rois_temp.zip")) { deleted = File.delete(getDirectory("temp") + "overlay_rois_temp.zip"); }
+    if (File.exists(temp_directory_fibers + "overlay_rois_temp.zip")) { deleted = File.delete(getDirectory("temp") + "overlay_rois_temp.zip"); }
     if (lengthOf(alert) > 0) {
         showStatus(alert);
     }
 }
 
-function frameScript(title, width, height, x, y) {
+// Resize and move a JAVA AWT Window object.
+function frame_script(title, width, height, x, y) {
     return "frame = WindowManager.getWindow(\"" + title + "\"); if (frame != null) {frame.setSize(" + width + ", " + height + "); frame.setLocation(" + x + ", " + y + ");}";
 }
 
-function getFieldFromTdf(inputString, field, isNumberBoolean) {
-    field -= 1;
-    result = replace(inputString, "^(.+?\t){" + field + "}", "");
-    result = replace(result, "\t.*", "");
-    if (isNumberBoolean == true) { result = parseInt(result); }
-    return result;
-}
-
-function get_file_list_from_directory(directory, extension) {
+// Return an array list of filenames in a directory ending with
+//   the suffix argument.
+function get_file_list_from_directory(directory, suffix) {
     file_list_all = getFileList(directory);
     file_list_ext = newArray();
     for (i = 0; i < file_list_all.length; i++) {
-        if (endsWith(file_list_all[i], extension) == true) {
+        if (endsWith(file_list_all[i], suffix) == true) {
             file_list_ext = Array.concat(file_list_ext, file_list_all[i]);
         }
     }
@@ -589,6 +584,8 @@ function get_working_paths(path_arg) {
     }
 }
 
+// Retrieve a single value from this experiment's setup file,
+//   or all values in that block if line_index is 'all'.
 function retrieve_configuration(block_index, line_index) {
     runMacro(getDirectory("plugins") +
              "BB_macros" + File.separator() +
@@ -601,6 +598,9 @@ function retrieve_configuration(block_index, line_index) {
     return retrieved[0];
 }
 
+// Retrieve a single value from the Fibers macro set global
+//   settings, or all values in that block if line_index is
+//   'all'.
 function retrieve_g_configuration(block_index, line_index) {
     runMacro(getDirectory("plugins") +
              "BB_macros" + File.separator() +
