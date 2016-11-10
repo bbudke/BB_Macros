@@ -67,9 +67,9 @@ var working_path        = get_working_paths("working_path");
 var analysis_path       = get_working_paths("analysis_path");
 var analysis_setup_file = get_working_paths("analysis_setup_file");
 
-var temp_directory = getDirectory("temp") +
-                     "BB_macros" + File.separator() +
-                     "Fibers" + File.separator();
+var temp_directory_fibers = getDirectory("temp") +
+                            "BB_macros" + File.separator() +
+                            "Fibers" + File.separator();
 
 /*
 --------------------------------------------------------------------------------
@@ -96,7 +96,7 @@ macro "Fibers_configurator" {
         3) "retrieve|block_index|line_index":
             Used to retrieve a single value in the Setup.txt file. The
             block_index and line_index values start at 1, not 0. The retrieved
-            value is stored in the temp_directory in config_temp.txt.
+            value is stored in the temp_directory_fibers in config_temp.txt.
         Multiple arguments must be separated by a pipe character.
     */
 
@@ -454,9 +454,9 @@ function get_file_list_from_directory(directory, extension) {
 //     to a text file in the temp directory. This result is read back and
 //     returned by the function and the temp file is deleted.
 function get_working_paths(path_arg) {
-    temp_directory = getDirectory("temp") +
-                     "BB_macros" + File.separator() +
-                     "Fibers" + File.separator();
+    temp_directory_fibers = getDirectory("temp") +
+                            "BB_macros" + File.separator() +
+                            "Fibers" + File.separator();
     valid_path_args = newArray("working_path",
                                "analysis_path",
                                "obs_unit_ROI_path",
@@ -480,8 +480,8 @@ function get_working_paths(path_arg) {
                  "BB_macros" + File.separator() +
                  "Fibers_modules" + File.separator() +
                  "Global_configurator_fibers.ijm", path_arg);
-        retrieved = File.openAsString(temp_directory + "g_config_temp.txt");
-        deleted = File.delete(temp_directory + "g_config_temp.txt");
+        retrieved = File.openAsString(temp_directory_fibers + "g_config_temp.txt");
+        deleted = File.delete(temp_directory_fibers + "g_config_temp.txt");
         retrieved = split(retrieved, "\n");
         return retrieved[0];
     } else {
@@ -606,11 +606,26 @@ function modify_setup_file(block_index, line_index, new_value) {
     File.close(setup_file);
 }
 
-// Passes its arguments to get_global_configuration and writes the
+// Passes its arguments to retrieve_g_configuration and writes the
 //    result to the temp file.
 function write_retrieved_to_temp(block_index, line_index) {
-    retrieved = get_global_configuration(block_index, line_index);
-    retrieved_temp = File.open(temp_directory + "g_config_temp.txt");
+    retrieved = retrieve_g_configuration(block_index, line_index);
+    retrieved_temp = File.open(temp_directory_fibers + "config_temp.txt");
     print(retrieved_temp, retrieved);
     File.close(retrieved_temp);
+}
+
+// Retrieve a single value from the Fibers macro set global
+//   settings, or all values in that block if line_index is
+//   'all'.
+function retrieve_g_configuration(block_index, line_index) {
+    runMacro(getDirectory("plugins") +
+             "BB_macros" + File.separator() +
+             "Fibers_modules" + File.separator() +
+             "Global_configurator_fibers.ijm",
+             "retrieve|" + block_index + "|" + line_index);
+    retrieved = File.openAsString(temp_directory_fibers + "g_config_temp.txt");
+    deleted = File.delete(temp_directory_fibers + "g_config_temp.txt");
+    retrieved = split(retrieved, "\n");
+    return retrieved[0];
 }

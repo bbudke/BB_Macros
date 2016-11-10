@@ -2,9 +2,9 @@ var wd_cmds = newMenu(
     "Working Directory Menu Tool",
     newArray("Set working directory",
              "Show working directory"));
-var temp_directory = getDirectory("temp") +
-                     "BB_macros" + File.separator() +
-                     "Fibers" + File.separator();
+var temp_directory_fibers = getDirectory("temp") +
+                            "BB_macros" + File.separator() +
+                            "Fibers" + File.separator();
 
 /*
 --------------------------------------------------------------------------------
