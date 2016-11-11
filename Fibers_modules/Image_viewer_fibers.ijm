@@ -340,40 +340,9 @@ function display_image(image) {
     deleted = File.delete(temp_directory_utilities + "convert_to_tiff_temp.tif");
 
     alert = "";
+
     if (show_traces_choice == 1) {
-        if (File.exists(obs_unit_ROI_path + image + ".zip") == true) {
-            roiManager("Open", obs_unit_ROI_path + image + ".zip");
 
-            obs_units = newArray();
-            for (i = 0; i < roiManager("Count"); i++) {
-                roiManager("Select", i);
-                ROI_name = Roi.getName();
-                if (indexOf(ROI_name, "FIBER ") != -1) {
-                    obs_units = Array.concat(obs_units,
-                                             substring(ROI_name,
-                                                       lengthOf("FIBER "),
-                                                       lengthOf(ROI_name)));
-                }
-            }
-
-            do {
-                deleted = false;
-                for (i = 0; i < roiManager("Count"); i++) {
-                    roiManager("Select", i);
-                    ROI_name = Roi.getName();
-                    if (show_traces_choice == 0 && indexOf(ROI_name, "FIBER ") != -1) {
-                        roiManager("Delete");
-                        deleted = true;
-                    }
-                }
-            } while (deleted == true);
-
-            if (roiManager("Count") > 0) {
-                roiManager("Save", temp_directory_fibers + "overlay_rois_temp.zip");
-            }
-        } else {
-            alert = alerts[0];
-        }
     }
 
     labels = newArray();
@@ -429,17 +398,11 @@ function display_image(image) {
             for (i = 0; i < temp_files.length; i++) {
                 open(temp_directory_fibers + temp_files[i]);
                 deleted = File.delete(temp_directory_fibers + temp_files[i]);
+                
                 if (show_traces_choice == 1) {
-                    if (File.exists(temp_directory_fibers + "overlay_rois_temp.zip") == true) {
-                        roiManager("Reset");
-                        roiManager("Open", temp_directory_fibers + "overlay_rois_temp.zip");
-                        run("Overlay Options...", "stroke=white width=0 fill=none");
-                        for (j = 0; j < roiManager("Count"); j++) {
-                            roiManager("Select", j);
-                            run("Add Selection...");
-                        }
-                    }
+
                 }
+                
                 setMinAndMax(mins[i], maxes[i]);
                 saveAs("Tiff", temp_directory_fibers + temp_files[i]);
                 run("Close All");
@@ -494,18 +457,11 @@ function display_image(image) {
 
             open(temp_directory_fibers + "RGB_composite_image_temp.tif");
             deleted = File.delete(temp_directory_fibers + "RGB_composite_image_temp.tif");
+
             if (show_traces_choice == 1) {
-                if (File.exists(temp_directory_fibers + "overlay_rois_temp.zip") == true) {
-                    roiManager("Reset");
-                    roiManager("Open", temp_directory_fibers + "overlay_rois_temp.zip");
-                    run("Overlay Options...", "stroke=#FFFFFFFF width=0 fill=none");
-                    for (j = 0; j < roiManager("Count"); j++) {
-                        roiManager("Select", j);
-                        run("Add Selection...");
-                    }
-                    run("Select None");
-                }
+
             }
+
             saveAs(temp_directory_fibers + "RGB_composite_image_temp.tif");
             run("Close All");
 
@@ -517,13 +473,7 @@ function display_image(image) {
         }
         
     }
-    if (isOpen("ROI Manager")) { selectWindow("ROI Manager"); run("Close"); }
-    if (File.exists(obs_unit_ROI_path + image + ".zip")) {
-        if (File.exists(temp_directory_fibers + "overlay_rois_temp.zip")) {
-            roiManager("Open", temp_directory_fibers + "overlay_rois_temp.zip");
-        }
-    }
-    if (File.exists(temp_directory_fibers + "overlay_rois_temp.zip")) { deleted = File.delete(temp_directory_fibers + "overlay_rois_temp.zip"); }
+
     if (lengthOf(alert) > 0) {
         showStatus(alert);
     }
