@@ -260,8 +260,29 @@ macro "Load Next Image (Shortcut Key is F2) Action Tool - C22dF06c6Hf9939f00" {
 }
 
 macro "Manually Add Fiber Action Tool (Shortcut Key is F5) - C037F0055C307F6055C370Fc055C031F0855C604F6b55C440Fce55" {
-    analysis_path = get_working_paths("analysis_path");
+    obs_unit_ROI_path = get_working_paths("obs_unit_ROI_path");
+    if (!File.exists(obs_unit_ROI_path)) File.makeDirectory(obs_unit_ROI_path);
+    image_name = getTitle();
 
+    image_list = get_file_list_from_directory(working_path, image_type);
+    for (i = 0; i < image_list.length; i++) {
+        this_name = substring(image_list[i], 0, indexOf(image_list[i], image_type));
+        if (indexOf(image_name, this_name) != -1) {
+            zip_name = this_name;
+            break;
+        }
+        if (i == image_list.length - 1)
+            exit("The name of this image doesn't match any of the ZVI file names.");
+    }
+
+    /*
+    roiManager("Add");
+    roiManager("Select", roiManager("Count") - 1);
+    roiManager("Rename", "FIBER " + IJ.pad(roiManager("Count"), 2));
+    run("Overlay Options...", "stroke=green width=0 fill=none");
+    run("Add Selection...");
+    roiManager("Save", obs_unit_ROI_path + image_name + ".zip");
+    */
 }
 
 /*
@@ -473,7 +494,7 @@ function display_image(image) {
         }
         
     }
-
+    roiManager("Reset");
     if (lengthOf(alert) > 0) {
         showStatus(alert);
     }
