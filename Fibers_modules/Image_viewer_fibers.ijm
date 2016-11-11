@@ -335,7 +335,7 @@ function display_image(image) {
         "BB_macros" + File.separator() +
         "Utilities" + File.separator() +
         "Convert_to_tiff.ijm",
-        working_path + image + image_type + "|" + image_type + "|" + z_series_option);
+        working_path + image + image_type + "|" + image_type + "|" + "Do nothing");
     open(temp_directory_utilities + "convert_to_tiff_temp.tif");
     deleted = File.delete(temp_directory_utilities + "convert_to_tiff_temp.tif");
 
@@ -382,7 +382,7 @@ function display_image(image) {
     maxes  = newArray();
     getDimensions(width, height, channels, slices, frames);
     for (i = 0; i < n_channels; i++) {
-        label = retrieve_configuration(2, i);
+        label = retrieve_configuration(2, (i + 1));
         color = retrieve_configuration(3, 1 + (5 * i));
         if (color != "Unused") {
             if (display_choice == "Single Monochrome Images" || display_choice == "RGB Composite") {
@@ -391,6 +391,8 @@ function display_image(image) {
             } else if (display_choice == "Single Heatmap Images") {
                 min = retrieve_configuration(3, 4 + (5 * i));
                 max = retrieve_configuration(3, 5 + (5 * i));
+            } else {
+                exit("display_choice must be one of the three options.");
             }
             labels = Array.concat(labels, label);
             colors = Array.concat(colors, color);
@@ -400,7 +402,7 @@ function display_image(image) {
             Stack.setPosition(1 + i, 1, 1);
             run("Select All");
             run("Copy");
-            newImage("Ch " + toString(i + 1) + " temp image", "16-bit black", width, height, 1, 1, 1);
+            newImage("Ch " + toString(i + 1) + "_image_temp", "16-bit black", width, height, 1, 1, 1);
             selectImage(nImages());
             run("Paste");
             if (display_choice == "Single Monochrome Images" || display_choice == "RGB Composite") {
@@ -464,7 +466,7 @@ function display_image(image) {
 
         } else if (display_choice == "RGB Composite") {
 
-            temp_files = get_file_list_from_directory(getDirectory("temp"), " temp image.tif");
+            temp_files = get_file_list_from_directory(temp_directory_fibers, "_image_temp.tif");
             for (i = 0; i < temp_files.length; i++) {
                 open(temp_directory_fibers + temp_files[i]);
                 deleted = File.delete(temp_directory_fibers + temp_files[i]);
@@ -521,7 +523,7 @@ function display_image(image) {
             roiManager("Open", temp_directory_fibers + "overlay_rois_temp.zip");
         }
     }
-    if (File.exists(temp_directory_fibers + "overlay_rois_temp.zip")) { deleted = File.delete(getDirectory("temp") + "overlay_rois_temp.zip"); }
+    if (File.exists(temp_directory_fibers + "overlay_rois_temp.zip")) { deleted = File.delete(temp_directory_fibers + "overlay_rois_temp.zip"); }
     if (lengthOf(alert) > 0) {
         showStatus(alert);
     }

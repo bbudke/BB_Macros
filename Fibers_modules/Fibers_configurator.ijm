@@ -159,7 +159,12 @@ macro "Fibers_configurator" {
     } else if (args[0] == "change") {
         modify_setup_file(args[1], args[2], args[3]);
     } else if (args[0] == "retrieve") {
-        write_retrieved_to_temp(args[1], args[2]);
+        block_index = parseInt(args[1]);
+        line_index  = parseInt(args[2]);
+        retrieved = get_configuration(block_index, line_index);
+        retrieved_temp = File.open(temp_directory_fibers + "config_temp.txt");
+        print(retrieved_temp, retrieved);
+        File.close(retrieved_temp);
     }
 }
 
@@ -367,8 +372,8 @@ function get_configuration(block_index, line_index) {
         line_index  -= 1;
     }
 
-    raw_text = File.openAsString(analysis_setup_file);
-
+    raw_text = File.openAsString(analysis_setup_file)
+;
     // Get the number of channels, needed for enumerating repeating
     //     elements in the setup file.
     n_channels = substring(raw_text,
@@ -493,11 +498,26 @@ function get_working_paths(path_arg) {
 function modify_setup_file(block_index, line_index, new_value) {
     // First make sure that whatever called this function
     //     passed indices that exist in this macro.
-    if (block_index > setup_file_headers.length - 1) {
-        exit("Fibers Configurator",
-             "Invalid Block Index passed to modify_setup_file()\n" +
-             "in Fibers_configurator.ijm.");
-    }
+    if (isNaN(parseInt(block_index)))
+        exit("block_index = " + block_index + " was passed to\n" +
+             "get_configuration() in Fibers_configurator.ijm.\n" +
+             "\n" +
+             "block_index must be a number.");
+    block_index = parseInt(block_index);
+    if (block_index < 1 || block_index > setup_file_headers.length)
+        exit("block_index = " + block_index + " was passed to\n" +
+             "get_configuration() in Fibers_configurator.ijm.\n" +
+             "\n" +
+             "block_index must be between 1 and " + setup_file_headers.length + ".");
+    block_index -= 1;
+
+    if (isNaN(parseInt(line_index)))
+        exit("line_index = " + line_index + " was passed to\n" +
+             "get_configuration() in Fibers_configurator.ijm.\n" +
+             "\n" +
+             "line_index must be a number.");
+    line_index = parseInt(line_index);
+    line_index -= 1;
 
     last_block_01_settings = get_configuration(1, "all");
     last_block_02_settings = get_configuration(2, "all");
@@ -527,6 +547,8 @@ function modify_setup_file(block_index, line_index, new_value) {
         }
     }
 
+    n_channels = parseInt(n_channels);
+
     /*
     ----------------------------------------------------------------------------
         BLOCK 2
@@ -551,7 +573,7 @@ function modify_setup_file(block_index, line_index, new_value) {
                     }
                 }
             }
-            i = 0;
+            block_line = 0;
         } else {
             if (block_index == 1 && line_index == block_line + (1 * (n_channels - 1))) {
                 print(setup_file,
@@ -589,7 +611,7 @@ function modify_setup_file(block_index, line_index, new_value) {
                     }
                 }
             }
-            i = 4;
+            block_line = 4;
         } else {
             if (block_index == 2 && line_index == block_line + (5 * (n_channels - 1))) {
                 print(setup_file,
@@ -604,15 +626,6 @@ function modify_setup_file(block_index, line_index, new_value) {
     }
 
     File.close(setup_file);
-}
-
-// Passes its arguments to retrieve_g_configuration and writes the
-//    result to the temp file.
-function write_retrieved_to_temp(block_index, line_index) {
-    retrieved = retrieve_g_configuration(block_index, line_index);
-    retrieved_temp = File.open(temp_directory_fibers + "config_temp.txt");
-    print(retrieved_temp, retrieved);
-    File.close(retrieved_temp);
 }
 
 // Retrieve a single value from the Fibers macro set global
