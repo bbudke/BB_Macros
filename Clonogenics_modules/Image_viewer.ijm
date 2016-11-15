@@ -535,7 +535,7 @@ function displayImage(image) {
 }
 
 function frameScript(title, width, height, x, y) {
-	return "frame = WindowManager.getFrame(\"" + title + "\"); if (frame != null) {frame.setSize(" + width + ", " + height + "); frame.setLocation(" + x + ", " + y + ");}";
+	return "frame = WindowManager.getWindow(\"" + title + "\"); if (frame != null) {frame.setSize(" + width + ", " + height + "); frame.setLocation(" + x + ", " + y + ");}";
 }
 
 function getFileListFromDirectory(directory, extension) {

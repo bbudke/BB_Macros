@@ -152,7 +152,7 @@ macro "Focus Counter Core" {
 		open(originalImage);
 		rename("Original image.tif");
 		getDimensions(width, height, channels, slices, frames);
-//		eval("script", frameScript("Original image.tif", 400, 400, 0, 200));
+		eval("script", frameScript("Original image.tif", 400, 400, 0, 200));
 		run("Scale to Fit");
 		run("Fire");
 		setMinAndMax(heatMapDisplayMin, heatMapDisplayMax);
@@ -162,7 +162,7 @@ macro "Focus Counter Core" {
 		run("Find Maxima...", "noise=" + maximaTolerance + " output=[Segmented Particles]");
 		showProgress(percentComplete);
 		rename("Segmentation map.tif");
-//		eval("script", frameScript("Segmentation map.tif", 400, 400, 400, 200));
+		eval("script", frameScript("Segmentation map.tif", 400, 400, 400, 200));
 		run("Scale to Fit");
 		run("Max...", "value=1");
 		setMinAndMax(0, 1);
@@ -176,7 +176,7 @@ macro "Focus Counter Core" {
 			newImage("Background subtracted.tif", "16-bit black", width, height, 1);
 			selectWindow("Background subtracted.tif");
 			run("Paste");
-//			eval("script", frameScript("Background subtracted.tif", 400, 400, 0, 600));
+			eval("script", frameScript("Background subtracted.tif", 400, 400, 0, 600));
 			run("Scale to Fit");
 			if (backendBSub > 0) {
 				run("Subtract...", "value=" + backendBSub);
@@ -202,7 +202,7 @@ macro "Focus Counter Core" {
 		newImage("Thresholded.tif", "16-bit black", width, height, 1);
 		selectWindow("Thresholded.tif");
 		run("Paste");
-//		eval("script", frameScript("Thresholded.tif", 400, 400, 400, 600));
+		eval("script", frameScript("Thresholded.tif", 400, 400, 400, 600));
 		run("Scale to Fit");
 		setThreshold(lowerThreshold, 4095);
 		run("Make Binary");
@@ -215,7 +215,7 @@ macro "Focus Counter Core" {
 		// Mask of foci (5)
 		imageCalculator("Multiply create", "Thresholded.tif", "Segmentation map.tif");
 		rename("Foci mask.tif");
-//		eval("script", frameScript("Foci mask.tif", 400, 400, 800, 200));
+		eval("script", frameScript("Foci mask.tif", 400, 400, 800, 200));
 		run("Scale to Fit");
 		run("Invert");
 		if (maskFile != "null" && submaskRoiIndex != -1) {
@@ -401,21 +401,21 @@ macro "Focus Counter Core" {
 			setBatchMode(false);
 
 			open(segmentationMap);
-//			eval("script", frameScript("Segmentation map.tif", 400, 400, 400, 200));
+			eval("script", frameScript("Segmentation map.tif", 400, 400, 400, 200));
 			run("Scale to Fit");
 			open(fociMask);
-//			eval("script", frameScript("Foci mask.tif", 400, 400, 1200, 200));
+			eval("script", frameScript("Foci mask.tif", 400, 400, 1200, 200));
 			run("Scale to Fit");
 			open(thresholded);
-//			eval("script", frameScript("Thresholded.tif", 400, 400, 400, 600));
+			eval("script", frameScript("Thresholded.tif", 400, 400, 400, 600));
 			run("Scale to Fit");
 			if (backendBSub != 0) {
 				open(backgroundSubtracted);
-//				eval("script", frameScript("Background subtracted.tif", 400, 400, 0, 600));
+				eval("script", frameScript("Background subtracted.tif", 400, 400, 0, 600));
 				run("Scale to Fit");
 			}
 			open(originalImageOverlay);
-//			eval("script", frameScript("Original image overlay.tif", 400, 400, 0, 200));
+			eval("script", frameScript("Original image overlay.tif", 400, 400, 0, 200));
 			run("Scale to Fit");
 
 			if (isOpen("Results")) { selectWindow("Results"); run("Close"); }
@@ -442,7 +442,7 @@ macro "Focus Counter Core" {
 				print(resultsTable, focusMeasurements);
 				File.close(resultsTable);
 				run("Table... ", "open=[" + getDirectory("temp") + "FCC results temp.txt]");
-//				eval("script", frameScript("FCC results temp.txt", 800, 400, 800, 600));
+				eval("script", frameScript("FCC results temp.txt", 800, 400, 800, 600));
 			}
 
 			oldSettings = newArray(backendBSub, maximaTolerance, lowerThreshold, minimumSize, minimumAvgIntensity, minimumIntensity, minimumUpperDecile);
@@ -664,8 +664,9 @@ function cleanup() {
 	run("Close All");
 }
 
+// Resize and move a JAVA AWT Window object.
 function frameScript(title, width, height, x, y) {
-	return "frame = WindowManager.getFrame(\"" + title + "\"); if (frame != null) {frame.setSize(" + width + ", " + height + "); frame.setLocation(" + x + ", " + y + ");}";
+    return "frame = WindowManager.getWindow(\"" + title + "\"); if (frame != null) {frame.setSize(" + width + ", " + height + "); frame.setLocation(" + x + ", " + y + ");}";
 }
 
 function getFieldFromTdf(inputString, field, isNumberBoolean) {
