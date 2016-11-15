@@ -5,12 +5,12 @@ Do not modify unless you know exactly what you are doing.
 	PATHS
 --------------------------------------------------------------------------------
 
-Working Path: 	/media/sf_Brian_Budke/Clonogenics/CL 2016-10-27 VU423F Vel WL-1-55/Plate images/
-Analysis Path: 	/media/sf_Brian_Budke/Clonogenics/CL 2016-10-27 VU423F Vel WL-1-55/Plate images/Analysis/
-Obs Unit Roi Path: 	/media/sf_Brian_Budke/Clonogenics/CL 2016-10-27 VU423F Vel WL-1-55/Plate images/Analysis/OBS UNIT ROIs/
-Analysis Setup File: 	/media/sf_Brian_Budke/Clonogenics/CL 2016-10-27 VU423F Vel WL-1-55/Plate images/Analysis/Setup.txt
-Image Index File: 	/media/sf_Brian_Budke/Clonogenics/CL 2016-10-27 VU423F Vel WL-1-55/Plate images/Analysis/Image index.txt
-Group Labels File: 	/media/sf_Brian_Budke/Clonogenics/CL 2016-10-27 VU423F Vel WL-1-55/Plate images/Analysis/Group labels.txt
+Working Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Clonogenics\CL 2016-10-31 Kur SNU 4 drug titrations\Plate images Kur\
+Analysis Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Clonogenics\CL 2016-10-31 Kur SNU 4 drug titrations\Plate images Kur\Analysis\
+Obs Unit Roi Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Clonogenics\CL 2016-10-31 Kur SNU 4 drug titrations\Plate images Kur\Analysis\OBS UNIT ROIs\
+Analysis Setup File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Clonogenics\CL 2016-10-31 Kur SNU 4 drug titrations\Plate images Kur\Analysis\Setup.txt
+Image Index File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Clonogenics\CL 2016-10-31 Kur SNU 4 drug titrations\Plate images Kur\Analysis\Image index.txt
+Group Labels File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Clonogenics\CL 2016-10-31 Kur SNU 4 drug titrations\Plate images Kur\Analysis\Group labels.txt
 
 --------------------------------------------------------------------------------
 	SETTINGS
