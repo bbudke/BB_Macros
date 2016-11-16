@@ -99,8 +99,8 @@ macro "Image Viewer Action Tool - C037R00eeL707eL07e7C22fV2244C2c2V9244C0f0V2944
         if (File.exists(getWorkingPaths("workingPath")) == true) {
             if (File.exists(getWorkingPaths("analysisSetupFile")) == true) {
                 runMacro(getDirectory("plugins") +
-                    "BB Macros" + File.separator() +
-                    "Clonogenics Modules" + File.separator() + "Image Viewer.ijm");
+                    "BB_macros" + File.separator() +
+                    "Clonogenics_modules" + File.separator() + "Image_viewer.ijm");
             } else {
                 showStatus("Setup file not found. " +
                            "Please run Clonogenics Configuration");

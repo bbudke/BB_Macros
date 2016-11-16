@@ -240,7 +240,7 @@ macro "Load Image Action Tool - C037T0707LT4707OT9707ATe707DT2f08IT5f08MTcf08G" 
 }
 
 macro "Load Next Image (Shortcut Key is F2) Action Tool - C22dF06c6Hf9939f00" {
-    if (is_in_use == false) {
+    if (!is_in_use) {
         is_in_use = true;
         cleanup();
         image_list = get_file_list_from_directory(working_path, image_type);
@@ -260,29 +260,55 @@ macro "Load Next Image (Shortcut Key is F2) Action Tool - C22dF06c6Hf9939f00" {
 }
 
 macro "Manually Add Fiber Action Tool (Shortcut Key is F5) - C037F0055C307F6055C370Fc055C031F0855C604F6b55C440Fce55" {
-    obs_unit_ROI_path = get_working_paths("obs_unit_ROI_path");
-    if (!File.exists(obs_unit_ROI_path)) File.makeDirectory(obs_unit_ROI_path);
-    image_name = getTitle();
+    if (!(selectionType() == 5 || selectionType() == 6)) {
+        showStatus("Straight or segmented line selection required.");
+    } else {
+        obs_unit_ROI_path = get_working_paths("obs_unit_ROI_path");
+        if (!File.exists(obs_unit_ROI_path)) File.makeDirectory(obs_unit_ROI_path);
+        image_name = getTitle();
 
-    image_list = get_file_list_from_directory(working_path, image_type);
-    for (i = 0; i < image_list.length; i++) {
-        this_name = substring(image_list[i], 0, indexOf(image_list[i], image_type));
-        if (indexOf(image_name, this_name) != -1) {
-            zip_name = this_name;
-            break;
+        image_list = get_file_list_from_directory(working_path, image_type);
+        for (i = 0; i < image_list.length; i++) {
+            this_name = substring(image_list[i], 0, indexOf(image_list[i], image_type));
+            if (indexOf(image_name, this_name) != -1) {
+                zip_name = this_name;
+                break;
+            }
+            if (i == image_list.length - 1)
+                exit("The name of this image doesn't match any of the ZVI file names.");
         }
-        if (i == image_list.length - 1)
-            exit("The name of this image doesn't match any of the ZVI file names.");
-    }
+        print(zip_name);
 
-    /*
-    roiManager("Add");
-    roiManager("Select", roiManager("Count") - 1);
-    roiManager("Rename", "FIBER " + IJ.pad(roiManager("Count"), 2));
-    run("Overlay Options...", "stroke=green width=0 fill=none");
-    run("Add Selection...");
-    roiManager("Save", obs_unit_ROI_path + image_name + ".zip");
-    */
+        // See if the zip file containing ROIs exists. If so, open it and count the number
+        //   of FIBER ROIs. If not, start the counting from one.
+        if (File.exists(obs_unit_ROI_path + zip_name + ".zip")) {
+            if (isOpen("ROI Manager")) { selectWindow("ROI Manager"); run("Close"); }
+            roiManager("Open", obs_unit_ROI_path + zip_name + ".zip");
+            fiber_ROIs = 1;
+            for (i = 0; i < roiManager("Count"); i++) {
+                roiManager("Select", i);
+                name = Roi.getName();
+                if (indexOf(name, "FIBER") != -1) fiber_ROIs++;
+            }
+            roiManager("Add");
+            roiManager("Select", roiManager("Count") - 1);
+            roiManager("Rename", "FIBER " + IJ.pad(fiber_ROIs, 2));
+            roiManager("Save", obs_unit_ROI_path + zip_name + ".zip");
+            roiManager("show all");
+            run("Select None");
+        } else {
+            
+        }
+
+        /*
+        roiManager("Add");
+        roiManager("Select", roiManager("Count") - 1);
+        roiManager("Rename", "FIBER " + IJ.pad(roiManager("Count"), 2));
+        run("Overlay Options...", "stroke=green width=0 fill=none");
+        run("Add Selection...");
+        roiManager("Save", obs_unit_ROI_path + image_name + ".zip");
+        */
+    }
 }
 
 /*
@@ -312,7 +338,7 @@ macro "Load Previous Image [f1]" {
 }
 
 macro "Load Next Image [f2]" {
-    if (is_in_use == false) {
+    if (!is_in_use) {
         is_in_use = true;
         cleanup();
         image_list = get_file_list_from_directory(working_path, image_type);
