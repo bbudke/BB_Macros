@@ -255,6 +255,12 @@ macro "Load Next Image (Shortcut Key is F2) Action Tool - C22dF06c6Hf9939f00" {
         }
         image = image_list_no_ext[current_image_index];
         display_image(image);
+
+        if (File.exists(obs_unit_ROI_path + image + ".zip")) {
+            roiManager("Open", obs_unit_ROI_path + image + ".zip");
+            roiManager("show all");
+        }
+
         is_in_use = false;
     }
 }
@@ -277,29 +283,28 @@ macro "Manually Add Fiber Action Tool (Shortcut Key is F5) - C037F0055C307F6055C
             if (i == image_list.length - 1)
                 exit("The name of this image doesn't match any of the ZVI file names.");
         }
-        print(zip_name);
 
         // See if the zip file containing ROIs exists. If so, open it and count the number
         //   of FIBER ROIs. If not, start the counting from one.
+        fiber_ROIs = 1;
+        if (isOpen("ROI Manager")) { selectWindow("ROI Manager"); run("Close"); }
         if (File.exists(obs_unit_ROI_path + zip_name + ".zip")) {
             if (isOpen("ROI Manager")) { selectWindow("ROI Manager"); run("Close"); }
             roiManager("Open", obs_unit_ROI_path + zip_name + ".zip");
-            fiber_ROIs = 1;
             for (i = 0; i < roiManager("Count"); i++) {
                 roiManager("Select", i);
                 name = Roi.getName();
                 if (indexOf(name, "FIBER") != -1) fiber_ROIs++;
             }
-            roiManager("Add");
-            roiManager("Select", roiManager("Count") - 1);
-            roiManager("Rename", "FIBER " + IJ.pad(fiber_ROIs, 2));
-            roiManager("Save", obs_unit_ROI_path + zip_name + ".zip");
-            roiManager("show all");
-            run("Select None");
-        } else {
-            
         }
+        roiManager("Add"); // this needs to go upstream so that user selection is preserved
+        roiManager("Select", roiManager("Count") - 1);
+        roiManager("Rename", "FIBER " + IJ.pad(fiber_ROIs, 2));
+        roiManager("Save", obs_unit_ROI_path + zip_name + ".zip");
+        roiManager("show all");
+        run("Select None");
 
+        showStatus("Added FIBER " + IJ.pad(fiber_ROIs, 2) + " to " + obs_unit_ROI_path + zip_name + ".zip");
         /*
         roiManager("Add");
         roiManager("Select", roiManager("Count") - 1);
