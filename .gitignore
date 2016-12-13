@@ -215,7 +215,5 @@ pip-log.txt
 #Mr Developer
 .mr.developer.cfg
 Clonogenics_modules/Global_configuration.txt
-Clonogenics_modules/Global_configuration.txt
 Fibers_modules/Global_configuration_fibers.txt
-Clonogenics_modules/Global_configuration.txt
-Fibers_modules/Global_configuration_fibers.txt
+Cytology_modules/Global_configuration.txt

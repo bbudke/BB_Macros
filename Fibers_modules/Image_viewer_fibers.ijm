@@ -170,7 +170,6 @@ macro "Image Viewer Configuration Action Tool - C037T0b10CT8b09fTdb09g" {
     }
 
     changed = false;
-
     for (i = 0; i < all_old_settings.length; i++) {
         if (all_old_settings[i] != all_new_settings[i]) {
             changed = true;
@@ -211,6 +210,12 @@ macro "Load Previous Image (Shortcut Key is F1) Action Tool - C22dF36c6H096f6300
         }
         image = image_list_no_ext[current_image_index];
         display_image(image);
+
+        if (File.exists(obs_unit_ROI_path + image + ".zip")) {
+            roiManager("Open", obs_unit_ROI_path + image + ".zip");
+            roiManager("Show all with labels");
+        }
+
         is_in_use = false;
     }
 }
@@ -236,6 +241,11 @@ macro "Load Image Action Tool - C037T0707LT4707OT9707ATe707DT2f08IT5f08MTcf08G" 
         }
     }
 
+    if (File.exists(obs_unit_ROI_path + image + ".zip")) {
+        roiManager("Open", obs_unit_ROI_path + image + ".zip");
+        roiManager("Show all with labels");
+    }
+
     display_image(image);
 }
 
@@ -258,7 +268,7 @@ macro "Load Next Image (Shortcut Key is F2) Action Tool - C22dF06c6Hf9939f00" {
 
         if (File.exists(obs_unit_ROI_path + image + ".zip")) {
             roiManager("Open", obs_unit_ROI_path + image + ".zip");
-            roiManager("show all");
+            roiManager("Show all with labels");
         }
 
         is_in_use = false;
@@ -291,28 +301,48 @@ macro "Manually Add Fiber Action Tool (Shortcut Key is F5) - C037F0055C307F6055C
         if (File.exists(obs_unit_ROI_path + zip_name + ".zip")) {
             if (isOpen("ROI Manager")) { selectWindow("ROI Manager"); run("Close"); }
             roiManager("Open", obs_unit_ROI_path + zip_name + ".zip");
+            roiManager("Add");
+            roiManager("Select", roiManager("Count") - 1);
+            roiManager("Rename", "New selection");
             for (i = 0; i < roiManager("Count"); i++) {
                 roiManager("Select", i);
                 name = Roi.getName();
                 if (indexOf(name, "FIBER") != -1) fiber_ROIs++;
             }
+            for (i = 0; i < roiManager("Count"); i++) {
+                roiManager("Select", i);
+                name = Roi.getName();
+                if (matches(name, "New selection")) 
+                    roiManager("Rename", "FIBER " + IJ.pad(fiber_ROIs, 2));
+            }
+        } else {
+            roiManager("Add");
+            roiManager("Select", roiManager("Count") - 1);
+            roiManager("Rename", "FIBER " + IJ.pad(fiber_ROIs, 2));
         }
-        roiManager("Add"); // this needs to go upstream so that user selection is preserved
-        roiManager("Select", roiManager("Count") - 1);
-        roiManager("Rename", "FIBER " + IJ.pad(fiber_ROIs, 2));
         roiManager("Save", obs_unit_ROI_path + zip_name + ".zip");
         roiManager("show all");
         run("Select None");
 
         showStatus("Added FIBER " + IJ.pad(fiber_ROIs, 2) + " to " + obs_unit_ROI_path + zip_name + ".zip");
-        /*
-        roiManager("Add");
-        roiManager("Select", roiManager("Count") - 1);
-        roiManager("Rename", "FIBER " + IJ.pad(roiManager("Count"), 2));
-        run("Overlay Options...", "stroke=green width=0 fill=none");
-        run("Add Selection...");
-        roiManager("Save", obs_unit_ROI_path + image_name + ".zip");
-        */
+    }
+}
+
+macro "Update ROI File Action Tool - C037T0707ST5707AT9707VTe707ET0f08RT6f08OTdf08I" {
+    if (!isOpen("ROI Manager")) {
+        showStatus("ROI Manager is not open.");
+    } else if (roiManager("Count") < 1) {
+        showStatus("No ROIs to save.");
+    } else {
+        image_list = get_file_list_from_directory(working_path, image_type);
+        image_list_no_ext = newArray();
+        for (i = 0; i < image_list.length; i++) {
+            append = substring(image_list[i], 0, indexOf(image_list[i], image_type));
+            image_list_no_ext = Array.concat(image_list_no_ext, append);
+        }
+        image = image_list_no_ext[current_image_index];
+        roiManager("Save", obs_unit_ROI_path + image + ".zip");
+        showStatus(image + ".zip" + " updated.");
     }
 }
 
@@ -338,6 +368,12 @@ macro "Load Previous Image [f1]" {
         }
         image = image_list_no_ext[current_image_index];
         display_image(image);
+
+        if (File.exists(obs_unit_ROI_path + image + ".zip")) {
+            roiManager("Open", obs_unit_ROI_path + image + ".zip");
+            roiManager("Show all with labels");
+        }
+
         is_in_use = false;
     }
 }
@@ -358,6 +394,12 @@ macro "Load Next Image [f2]" {
         }
         image = image_list_no_ext[current_image_index];
         display_image(image);
+
+        if (File.exists(obs_unit_ROI_path + image + ".zip")) {
+            roiManager("Open", obs_unit_ROI_path + image + ".zip");
+            roiManager("Show all with labels");
+        }
+
         is_in_use = false;
     }
 }

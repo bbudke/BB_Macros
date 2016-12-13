@@ -5,12 +5,12 @@ Do not modify unless you know exactly what you are doing.
 	PATHS
 --------------------------------------------------------------------------------
 
-Working Path: 	/media/sf_Brian_Budke/Cytology/test 2016-11-11/
-Analysis Path: 	/media/sf_Brian_Budke/Cytology/test 2016-11-11/Analysis/
-Obs Unit Roi Path: 	/media/sf_Brian_Budke/Cytology/test 2016-11-11/Analysis/OBS UNIT ROIs/
-Analysis Setup File: 	/media/sf_Brian_Budke/Cytology/test 2016-11-11/Analysis/Setup.txt
-Image Index File: 	/media/sf_Brian_Budke/Cytology/test 2016-11-11/Analysis/Image index.txt
-Group Labels File: 	/media/sf_Brian_Budke/Cytology/test 2016-11-11/Analysis/Group labels.txt
+Working Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Cytology\CYT 2015-12-10 BRCA2 51C Pairs 53BP1\ZVIs 2016-03-01\
+Analysis Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Cytology\CYT 2015-12-10 BRCA2 51C Pairs 53BP1\ZVIs 2016-03-01\Analysis\
+Obs Unit Roi Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Cytology\CYT 2015-12-10 BRCA2 51C Pairs 53BP1\ZVIs 2016-03-01\Analysis\OBS UNIT ROIs\
+Analysis Setup File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Cytology\CYT 2015-12-10 BRCA2 51C Pairs 53BP1\ZVIs 2016-03-01\Analysis\Setup.txt
+Image Index File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Cytology\CYT 2015-12-10 BRCA2 51C Pairs 53BP1\ZVIs 2016-03-01\Analysis\Image index.txt
+Group Labels File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Cytology\CYT 2015-12-10 BRCA2 51C Pairs 53BP1\ZVIs 2016-03-01\Analysis\Group labels.txt
 
 --------------------------------------------------------------------------------
 	SETTINGS
