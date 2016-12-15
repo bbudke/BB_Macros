@@ -5,6 +5,12 @@ Do not modify unless you know exactly what you are doing.
 	PATHS
 --------------------------------------------------------------------------------
 
+Working Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\DNA fibers\Fibers 2016-12-06\ZVIs 2016-12-09\
+Analysis Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\DNA fibers\Fibers 2016-12-06\ZVIs 2016-12-09\Analysis\
+Obs Unit Roi Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\DNA fibers\Fibers 2016-12-06\ZVIs 2016-12-09\Analysis\OBS UNIT ROIs\
+Analysis Setup File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\DNA fibers\Fibers 2016-12-06\ZVIs 2016-12-09\Analysis\Setup.txt
+Image Index File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\DNA fibers\Fibers 2016-12-06\ZVIs 2016-12-09\Analysis\Image index.txt
+Group Labels File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\DNA fibers\Fibers 2016-12-06\ZVIs 2016-12-09\Analysis\Group labels.txt
 
 --------------------------------------------------------------------------------
 	SETTINGS

@@ -103,6 +103,21 @@ macro "Image Viewer Action Tool - C037R00eeL707eL07e7C22fV2244C2c2V9244C0f0V2944
     }
 }
 
+macro "Measure Fiber ROIs Action Tool - Cf00Lf096C0f0L963cC037Lb9f9Lb9ecLecbfLbfff" {
+	setBatchMode(true);
+	if (!File.exists(get_working_paths("obs_unit_ROI_path")))
+		exit("No OBS UNIT ROIs path found.\n" +
+			 "This path is generated when fibers are traced\n" +
+			 "manually in the Image Viewer, so do that first.");
+	zip_list = get_file_list_from_directory(get_working_paths("obs_unit_ROI_path"), ".zip");
+	if (zip_list.length == 0)
+		exit("No ROI zip files found.\n" +
+			 "Automatic fiber detection is not yet supported.\n" +
+			 "Fibers must be manually traced in the Image Viewer\n" +
+			 "first. Then this utility can be run to perform\n" +
+			 "measurements of all the fibers that were manually drawn.");
+}
+
 /*
 --------------------------------------------------------------------------------
     FUNCTIONS
@@ -146,4 +161,17 @@ function get_working_paths(path_arg) {
     } else {
         exit("Global configuration not found.");
     }
+}
+
+// Return an array list of filenames in a directory ending with
+//   the suffix argument.
+function get_file_list_from_directory(directory, suffix) {
+    file_list_all = getFileList(directory);
+    file_list_ext = newArray();
+    for (i = 0; i < file_list_all.length; i++) {
+        if (endsWith(file_list_all[i], suffix) == true) {
+            file_list_ext = Array.concat(file_list_ext, file_list_all[i]);
+        }
+    }
+    return file_list_ext;
 }

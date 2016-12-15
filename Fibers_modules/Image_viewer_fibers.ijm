@@ -685,7 +685,7 @@ function display_image(image) {
                     maxLocs = Array.findMaxima(counts, max * 0.5);
                     mode = values[maxLocs[0]];
                     range = mode - min1;
-                    offset = range * 0.25;
+                    offset = range * -0.2;
                     lower = mode + offset;
                     upper = mode + range + offset;
                     setMinAndMax(lower, upper);
