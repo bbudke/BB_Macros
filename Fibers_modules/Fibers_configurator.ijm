@@ -53,7 +53,7 @@ var setup_block_03_labels   = newArray("Color:",
                                        "Heat map display min value:", 
                                        "Heat map display max value:", 
                                        "Display channels as:", 
-                                       "Show fiber traces:");
+                                       "Auto contrast:");
 
 var setup_block_03_defaults = newArray("Unused", 
                                        0, 

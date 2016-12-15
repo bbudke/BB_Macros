@@ -90,14 +90,15 @@ macro "Image Viewer Configuration Action Tool - C037T0b10CT8b09fTdb09g" {
                                "Single Monochrome Images",
                                "Single Heatmap Images");
     display_default     = retrieve_configuration(3, 1 + (5 * n_channels));
-    show_traces_default = retrieve_configuration(3, 2 + (5 * n_channels));
+    auto_contrast_default = retrieve_configuration(3, 2 + (5 * n_channels));
 
     Dialog.create("Image Viewer Settings");
     Dialog.addChoice("Display images as: ", display_choices, display_default);
     Dialog.setInsets(0, 20, 0);
-    Dialog.addMessage("Overlay options");
-    Dialog.setInsets(0, 20, 0);
-    Dialog.addCheckbox("Show fiber traces", show_traces_default);
+    Dialog.addCheckbox("Auto contrast", auto_contrast_default);
+    Dialog.addMessage("If 'Auto contrast' is selected, then\n" +
+                      "the monotone display min and max values\n" +
+                      "below are ignored and set automatically.");
     Dialog.addMessage("Channel options");
 
     for (i = 0; i < n_channels; i++) {
@@ -115,7 +116,7 @@ macro "Image Viewer Configuration Action Tool - C037T0b10CT8b09fTdb09g" {
     Dialog.show();
 
     display_choice     = Dialog.getChoice();
-    show_traces_choice = Dialog.getCheckbox();
+    auto_contrast_choice = Dialog.getCheckbox();
 
     runMacro(getDirectory("plugins") +
         "BB_macros" + File.separator() +
@@ -126,7 +127,7 @@ macro "Image Viewer Configuration Action Tool - C037T0b10CT8b09fTdb09g" {
         "BB_macros" + File.separator() +
         "Fibers_modules" + File.separator() +
         "Fibers_configurator.ijm",
-        "change|3|" + toString(2 + (5 * n_channels)) + "|" + show_traces_choice);
+        "change|3|" + toString(2 + (5 * n_channels)) + "|" + auto_contrast_choice);
 
     for (i = 0; i < n_channels; i++) {
         runMacro(getDirectory("plugins") +
@@ -398,7 +399,7 @@ macro "Check Fibers Action Tool (Shortcut Key is F6) - Cf00Lf096C0f0L963cC037Lf9
                 overlayColor = greenColorAlias;
             else
                 overlayColor = "white";
-            run("Overlay Options...", "stroke=" + overlayColor + " width=4 show");
+            run("Overlay Options...", "stroke=" + overlayColor + " width=6 show");
             makeLine(x1, y1, x2, y2);
             run("Add Selection...");
             run("Select None");
@@ -527,6 +528,69 @@ macro "Manually Add Fiber [f5]" {
     }
 }
 
+macro "Check Fibers [f6]" {
+    if (nImages != 1) exit("Measure_fibers_image.ijm requires " +
+        "a single open image.");
+    if (roiManager("Count") < 1) exit("Measure_fibers_image.ijm requires " +
+        "at least one ROI.");
+
+    ROI_list = newArray();
+    for (this_ROI = 0; this_ROI < roiManager("Count"); this_ROI++) {
+        roiManager("Select", this_ROI);
+        ROI_name = Roi.getName();
+        if (indexOf(ROI_name, "FIBER") != -1)
+            ROI_list = Array.concat(ROI_list, ROI_name);
+    }
+    run("Select None");
+    if (ROI_list.length < 1) exit("The ROI list must contain ROIs " +
+        "whose names include 'FIBER'.");
+
+    if (Overlay.size == 0) {
+        runMacro(getDirectory("plugins") +
+                 "BB_macros" + File.separator() +
+                 "Fibers_modules" + File.separator() +
+                 "Measure_fibers_image.ijm");
+        if (!File.exists(temp_directory_fibers + "Measure_fibers_result.txt"))
+            exit("Something went wrong here!\n" +
+                 "Ran 'Measure_fibers_image.ijm' but couldn't find" +
+                 "'Measure_fibers_result.txt' in the temp directory.");
+
+        this_ROI_result = File.openAsString(temp_directory_fibers +
+                                            "Measure_fibers_result.txt");
+        this_ROI_result = split(this_ROI_result, "\n");
+        this_ROI_result_header = Array.slice(this_ROI_result, 0, 1);
+        this_ROI_result_data = Array.slice(this_ROI_result, 1, this_ROI_result.length);
+        for (this_row = 0; this_row < this_ROI_result_data.length; this_row++) {
+            // Paint the line segments on the Overlay.
+            redColorAlias = "magenta";
+            greenColorAlias = "cyan";
+            segment = split(this_ROI_result_data[this_row], "\t");
+            x1 = segment[3];
+            y1 = segment[4];
+            x2 = segment[5];
+            y2 = segment[6];
+            color = segment[9];
+            if (toLowerCase(color) == "red")
+                overlayColor = redColorAlias;
+            else if (toLowerCase(color) == "green")
+                overlayColor = greenColorAlias;
+            else
+                overlayColor = "white";
+            run("Overlay Options...", "stroke=" + overlayColor + " width=6 show");
+            makeLine(x1, y1, x2, y2);
+            run("Add Selection...");
+            run("Select None");
+        }
+        Overlay.show;
+        showStatus("Showing fiber overlay");
+    } else {
+        run("Remove Overlay");
+        roiManager("Show all");
+        run("Labels...", "color=cyan font=10 show use");
+        showStatus("Removing fiber overlay");
+    }
+}
+
 /*
 --------------------------------------------------------------------------------
     FUNCTIONS
@@ -547,7 +611,7 @@ function cleanup() {
 function display_image(image) {
     setBatchMode(true);
     display_choice     = retrieve_configuration(3, 1 + (5 * n_channels));
-    show_traces_choice = retrieve_configuration(3, 2 + (5 * n_channels));
+    auto_contrast_choice = retrieve_configuration(3, 2 + (5 * n_channels));
     runMacro(getDirectory("plugins") +
         "BB_macros" + File.separator() +
         "Utilities" + File.separator() +
@@ -557,10 +621,6 @@ function display_image(image) {
     deleted = File.delete(temp_directory_utilities + "convert_to_tiff_temp.tif");
 
     alert = "";
-
-    if (show_traces_choice == 1) {
-
-    }
 
     labels = newArray();
     colors = newArray();
@@ -616,11 +676,23 @@ function display_image(image) {
                 open(temp_directory_fibers + temp_files[i]);
                 deleted = File.delete(temp_directory_fibers + temp_files[i]);
                 
-                if (show_traces_choice == 1) {
-
+                if (auto_contrast_choice == 1 && display_choice == "Single Monochrome Images") {
+                    run("Set Measurements...", "mean modal min median redirect=None decimal=3");
+                    run("Measure");
+                    min1 = getResult("Min");
+                    getHistogram(values, counts, 256, min1, 4094);
+                    Array.getStatistics(counts, min2, max, mean, stdDev);
+                    maxLocs = Array.findMaxima(counts, max * 0.5);
+                    mode = values[maxLocs[0]];
+                    range = mode - min1;
+                    offset = range * 0.25;
+                    lower = mode + offset;
+                    upper = mode + range + offset;
+                    setMinAndMax(lower, upper);
+                } else {
+                    setMinAndMax(mins[i], maxes[i]);
                 }
-                
-                setMinAndMax(mins[i], maxes[i]);
+
                 saveAs("Tiff", temp_directory_fibers + temp_files[i]);
                 run("Close All");
             }
@@ -653,7 +725,22 @@ function display_image(image) {
                 title = image + " " + labels[i] + ".tif";
                 selectImage(nImages());
                 rename(title);
-                setMinAndMax(mins[i], maxes[i]);
+                if (auto_contrast_choice == 1) {
+                    run("Set Measurements...", "mean modal min median redirect=None decimal=3");
+                    run("Measure");
+                    min1 = getResult("Min");
+                    getHistogram(values, counts, 256, min1, 4094);
+                    Array.getStatistics(counts, min2, max, mean, stdDev);
+                    maxLocs = Array.findMaxima(counts, max * 0.5);
+                    mode = values[maxLocs[0]];
+                    range = mode - min1;
+                    offset = range * 0.25;
+                    lower = mode + offset;
+                    upper = mode + range + offset;
+                    setMinAndMax(lower, upper);
+                } else {
+                    setMinAndMax(mins[i], maxes[i]);
+                }
             }
 
             merge_channels_str = "";
@@ -675,7 +762,7 @@ function display_image(image) {
             open(temp_directory_fibers + "RGB_composite_image_temp.tif");
             deleted = File.delete(temp_directory_fibers + "RGB_composite_image_temp.tif");
 
-            if (show_traces_choice == 1) {
+            if (auto_contrast_choice == 1) {
 
             }
 
