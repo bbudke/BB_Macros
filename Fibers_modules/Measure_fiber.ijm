@@ -5,6 +5,9 @@
         must be selected, or it can take an ROI name as its argument.
 */
 
+var temp_directory_fibers    = getDirectory("temp") +
+                               "BB_macros" + File.separator() +
+                               "Fibers" + File.separator();
 
 /*
 --------------------------------------------------------------------------------
@@ -37,12 +40,18 @@ macro "Measure_fiber" {
         fiber = args;
     }
 
-    result = File.open(getDirectory("temp") +
+    result = File.open(temp_directory_fibers +
                        "Measure_fiber_result.txt");
     print(result,
         "image\t" +
         "fiber\t" +
         "segment\t" +
+        "point_1_x\t" +
+        "point_1_y\t" +
+        "point_2_x\t" +
+        "point_2_y\t" +
+        "red_val\t" +
+        "green_val\t" +
         "color\t" +
         "length\t" +
         "unit"
@@ -72,6 +81,12 @@ macro "Measure_fiber" {
             image + "\t" +
             fiber + "\t" +
             segment + "\t" +
+            x[thisPoint] + "\t" +
+            y[thisPoint] + "\t" +
+            x[nextPoint] + "\t" +
+            y[nextPoint] + "\t" +
+            redVal + "\t" +
+            greenVal + "\t" +
             color + "\t" +
             length + "\t" +
             unit
