@@ -87,6 +87,7 @@ macro "Image Viewer Configuration Action Tool - C037T0b10CT8b09fTdb09g" {
         heat_max_defaults[i] = value;
     }
     display_choices = newArray("RGB Composite",
+                               "Merged Stack",
                                "Single Monochrome Images",
                                "Single Heatmap Images");
     display_default     = retrieve_configuration(3, 1 + (5 * n_channels));
@@ -631,7 +632,9 @@ function display_image(image) {
         label = retrieve_configuration(2, (i + 1));
         color = retrieve_configuration(3, 1 + (5 * i));
         if (color != "Unused") {
-            if (display_choice == "Single Monochrome Images" || display_choice == "RGB Composite") {
+            if (display_choice == "Single Monochrome Images" ||
+                display_choice == "RGB Composite" ||
+                display_choice == "Merged Stack") {
                 min = retrieve_configuration(3, 2 + (5 * i));
                 max = retrieve_configuration(3, 3 + (5 * i));
             } else if (display_choice == "Single Heatmap Images") {
@@ -651,7 +654,9 @@ function display_image(image) {
             newImage("Ch " + toString(i + 1) + "_image_temp", "16-bit black", width, height, 1, 1, 1);
             selectImage(nImages());
             run("Paste");
-            if (display_choice == "Single Monochrome Images" || display_choice == "RGB Composite") {
+            if (display_choice == "Single Monochrome Images" ||
+                display_choice == "RGB Composite" ||
+                display_choice == "Merged Stack") {
                 if (color == "Gray") {
                     color = "Grays";
                 }
@@ -717,7 +722,7 @@ function display_image(image) {
                 run("Select None");
             }
 
-        } else if (display_choice == "RGB Composite") {
+        } else if (display_choice == "RGB Composite" || display_choice == "Merged Stack") {
 
             temp_files = get_file_list_from_directory(temp_directory_fibers, "_image_temp.tif");
             for (i = 0; i < temp_files.length; i++) {
@@ -755,27 +760,43 @@ function display_image(image) {
                 }
             }
             merge_channels_str = merge_channels_str + "create";
-            run("Merge Channels...", merge_channels_str);
-            run("RGB Color");
-            selectImage(nImages());
-            saveAs(temp_directory_fibers + "RGB_composite_image_temp.tif");
-            run("Close All");
+            if (display_choice == "RGB Composite") {
+                run("Merge Channels...", merge_channels_str);
+                run("RGB Color");
+                selectImage(nImages());
+                saveAs(temp_directory_fibers + "RGB_composite_image_temp.tif");
+                run("Close All");
 
-            open(temp_directory_fibers + "RGB_composite_image_temp.tif");
-            deleted = File.delete(temp_directory_fibers + "RGB_composite_image_temp.tif");
+                open(temp_directory_fibers + "RGB_composite_image_temp.tif");
+                deleted = File.delete(temp_directory_fibers + "RGB_composite_image_temp.tif");
 
-            if (auto_contrast_choice == 1) {
+                saveAs(temp_directory_fibers + "RGB_composite_image_temp.tif");
+                run("Close All");
 
+                setBatchMode(false);
+                open(temp_directory_fibers + "RGB_composite_image_temp.tif");
+                deleted = File.delete(temp_directory_fibers + "RGB_composite_image_temp.tif");
+                title = image + " RGB Composite";
+                rename(title);
+            } else {
+                run("Merge Channels...", merge_channels_str);
+
+                selectImage(nImages());
+                saveAs(temp_directory_fibers + "Merged_Stack_image_temp.tif");
+                run("Close All");
+
+                open(temp_directory_fibers + "Merged_Stack_image_temp.tif");
+                deleted = File.delete(temp_directory_fibers + "Merged_Stack_image_temp.tif");
+
+                saveAs(temp_directory_fibers + "Merged_Stack_image_temp.tif");
+                run("Close All");
+
+                setBatchMode(false);
+                open(temp_directory_fibers + "Merged_Stack_image_temp.tif");
+                deleted = File.delete(temp_directory_fibers + "Merged_Stack_image_temp.tif");
+                title = image + " Merged Stack";
+                rename(title);
             }
-
-            saveAs(temp_directory_fibers + "RGB_composite_image_temp.tif");
-            run("Close All");
-
-            setBatchMode(false);
-            open(temp_directory_fibers + "RGB_composite_image_temp.tif");
-            deleted = File.delete(temp_directory_fibers + "RGB_composite_image_temp.tif");
-            title = image + " RGB Composite";
-            rename(title);
         }
         
     }
