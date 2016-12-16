@@ -677,17 +677,13 @@ function display_image(image) {
                 deleted = File.delete(temp_directory_fibers + temp_files[i]);
                 
                 if (auto_contrast_choice == 1 && display_choice == "Single Monochrome Images") {
-                    run("Set Measurements...", "mean modal min median redirect=None decimal=3");
+                    run("Set Measurements...", "mean standard modal min median redirect=None decimal=3");
                     run("Measure");
-                    min1 = getResult("Min");
-                    getHistogram(values, counts, 256, min1, 4094);
-                    Array.getStatistics(counts, min2, max, mean, stdDev);
-                    maxLocs = Array.findMaxima(counts, max * 0.5);
-                    mode = values[maxLocs[0]];
-                    range = mode - min1;
-                    offset = range * -0.2;
+                    mode = getResult("Mode");
+                    stdev = getResult("StdDev");
+                    offset = stdev * 0;
                     lower = mode + offset;
-                    upper = mode + range + offset;
+                    upper = mode + (stdev * 2) + offset;
                     setMinAndMax(lower, upper);
                 } else {
                     setMinAndMax(mins[i], maxes[i]);
@@ -726,17 +722,13 @@ function display_image(image) {
                 selectImage(nImages());
                 rename(title);
                 if (auto_contrast_choice == 1) {
-                    run("Set Measurements...", "mean modal min median redirect=None decimal=3");
+                    run("Set Measurements...", "mean standard modal min median redirect=None decimal=3");
                     run("Measure");
-                    min1 = getResult("Min");
-                    getHistogram(values, counts, 256, min1, 4094);
-                    Array.getStatistics(counts, min2, max, mean, stdDev);
-                    maxLocs = Array.findMaxima(counts, max * 0.5);
-                    mode = values[maxLocs[0]];
-                    range = mode - min1;
-                    offset = range * 0.25;
+                    mode = getResult("Mode");
+                    stdev = getResult("StdDev");
+                    offset = stdev * 0;
                     lower = mode + offset;
-                    upper = mode + range + offset;
+                    upper = mode + (stdev * 2) + offset;
                     setMinAndMax(lower, upper);
                 } else {
                     setMinAndMax(mins[i], maxes[i]);
