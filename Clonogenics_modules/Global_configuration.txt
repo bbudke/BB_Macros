@@ -5,12 +5,12 @@ Do not modify unless you know exactly what you are doing.
 	PATHS
 --------------------------------------------------------------------------------
 
-Working Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\DNA fibers\Fibers 2016-12-06\ZVIs 2016-12-09\
-Analysis Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\DNA fibers\Fibers 2016-12-06\ZVIs 2016-12-09\Analysis\
-Obs Unit Roi Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\DNA fibers\Fibers 2016-12-06\ZVIs 2016-12-09\Analysis\OBS UNIT ROIs\
-Analysis Setup File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\DNA fibers\Fibers 2016-12-06\ZVIs 2016-12-09\Analysis\Setup.txt
-Image Index File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\DNA fibers\Fibers 2016-12-06\ZVIs 2016-12-09\Analysis\Image index.txt
-Group Labels File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\DNA fibers\Fibers 2016-12-06\ZVIs 2016-12-09\Analysis\Group labels.txt
+Working Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Clonogenics\CL 2016-12-07 SKOV Vel WT34-25 WL-1-55\Plate images\
+Analysis Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Clonogenics\CL 2016-12-07 SKOV Vel WT34-25 WL-1-55\Plate images\Analysis\
+Obs Unit Roi Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Clonogenics\CL 2016-12-07 SKOV Vel WT34-25 WL-1-55\Plate images\Analysis\OBS UNIT ROIs\
+Analysis Setup File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Clonogenics\CL 2016-12-07 SKOV Vel WT34-25 WL-1-55\Plate images\Analysis\Setup.txt
+Image Index File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Clonogenics\CL 2016-12-07 SKOV Vel WT34-25 WL-1-55\Plate images\Analysis\Image index.txt
+Group Labels File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Clonogenics\CL 2016-12-07 SKOV Vel WT34-25 WL-1-55\Plate images\Analysis\Group labels.txt
 
 --------------------------------------------------------------------------------
 	SETTINGS

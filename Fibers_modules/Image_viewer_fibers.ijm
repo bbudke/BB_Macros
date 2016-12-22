@@ -682,19 +682,8 @@ function display_image(image) {
                 deleted = File.delete(temp_directory_fibers + temp_files[i]);
                 
                 if (auto_contrast_choice == 1 && display_choice == "Single Monochrome Images") {
-                    run("Set Measurements...", "mean standard modal min median redirect=None decimal=3");
-                    run("Measure");
-                    min1 = getResult("Min");
-                    std = getResult("StdDev");
-                    getHistogram(values, counts, 256, min1, 4094);
-                    Array.getStatistics(counts, min2, max, mean, stdDev);
-                    maxLocs = Array.findMaxima(counts, max * 0.5);
-                    mode = values[maxLocs[0]];
-                    range = std * 2;
-                    offset = range * 0;
-                    lower = mode + offset;
-                    upper = mode + range + offset;
-                    setMinAndMax(lower, upper);
+                    min_max = get_min_max();
+                    setMinAndMax(min_max[0], min_max[1]);
                 } else {
                     setMinAndMax(mins[i], maxes[i]);
                 }
@@ -732,19 +721,8 @@ function display_image(image) {
                 selectImage(nImages());
                 rename(title);
                 if (auto_contrast_choice == 1) {
-                    run("Set Measurements...", "mean standard modal min median redirect=None decimal=3");
-                    run("Measure");
-                    min1 = getResult("Min");
-                    std = getResult("StdDev");
-                    getHistogram(values, counts, 256, min1, 4094);
-                    Array.getStatistics(counts, min2, max, mean, stdDev);
-                    maxLocs = Array.findMaxima(counts, max * 0.5);
-                    mode = values[maxLocs[0]];
-                    range = std * 2;
-                    offset = range * 0;
-                    lower = mode + offset;
-                    upper = mode + range + offset;
-                    setMinAndMax(lower, upper);
+                    min_max = get_min_max();
+                    setMinAndMax(min_max[0], min_max[1]);
                 } else {
                     setMinAndMax(mins[i], maxes[i]);
                 }
@@ -809,6 +787,24 @@ function display_image(image) {
 // Resize and move a JAVA AWT Window object.
 function frame_script(title, width, height, x, y) {
     return "frame = WindowManager.getWindow(\"" + title + "\"); if (frame != null) {frame.setSize(" + width + ", " + height + "); frame.setLocation(" + x + ", " + y + ");}";
+}
+
+// Return an array with two values that correspond to the minimum and maximum display
+//   values as determined by the modal pixel value and FWHM for an image.
+function get_min_max() {
+    run("Set Measurements...", "mean standard modal min median redirect=None decimal=3");
+    run("Measure");
+    min = getResult("Min");
+    getHistogram(values, counts, 256, min, 4064);
+    Fit.doFit("Gaussian", values, counts);
+    mode = Fit.p(2);
+    stdev = Fit.p(3);
+    FWHM = 2*sqrt(2*log(2))*stdev;
+    offset = FWHM * 0;
+    min = mode + offset;
+    max = mode + offset + FWHM*3;
+    result = newArray(min, max);
+    return result;
 }
 
 // Return an array list of filenames in a directory ending with
