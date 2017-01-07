@@ -24,6 +24,8 @@ var temp_directory_utilities = getDirectory("temp") +
 var image_type = retrieve_configuration(1, 1);
 var n_channels = retrieve_configuration(1, 2);
 
+var currentColor = "GREEN";
+
 /*
 --------------------------------------------------------------------------------
     MACRO
@@ -360,6 +362,34 @@ macro "Load Next Image [f2]" {
     }
 }
 
+macro "Set Color To Green [f5]" {
+    currentColor = "GREEN";
+    print("Current color is " + currentColor);
+}
+
+macro "Set Color To Red [f6]" {
+    currentColor = "RED";
+    print("Current color is " + currentColor);
+}
+
+macro "Set Color To Black [f7]" {
+    currentColor = "BLACK";
+    print("Current color is " + currentColor);
+}
+
+macro "Add New Point [f9]" {
+    roiManager("Add");
+    roiManager("Select", roiManager("Count") - 1);
+    roiManager("Rename", "POINT " + IJ.pad(countROIsWithString("POINT") + 1, 3) + " " + currentColor);
+    getSelectionBounds(x, y, width, height);
+    setColor(toLowerCase(currentColor));
+    Overlay.drawLine(x - 1, y - 1, 3, 3);
+}
+
+macro "Connect Points [f10]" {
+
+}
+
 /*
 --------------------------------------------------------------------------------
     FUNCTIONS
@@ -654,4 +684,34 @@ function retrieve_g_configuration(block_index, line_index) {
     deleted = File.delete(temp_directory_fibers + "g_config_temp.txt");
     retrieved = split(retrieved, "\n");
     return retrieved[0];
+}
+
+// Utility function. Count all the ROIs in the ROI manager whose names
+//   contain the string entered as the argument to this function.
+//   Case-sensitive.
+function countROIsWithString(string) {
+    pointCount = 0;
+    for (i = 0; i < roiManager("Count"); i++) {
+        roiManager("Select", i);
+        name = Roi.getName();
+        if (indexOf(name, string) != -1) pointCount++;
+    }
+    return(pointCount);
+}
+
+// Utility function. Remove all ROIs from the ROI manager whose
+//   names contain the string entered as the argument to this function.
+//   Case-sensitive.
+function removeROIsWithString(string) {
+    if (roiManager("Count") == 0) return;
+    i = 0;
+    do {
+        roiManager("Select", i);
+        name = Roi.getName();
+        if (indexOf(name, string) != -1) {
+            roiManager("Delete");
+        } else {
+            i++;
+        }
+    } while (i < roiManager("Count"));
 }
