@@ -46,18 +46,7 @@ macro "Convert_to_tiff" {
 
     if (image_type == ".tif") {
 
-        if (File.exists(getDirectory("plugins") + File.separator() + "bioformats_package.jar")) {
-            run("Bio-Formats Importer",
-                "open=" + path_to_image + " " +
-                "autoscale " +
-                "color_mode=Default " +
-                "rois_import=[ROI manager] " +
-                "split_channels " +
-                "view=Hyperstack " +
-                "stack_order=XYCZT");
-        } else {
-            open(path_to_image);
-        }
+        open(path_to_image);
         getDimensions(width, height, channels, slices, frames);
         if (frames != 1) {
             exit("Time-lapse images are not currently supported.");
@@ -69,18 +58,7 @@ macro "Convert_to_tiff" {
         // ZVI files open as a separate image for each channel.
         //   This returns a single TIFF where each image from
         //   the ZVI file is a channel in the TIFF.
-        if (File.exists(getDirectory("plugins") + File.separator() + "bioformats_package.jar")) {
-            run("Bio-Formats Importer",
-                "open=" + path_to_image + " " +
-                "autoscale " +
-                "color_mode=Default " +
-                "rois_import=[ROI manager] " +
-                "split_channels " +
-                "view=Hyperstack " +
-                "stack_order=XYCZT");
-        } else {
-            open(path_to_image);
-        }
+        open(path_to_image);
         selectImage(1);
         getDimensions(width, height, channels, slices, frames);
         if (frames != 1) {
@@ -125,18 +103,7 @@ macro "Convert_to_tiff" {
 
     } else if (image_type == ".lsm") {
 
-        if (File.exists(getDirectory("plugins") + File.separator() + "bioformats_package.jar")) {
-            run("Bio-Formats Importer",
-                "open=" + path_to_image + " " +
-                "autoscale " +
-                "color_mode=Default " +
-                "rois_import=[ROI manager] " +
-                "split_channels " +
-                "view=Hyperstack " +
-                "stack_order=XYCZT");
-        } else {
-            open(path_to_image);
-        }
+        open(path_to_image);
         getDimensions(width, height, channels, slices, frames);
         if (frames != 1) {
             exit("Time-lapse images are not currently supported.");
