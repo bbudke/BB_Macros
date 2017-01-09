@@ -24,6 +24,8 @@ var temp_directory_utilities = getDirectory("temp") +
 var image_type = retrieve_configuration(1, 1);
 var n_channels = retrieve_configuration(1, 2);
 
+var currentColor = "GREEN";
+
 /*
 --------------------------------------------------------------------------------
     MACRO
@@ -357,6 +359,23 @@ macro "Load Next Image [f2]" {
         is_in_use = false;
     }
 }
+
+macro "Set Current Color To Green [f5]" {
+	currentColor = "GREEN";
+	print("Segment color is now Green");
+}
+
+macro "Set Current Color To Red [f6]" {
+	currentColor = "RED";
+	print("Segment color is now Red");
+}
+
+
+macro "Set Current Color To Black [f7]" {
+	currentColor = "BLACK";
+	print("Segment color is now Black");
+}
+
 
 /*
 --------------------------------------------------------------------------------
