@@ -653,3 +653,28 @@ function retrieve_g_configuration(block_index, line_index) {
     retrieved = split(retrieved, "\n");
     return retrieved[0];
 }
+
+// Utility function to count the number of ROIs in the ROI manager
+//   containing the substring 'string'. Case-sensitive.
+function countROIsWithName(string) {
+	if (roiManager("Count") == 0) return 0;
+	counter = 0;
+	for (i = 0; i < roiManager("Count"); i++) {
+		roiManager("Select", i);
+		name = Roi.getName();
+		if (indexOf(name, string) != -1) counter++;
+	}
+	return counter;
+}
+
+// Utility function to delete every ROI in the ROI manager
+//   containing the substring 'string'. Case-sensitive.
+function removeROIsWithName(string) {
+	if (roiManager("Count") == 0) return;
+	i = 0;
+	do {
+		roiManager("Select", i);
+		name = Roi.getName();
+		if (indexOf(name, string) != -1) roiManager("Delete"); else i++;
+	} while (i < roiManager("Count"));
+}
