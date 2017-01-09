@@ -385,33 +385,8 @@ macro "Add Point [f9]" {
 	roiManager("Select", roiManager("Count") - 1);
 	roiManager("Rename", "TEMPORARY NEW POINT");
 
-	// Get the name of the current image. This will be the same name as the ROI zip
-	//   file and txt_data file.
-    image_list = get_file_list_from_directory(working_path, image_type);
-    image_list_no_ext = newArray();
-    for (i = 0; i < image_list.length; i++) {
-        append = substring(image_list[i], 0, indexOf(image_list[i], image_type));
-        image_list_no_ext = Array.concat(image_list_no_ext, append);
-    }
-    image = image_list_no_ext[current_image_index];
-
-	// The next block of code should ultimately tell us how many Fibers have
-	//   already been measured for this image. Fiber measurements are stored in
-	//   a txt file in ./Analysis/Fiber_txt_data/. If no file exists, then skip this
-	//   block; we are on Fiber 001. Otherwise, get the highest Fiber number from
-	//   this file. The new Fiber to which we are now assigning points is the next one.
-    fiber_number = 0;
-    if (!File.exists(directory_txt_data + image + ".txt")) {
-    	fiber_number++; // Increment to the next (first) fiber.
-    } else {
-    	data = File.openAsString(directory_txt_data + image + ".txt");
-    	data = split(data, "\n");
-    	data = Array.slice(data, 1, data.length); // Remove the header.
-    	for (i = 0; i < data.length; i++) {
-    		if (getFieldFromTdf(data[i], 2, true) > fiber_number) fiber_number++;
-    	}
-    	fiber_number++; // Increment to the next fiber.
-    }
+	fiber_number = getFiberNumber();
+	fiber_number++; // Increment to the next Fiber number.
     
     // The next block of code should tell us how many segments have currently
     //   been measured. Each segment will ultimately be combined into a single
@@ -429,7 +404,7 @@ macro "Add Point [f9]" {
     runMacro(getDirectory("plugins") +
         "BB_macros" + File.separator() +
         "Utilities" + File.separator() +
-        "Select_roi.ijm", "TEMPORARY NEW POINT");
+        "Select_roi.ijm", "TEMPORARY NEW POINT" + "\t" + "exact");
     roiManager("Rename", "NEW FIBER " + IJ.pad(fiber_number, 3) +
     					 " POINT " + IJ.pad(point_number, 3) +
     					 " " + currentColor);
@@ -444,6 +419,25 @@ macro "Add Point [f9]" {
 
     redrawOverlay();
     updateROIFile();
+}
+
+macro "Points To Fiber [f10]" {
+	// Check to make sure this macro can be run in a meaningful way.
+	if (roiManager("Count") < 1) exit("There must be at least two POINT ROIs.");
+	point_rois = countROIsWithName("POINT");
+	if (point_rois < 2) exit("There must be at least two POINT ROIs.");
+
+	fiber_number = getFiberNumber();
+	fiber_number++; // Increment to the next Fiber number.
+
+	for (i = 2; i <= point_rois; i++) {
+	    runMacro(getDirectory("plugins") +
+	        "BB_macros" + File.separator() +
+	        "Utilities" + File.separator() +
+	        "Select_roi.ijm", "NEW FIBER " + IJ.pad(fiber_number, 3) +
+	        				  " POINT " + IJ.pad(i - 1, 3) + "\t" + "contains");
+		prevPointIndex = 
+	}
 }
 
 /*
@@ -862,5 +856,37 @@ function updateROIFile() {
         if (!File.exists(obs_unit_ROI_path)) File.makeDirectory(obs_unit_ROI_path);
         roiManager("Save", obs_unit_ROI_path + image + ".zip");
         showStatus(image + ".zip" + " updated.");
+    }
+}
+
+// Return the highest Fiber number from saved Fibers (from the txt data) for
+//   the current image.
+function getFiberNumber() {
+	// Get the name of the current image. This will be the same name as the ROI zip
+	//   file and txt_data file.
+    image_list = get_file_list_from_directory(working_path, image_type);
+    image_list_no_ext = newArray();
+    for (i = 0; i < image_list.length; i++) {
+        append = substring(image_list[i], 0, indexOf(image_list[i], image_type));
+        image_list_no_ext = Array.concat(image_list_no_ext, append);
+    }
+    image = image_list_no_ext[current_image_index];
+
+	// The next block of code should ultimately tell us how many Fibers have
+	//   already been measured for this image. Fiber measurements are stored in
+	//   a txt file in ./Analysis/Fiber_txt_data/. If no file exists, then skip this
+	//   block; we are on Fiber 001. Otherwise, get the highest Fiber number from
+	//   this file. The new Fiber to which we are now assigning points is the next one.
+    fiber_number = 0;
+    if (!File.exists(directory_txt_data + image + ".txt")) {
+    	return fiber_number;
+    } else {
+    	data = File.openAsString(directory_txt_data + image + ".txt");
+    	data = split(data, "\n");
+    	data = Array.slice(data, 1, data.length); // Remove the header.
+    	for (i = 0; i < data.length; i++) {
+    		if (getFieldFromTdf(data[i], 2, true) > fiber_number) fiber_number++;
+    	}
+    	return fiber_number;
     }
 }
