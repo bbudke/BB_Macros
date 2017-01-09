@@ -1,4 +1,5 @@
 var working_path        = get_working_paths("working_path");
+var analysis_path		= get_working_paths("analysis_path");
 var obs_unit_ROI_path   = get_working_paths("obs_unit_ROI_path");
 
 var current_image_index = -1;
@@ -20,6 +21,9 @@ var temp_directory_fibers    = getDirectory("temp") +
 var temp_directory_utilities = getDirectory("temp") +
                                "BB_macros" + File.separator() +
                                "Utilities" + File.separator();
+var directory_txt_data		 = analysis_path +
+							   "Fiber_txt_data" + File.separator();
+
 
 var image_type = retrieve_configuration(1, 1);
 var n_channels = retrieve_configuration(1, 2);
@@ -38,8 +42,9 @@ macro "Image Viewer Startup" {
         "Fibers_modules" + File.separator() +
         "Image_viewer_fibers.ijm]");
     cleanup();
-    setTool("polyline");
+    setTool("point");
     run("Colors...", "foreground=white background=black selection=cyan");
+    if (!File.exists(directory_txt_data)) File.makeDirectory(directory_txt_data);
 }
 
 /*
@@ -218,8 +223,8 @@ macro "Load Previous Image (Shortcut Key is F1) Action Tool - C22dF36c6H096f6300
 
         if (File.exists(obs_unit_ROI_path + image + ".zip")) {
             roiManager("Open", obs_unit_ROI_path + image + ".zip");
-            roiManager("Show all with labels");
         }
+        redrawOverlay();
 
         is_in_use = false;
     }
@@ -248,9 +253,8 @@ macro "Load Image Action Tool - C037T0707LT4707OT9707ATe707DT2f08IT5f08MTcf08G" 
 
     if (File.exists(obs_unit_ROI_path + image + ".zip")) {
         roiManager("Open", obs_unit_ROI_path + image + ".zip");
-        roiManager("Show all");
-        run("Labels...", "color=cyan font=10 show use");
     }
+    redrawOverlay();
 
     display_image(image);
 }
@@ -274,30 +278,15 @@ macro "Load Next Image (Shortcut Key is F2) Action Tool - C22dF06c6Hf9939f00" {
 
         if (File.exists(obs_unit_ROI_path + image + ".zip")) {
             roiManager("Open", obs_unit_ROI_path + image + ".zip");
-            roiManager("Show all");
-            run("Labels...", "color=cyan font=10 show use");
         }
+        redrawOverlay();
 
         is_in_use = false;
     }
 }
 
 macro "Update ROI File Action Tool - C037T0707ST5707AT9707VTe707ET0f08RT6f08OTdf08I" {
-    if (!isOpen("ROI Manager")) {
-        showStatus("ROI Manager is not open.");
-    } else if (roiManager("Count") < 1) {
-        showStatus("No ROIs to save.");
-    } else {
-        image_list = get_file_list_from_directory(working_path, image_type);
-        image_list_no_ext = newArray();
-        for (i = 0; i < image_list.length; i++) {
-            append = substring(image_list[i], 0, indexOf(image_list[i], image_type));
-            image_list_no_ext = Array.concat(image_list_no_ext, append);
-        }
-        image = image_list_no_ext[current_image_index];
-        roiManager("Save", obs_unit_ROI_path + image + ".zip");
-        showStatus(image + ".zip" + " updated.");
-    }
+	updateROIFile();
 }
 
 /*
@@ -325,9 +314,8 @@ macro "Load Previous Image [f1]" {
 
         if (File.exists(obs_unit_ROI_path + image + ".zip")) {
             roiManager("Open", obs_unit_ROI_path + image + ".zip");
-            roiManager("Show all");
-            run("Labels...", "color=cyan font=10 show use");
         }
+        redrawOverlay();
 
         is_in_use = false;
     }
@@ -352,9 +340,8 @@ macro "Load Next Image [f2]" {
 
         if (File.exists(obs_unit_ROI_path + image + ".zip")) {
             roiManager("Open", obs_unit_ROI_path + image + ".zip");
-            roiManager("Show all");
-            run("Labels...", "color=cyan font=10 show use");
         }
+        redrawOverlay();
 
         is_in_use = false;
     }
@@ -370,12 +357,94 @@ macro "Set Current Color To Red [f6]" {
 	print("Segment color is now Red");
 }
 
-
 macro "Set Current Color To Black [f7]" {
 	currentColor = "BLACK";
 	print("Segment color is now Black");
 }
 
+// Add a point selection to the ROI manager.
+macro "Add Point [f9]" {
+	// This is the header for the txt data file that contains information on
+	//   each fiber segment.
+	//						Column name		Column index
+	txt_data_header = newArray("Image",			// 1
+							   "Fiber",  		// 2
+							   "Segment",		// 3
+							   "x1",     		// 4
+							   "y1",     		// 5
+							   "x2",     		// 6
+							   "y2",     		// 7
+							   "color");  		// 8
+
+	// Check to make sure this macro can be run in a meaningful way. If so,
+	//   add the new point and rename it to something we can easily find later.
+	if (IJ.getToolName() != "point") 	exit("Single point selection tool required.");
+	if (selectionType != 10) 			exit("Single point selection required.");
+	if (current_image_index == -1) 		exit("No images are open");
+	roiManager("Add");
+	roiManager("Select", roiManager("Count") - 1);
+	roiManager("Rename", "TEMPORARY NEW POINT");
+
+	// Get the name of the current image. This will be the same name as the ROI zip
+	//   file and txt_data file.
+    image_list = get_file_list_from_directory(working_path, image_type);
+    image_list_no_ext = newArray();
+    for (i = 0; i < image_list.length; i++) {
+        append = substring(image_list[i], 0, indexOf(image_list[i], image_type));
+        image_list_no_ext = Array.concat(image_list_no_ext, append);
+    }
+    image = image_list_no_ext[current_image_index];
+
+	// The next block of code should ultimately tell us how many Fibers have
+	//   already been measured for this image. Fiber measurements are stored in
+	//   a txt file in ./Analysis/Fiber_txt_data/. If no file exists, then skip this
+	//   block; we are on Fiber 001. Otherwise, get the highest Fiber number from
+	//   this file. The new Fiber to which we are now assigning points is the next one.
+    fiber_number = 0;
+    if (!File.exists(directory_txt_data + image + ".txt")) {
+    	fiber_number++; // Increment to the next (first) fiber.
+    } else {
+    	data = File.openAsString(directory_txt_data + image + ".txt");
+    	data = split(data, "\n");
+    	data = Array.slice(data, 1, data.length); // Remove the header.
+    	for (i = 0; i < data.length; i++) {
+    		if (getFieldFromTdf(data[i], 2, true) > fiber_number) fiber_number++;
+    	}
+    	fiber_number++; // Increment to the next fiber.
+    }
+    
+    // The next block of code should tell us how many segments have currently
+    //   been measured. Each segment will ultimately be combined into a single
+    //   polyline ROI, built from each point in numerical order as they are
+    //   named in the ROI manager. Furthermore, each point ROI name contains
+    //   information about segment color, which is ultimately used when the
+    //   points are converted into a Fiber polyline to assign color to each
+    //   segment in the data txt file. For now, just tell us what point we're on.
+    point_number = 0;
+    points = countROIsWithName("NEW FIBER " + IJ.pad(fiber_number, 3) + " POINT");
+    point_number += points;
+    point_number++; // Increment to the next point.
+
+    // Add the next point to the ROI manager. 
+    runMacro(getDirectory("plugins") +
+        "BB_macros" + File.separator() +
+        "Utilities" + File.separator() +
+        "Select_roi.ijm", "TEMPORARY NEW POINT");
+    roiManager("Rename", "NEW FIBER " + IJ.pad(fiber_number, 3) +
+    					 " POINT " + IJ.pad(point_number, 3) +
+    					 " " + currentColor);
+    print("Fiber " + fiber_number + " New Point " + IJ.pad(point_number, 3) + " added.");
+
+    // Check to see that we successfully added the last point. This means that
+    //   the TEMPORARY NEW POINT was renamed to something else and is no longer
+    //   in the list. If not, then stop here and complain to the user.
+    if (countROIsWithName("TEMPORARY NEW POINT") != 0)
+    	exit ("Something went wrong here.\n" +
+    		  "The TEMPORARY NEW POINT ROI should have been renamed.");
+
+    redrawOverlay();
+    updateROIFile();
+}
 
 /*
 --------------------------------------------------------------------------------
@@ -674,15 +743,19 @@ function retrieve_g_configuration(block_index, line_index) {
 }
 
 // Utility function to count the number of ROIs in the ROI manager
-//   containing the substring 'string'. Case-sensitive.
+//   containing the substring 'string'. Case-sensitive. If an ROI
+//   is currently selected, then return the selection to that ROI
+//   when finished.
 function countROIsWithName(string) {
 	if (roiManager("Count") == 0) return 0;
+	selectionIndex = roiManager("Index");
 	counter = 0;
 	for (i = 0; i < roiManager("Count"); i++) {
 		roiManager("Select", i);
 		name = Roi.getName();
 		if (indexOf(name, string) != -1) counter++;
 	}
+	if (selectionIndex != -1) roiManager("Select", selectionIndex);
 	return counter;
 }
 
@@ -696,4 +769,98 @@ function removeROIsWithName(string) {
 		name = Roi.getName();
 		if (indexOf(name, string) != -1) roiManager("Delete"); else i++;
 	} while (i < roiManager("Count"));
+}
+
+// Utility function to retrieve a single value from a single line
+//   of tab-separated text.
+function getFieldFromTdf(inputString, field, isNumberBoolean) {
+	field -= 1;
+	result = replace(inputString, "^(.+?\t){" + field + "}", "");
+	result = replace(result, "\t.*", "");
+	if (isNumberBoolean == true) { result = parseInt(result); }
+	return result;
+}
+
+// Redraw the overlay, showing all the current fiber traces and selected points.
+//   The overlay is drawn from information from the txt data file (complete Fiber
+//   traces) and the ROI manager (individual points that have not yet been merged
+//   into Fiber traces).
+function redrawOverlay() {
+    Overlay.remove();
+
+    // First, draw overlays corresponding to each point in the ROI manager.
+    if (roiManager("Count") > 0) {
+	    outerOvalSize = 19; // This should be an odd number.
+	    middleOvalSize = outerOvalSize - 2;
+	    innerOvalSize = outerOvalSize - 4;
+	    for (i = 0; i < roiManager("Count"); i++) {
+	    	roiManager("Select", i);
+	    	name = Roi.getName();
+	    	if (indexOf(name, "NEW FIBER ") != -1 && indexOf(name, " POINT ") != -1) {
+	    		color = substring(name,
+	    						  lengthOf("NEW FIBER 001 POINT 001 "), // Dummy string; just need length.
+	    						  lengthOf(name));
+	    		if (color == "BLACK") color = "#ff555555"; else color = toLowerCase(color);
+	    		getSelectionBounds(x, y, width, height);
+	    		makeOval(x - (outerOvalSize - 1)/2, y - (outerOvalSize - 1)/2, outerOvalSize, outerOvalSize);
+	    		Overlay.addSelection("", 0, "black");
+	    		makeOval(x - (middleOvalSize - 1)/2, y - (middleOvalSize - 1)/2, middleOvalSize, middleOvalSize);
+	    		Overlay.addSelection("", 0, "white");
+	    		makeOval(x - (innerOvalSize - 1)/2, y - (innerOvalSize - 1)/2, innerOvalSize, innerOvalSize);
+	    		Overlay.addSelection("", 0, color);
+	    		run("Select None");
+	    	}
+	    }
+    }
+
+    // Now draw overlays corresponding to each segment in the txt data file.
+    image_list = get_file_list_from_directory(working_path, image_type);
+    image_list_no_ext = newArray();
+    for (i = 0; i < image_list.length; i++) {
+        append = substring(image_list[i], 0, indexOf(image_list[i], image_type));
+        image_list_no_ext = Array.concat(image_list_no_ext, append);
+    }
+    image = image_list_no_ext[current_image_index];
+    if (File.exists(directory_txt_data + image + ".txt")) {
+	    data = File.openAsString(directory_txt_data + image + ".txt");
+	    data = split(data, "\n");
+	    data = Array.slice(data, 1, data.length);
+	    if (data.length > 0) {
+	    	// Draw each segment.
+	    	for (i = 0; i < data.length; i++) {
+	    		x1 = getFieldFromTdf(data[i], 4, true);
+	    		y1 = getFieldFromTdf(data[i], 5, true);
+	    		x2 = getFieldFromTdf(data[i], 6, true);
+	    		y2 = getFieldFromTdf(data[i], 7, true);
+	    		color = getFieldFromTdf(data[i], 8, false);
+	    		if (toLowerCase(color) == "black") color = "ff555555"; else color = toLowerCase(color);
+	    		makeLine(x1, y1, x2, y2);
+	    		Overlay.addSelection(color, 5);
+	    		makeRectangle(x1 - 2, y1 - 2, 4, 4);
+	    		Overlay.addSelection("", 0, "black");
+	    		run("Select None");
+	    	}
+	    }
+    }
+    Overlay.show();
+}
+
+// Utility function to save any changes made to the ROI zip file.
+function updateROIFile() {
+	   if (!isOpen("ROI Manager")) {
+        showStatus("ROI Manager is not open.");
+    } else if (roiManager("Count") < 1) {
+        showStatus("No ROIs to save.");
+    } else {
+        image_list = get_file_list_from_directory(working_path, image_type);
+        image_list_no_ext = newArray();
+        for (i = 0; i < image_list.length; i++) {
+            append = substring(image_list[i], 0, indexOf(image_list[i], image_type));
+            image_list_no_ext = Array.concat(image_list_no_ext, append);
+        }
+        image = image_list_no_ext[current_image_index];
+        if (!File.exists(obs_unit_ROI_path)) File.makeDirectory(obs_unit_ROI_path);
+        roiManager("Save", obs_unit_ROI_path + image + ".zip");
+        showStatus(image + ".zip" + " updated.");
+    }
 }
