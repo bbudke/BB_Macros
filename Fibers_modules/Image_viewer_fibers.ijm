@@ -28,6 +28,20 @@ var directory_txt_data		 = analysis_path +
 var image_type = retrieve_configuration(1, 1);
 var n_channels = retrieve_configuration(1, 2);
 
+// This is the header for the txt data file that contains information on
+//   each fiber segment.
+//					  Column name	  Column index
+var txt_data_header = "Image\t" +		// 1
+					  "Fiber\t" +  		// 2
+					  "Segment\t" +		// 3
+					  "x1\t" +     		// 4
+					  "y1\t" +     		// 5
+					  "x2\t" +     		// 6
+					  "y2\t" +     		// 7
+					  "length\t" +		// 8
+					  "units\t" +		// 9
+					  "color";  		// 10
+
 var currentColor = "GREEN";
 var scaleUnitPerPx = 0.06;
 var scaleUnit = fromCharCode(0xb5) + "m";
@@ -366,20 +380,6 @@ macro "Set Current Color To Black [f7]" {
 
 // Add a point selection to the ROI manager.
 macro "Add Point [f9]" {
-	// This is the header for the txt data file that contains information on
-	//   each fiber segment.
-	//						Column name		Column index
-	txt_data_header = newArray("Image",			// 1
-							   "Fiber",  		// 2
-							   "Segment",		// 3
-							   "x1",     		// 4
-							   "y1",     		// 5
-							   "x2",     		// 6
-							   "y2",     		// 7
-							   "length",		// 8
-							   "units",			// 9
-							   "color");  		// 10
-
 	// Check to make sure this macro can be run in a meaningful way. If so,
 	//   add the new point and rename it to something we can easily find later.
 	if (IJ.getToolName() != "point") 	exit("Single point selection tool required.");
@@ -492,7 +492,32 @@ macro "Points To Fiber [f10]" {
 	}
 	File.close(tempfile);
 
+	// Now that we have the coordinate pairs that make up the fiber polyline,
+	//   make a corresponding FIBER polyline ROI and remove the POINT ROIs
+	//   since we don't need them anymore.
 	makeSelection("polyline", xCoords, yCoords);
+	roiManager("Add");
+	roiManager("Select", roiManager("Count") - 1);
+	roiManager("Rename", "FIBER " + fiber_number);
+	removeROIsWithName("POINT");
+	updateROIFile();
+
+	// Append the newest Fiber measurements from the temporary file to the
+	//   txt data file for this image. Then redraw the overlay to include
+	//   the new Fiber.
+	temp = File.openAsString(temp_directory_fibers + "Image_viewer_fibers_temp.txt");
+	if (File.exists(directory_txt_data + image + ".txt")) {
+		data = File.openAsString(directory_txt_data + image + ".txt");
+	} else {
+		data = txt_data_header;
+	}
+	print(data);
+	print(temp);
+	datafile = File.open(directory_txt_data + image + ".txt");
+	print(datafile, data + "\n" + temp);
+	File.close(datafile);
+	deleted = File.delete(temp_directory_fibers + "Image_viewer_fibers_temp.txt");
+	redrawOverlay();
 }
 
 /*
