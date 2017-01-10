@@ -48,7 +48,8 @@ var scaleUnit = fromCharCode(0xb5) + "m";
 
 var misc_cmds = newMenu(
     "Miscellaneous Commands Menu Tool",
-    newArray("Delete Last POINT",
+    newArray("Reload Image",
+    		 "Delete Last POINT",
              "Delete Last FIBER",
              "Flag as having no Fibers"));
 
@@ -311,10 +312,6 @@ macro "Update ROI File Action Tool - C037T0707ST5707AT9707VTe707ET0f08RT6f08OTdf
 	updateROIFile();
 }
 
-    newArray("Delete Last POINT",
-             "Delete Last FIBER",
-             "Flag as having no Fibers"));
-
 macro "Miscellaneous Commands Menu Tool - C037T0707MT5707IT9707STe707C" {
 	cmd = getArgument();
 
@@ -327,10 +324,28 @@ macro "Miscellaneous Commands Menu Tool - C037T0707MT5707IT9707STe707C" {
     }
     image = image_list_no_ext[current_image_index];
 
-	if (cmd == "Delete Last POINT") {
-
+	if (cmd == "Reload Image") {
+		is_in_use = true;
+		cleanup();
+		display_image(image);
+        if (File.exists(obs_unit_ROI_path + image + ".zip")) {
+            roiManager("Open", obs_unit_ROI_path + image + ".zip");
+        }
+        redrawOverlay();
+        is_in_use = false;
+	} else if (cmd == "Delete Last POINT") {
+		exit("This currently doesn't do anything.\n" +
+			 "To delete a POINT, delete it from the\n" +
+			 "ROI Manager and hit 'SAVE ROI'.");
 	} else if (cmd == "Delete Last FIBER") {
-
+		exit("This currently doesn't do anything.\n" +
+			 "To delete a FIBER, delete it from the\n" +
+			 "ROI Manager and hit 'SAVE ROI'.\n" +
+			 "Then, go into this Image's Fiber_txt_data\n" +
+			 "file, remove all the lines pertaining to\n" +
+			 "this fiber (leave a trailing newline!)\n" +
+			 "and save your changes. Reload the image\n" +
+			 "to confirm that this worked.");
 	} else if (cmd == "Flag as having no Fibers") {
 		// Save a txt data file with just the header and no segment data
 		//   to indicate that we've examined this image and found no
@@ -972,18 +987,24 @@ function redrawOverlay() {
 
 // Utility function to save any changes made to the ROI zip file.
 function updateROIFile() {
-	   if (!isOpen("ROI Manager")) {
+    image_list = get_file_list_from_directory(working_path, image_type);
+    image_list_no_ext = newArray();
+    for (i = 0; i < image_list.length; i++) {
+        append = substring(image_list[i], 0, indexOf(image_list[i], image_type));
+        image_list_no_ext = Array.concat(image_list_no_ext, append);
+    }
+    image = image_list_no_ext[current_image_index];
+
+	if (!isOpen("ROI Manager")) {
         showStatus("ROI Manager is not open.");
     } else if (roiManager("Count") < 1) {
-        showStatus("No ROIs to save.");
+        if (File.exists(obs_unit_ROI_path + image + ".zip")) {
+        	deleted = File.delete(obs_unit_ROI_path + image + ".zip");
+        	showStatus("The ROI list is empty, so the ROI zip file was deleted.");
+    	} else {
+	        showStatus("No ROIs to save. No action taken.");
+    	}
     } else {
-        image_list = get_file_list_from_directory(working_path, image_type);
-        image_list_no_ext = newArray();
-        for (i = 0; i < image_list.length; i++) {
-            append = substring(image_list[i], 0, indexOf(image_list[i], image_type));
-            image_list_no_ext = Array.concat(image_list_no_ext, append);
-        }
-        image = image_list_no_ext[current_image_index];
         if (!File.exists(obs_unit_ROI_path)) File.makeDirectory(obs_unit_ROI_path);
         roiManager("Save", obs_unit_ROI_path + image + ".zip");
         showStatus(image + ".zip" + " updated.");
