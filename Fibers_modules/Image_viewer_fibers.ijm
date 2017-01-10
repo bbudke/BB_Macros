@@ -274,71 +274,73 @@ macro "Load Previous Image (Shortcut Key is F1) Action Tool - C22dF36c6H096f6300
 }
 
 macro "Load Image Menu Tool - C037T0707LT4707OT9707ATe707DT2f08IT5f08MTcf08G" {
-    cmd = getArgument();
+	if (!is_in_use) {
+	    cmd = getArgument();
 
-    image_list = get_file_list_from_directory(working_path, image_type);
-    image_list_no_ext = newArray();
-    for (i = 0; i < image_list.length; i++) {
-        append = substring(image_list[i], 0, indexOf(image_list[i], image_type));
-        image_list_no_ext = Array.concat(image_list_no_ext, append);
-    }
-
-    is_in_use = true;
-    cleanup();
-
-    if (cmd == "Select From List") {
-	    Dialog.create("Select Image");
-	    Dialog.addChoice("Image: ", image_list_no_ext, image_list_no_ext[0]);
-	    Dialog.show();
-	    image = Dialog.getChoice();
-	    for (i = 0; i < image_list_no_ext.length; i++) {
-	        if (image == image_list_no_ext[i]) {
-	            current_image_index = i;
-	            i = image_list_no_ext.length;
-	        }
+	    image_list = get_file_list_from_directory(working_path, image_type);
+	    image_list_no_ext = newArray();
+	    for (i = 0; i < image_list.length; i++) {
+	        append = substring(image_list[i], 0, indexOf(image_list[i], image_type));
+	        image_list_no_ext = Array.concat(image_list_no_ext, append);
 	    }
-    } else if (cmd == "Resume At Last Image Measured") {
-    	if (!File.exists(directory_txt_data)) {
-    		image = image_list_no_ext[0];
-    		current_image_index = 0;
-    		print("No measurements detected in ./Analysis/Fiber_txt_data/\n" +
-    			  "Starting from the beginning.");
-    	}
-    	data_list = get_file_list_from_directory(directory_txt_data, ".txt");
-    	if (data_list.length == 0) {
-    		image = image_list_no_ext[0];
-    		current_image_index = 0;
-    		print("No measurements detected in ./Analysis/Fiber_txt_data/\n" +
-    			  "Starting from the beginning.");
-		} else {
-		    data_list_no_ext = newArray();
-		    for (i = 0; i < data_list.length; i++) {
-		        append = substring(data_list[i], 0, indexOf(data_list[i], ".txt"));
-		        data_list_no_ext = Array.concat(data_list_no_ext, append);
-		    }
-		    image = data_list_no_ext[data_list_no_ext.length - 1];
+
+	    is_in_use = true;
+	    cleanup();
+
+	    if (cmd == "Select From List") {
+		    Dialog.create("Select Image");
+		    Dialog.addChoice("Image: ", image_list_no_ext, image_list_no_ext[0]);
+		    Dialog.show();
+		    image = Dialog.getChoice();
 		    for (i = 0; i < image_list_no_ext.length; i++) {
 		        if (image == image_list_no_ext[i]) {
 		            current_image_index = i;
 		            i = image_list_no_ext.length;
 		        }
 		    }
-		    print("Loading the last image to be measured based on\n" +
-		    	  "the last .txt file in the ./Analysis/Fiber_txt_data\n" +
-		    	  "directory. Be aware that this is not necessarily the\n" +
-		    	  "most recent image to have been measured.\n");
+	    } else if (cmd == "Resume At Last Image Measured") {
+	    	if (!File.exists(directory_txt_data)) {
+	    		image = image_list_no_ext[0];
+	    		current_image_index = 0;
+	    		print("No measurements detected in ./Analysis/Fiber_txt_data/\n" +
+	    			  "Starting from the beginning.");
+	    	}
+	    	data_list = get_file_list_from_directory(directory_txt_data, ".txt");
+	    	if (data_list.length == 0) {
+	    		image = image_list_no_ext[0];
+	    		current_image_index = 0;
+	    		print("No measurements detected in ./Analysis/Fiber_txt_data/\n" +
+	    			  "Starting from the beginning.");
+			} else {
+			    data_list_no_ext = newArray();
+			    for (i = 0; i < data_list.length; i++) {
+			        append = substring(data_list[i], 0, indexOf(data_list[i], ".txt"));
+			        data_list_no_ext = Array.concat(data_list_no_ext, append);
+			    }
+			    image = data_list_no_ext[data_list_no_ext.length - 1];
+			    for (i = 0; i < image_list_no_ext.length; i++) {
+			        if (image == image_list_no_ext[i]) {
+			            current_image_index = i;
+			            i = image_list_no_ext.length;
+			        }
+			    }
+			    print("Loading the last image to be measured based on\n" +
+			    	  "the last .txt file in the ./Analysis/Fiber_txt_data\n" +
+			    	  "directory. Be aware that this is not necessarily the\n" +
+			    	  "most recent image to have been measured.\n");
+			}
+		} else {
+	        exit(cmd + " is not recongnized as\n" +
+	             "a valid argument for Load Image Menu Tool.");
 		}
-	} else {
-        exit(cmd + " is not recongnized as\n" +
-             "a valid argument for Load Image Menu Tool.");
-	}
 
-    display_image(image);
-    if (File.exists(obs_unit_ROI_path + image + ".zip")) {
-        roiManager("Open", obs_unit_ROI_path + image + ".zip");
-    }
-    redrawOverlay();
-    is_in_use = false;
+	    display_image(image);
+	    if (File.exists(obs_unit_ROI_path + image + ".zip")) {
+	        roiManager("Open", obs_unit_ROI_path + image + ".zip");
+	    }
+	    redrawOverlay();
+	    is_in_use = false;
+	}
 }
 
 macro "Load Next Image (Shortcut Key is F2) Action Tool - C22dF06c6Hf9939f00" {
@@ -631,6 +633,7 @@ macro "Points To Fiber [f10]" {
 	deleted = File.delete(temp_directory_fibers + "Image_viewer_fibers_temp.txt");
 	redrawOverlay();
 	print("Fiber " + fiber_number + " assembled.");
+	selectImage(1);
 }
 
 /*
