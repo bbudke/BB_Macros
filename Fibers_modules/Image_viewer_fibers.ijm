@@ -40,11 +40,17 @@ var txt_data_header = "Image\t" +		// 1
 					  "y2\t" +     		// 7
 					  "length\t" +		// 8
 					  "units\t" +		// 9
-					  "color";  		// 10
+					  "color\n";  		// 10 That trailing newline is intentional
 
 var currentColor = "GREEN";
 var scaleUnitPerPx = 0.06;
 var scaleUnit = fromCharCode(0xb5) + "m";
+
+var misc_cmds = newMenu(
+    "Miscellaneous Commands Menu Tool",
+    newArray("Delete Last POINT",
+             "Delete Last FIBER",
+             "Flag as having no Fibers"));
 
 /*
 --------------------------------------------------------------------------------
@@ -305,6 +311,24 @@ macro "Update ROI File Action Tool - C037T0707ST5707AT9707VTe707ET0f08RT6f08OTdf
 	updateROIFile();
 }
 
+    newArray("Delete Last POINT",
+             "Delete Last FIBER",
+             "Flag as having no Fibers"));
+
+macro "Miscellaneous Commands Menu Tool - C037T0707MT5707IT9707STe707C" {
+	cmd = getArgument();
+	if (cmd == "Delete Last POINT") {
+
+	} else if (cmd == "Delete Last FIBER") {
+
+	} else if (cmd == "Flag as having no Fibers") {
+
+	} else {
+        exit(cmd + " is not recongnized as\n" +
+             "a valid argument for Miscellaneous Commands Menu Tool.");
+	}
+} 
+
 /*
 --------------------------------------------------------------------------------
     MACRO SHORTCUT KEYS
@@ -514,7 +538,7 @@ macro "Points To Fiber [f10]" {
 	print(data);
 	print(temp);
 	datafile = File.open(directory_txt_data + image + ".txt");
-	print(datafile, data + "\n" + temp);
+	print(datafile, data + temp);
 	File.close(datafile);
 	deleted = File.delete(temp_directory_fibers + "Image_viewer_fibers_temp.txt");
 	redrawOverlay();
