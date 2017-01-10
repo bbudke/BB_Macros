@@ -317,12 +317,28 @@ macro "Update ROI File Action Tool - C037T0707ST5707AT9707VTe707ET0f08RT6f08OTdf
 
 macro "Miscellaneous Commands Menu Tool - C037T0707MT5707IT9707STe707C" {
 	cmd = getArgument();
+
+	// Get the current image name, which we'll need later.
+    image_list = get_file_list_from_directory(working_path, image_type);
+    image_list_no_ext = newArray();
+    for (i = 0; i < image_list.length; i++) {
+        append = substring(image_list[i], 0, indexOf(image_list[i], image_type));
+        image_list_no_ext = Array.concat(image_list_no_ext, append);
+    }
+    image = image_list_no_ext[current_image_index];
+
 	if (cmd == "Delete Last POINT") {
 
 	} else if (cmd == "Delete Last FIBER") {
 
 	} else if (cmd == "Flag as having no Fibers") {
-
+		// Save a txt data file with just the header and no segment data
+		//   to indicate that we've examined this image and found no
+		//   fibers that meet the cytological criteria for measurement.
+		datafile = File.open(directory_txt_data + image + ".txt");
+		print(datafile, txt_data_header);
+		File.close(datafile);
+		redrawOverlay();
 	} else {
         exit(cmd + " is not recongnized as\n" +
              "a valid argument for Miscellaneous Commands Menu Tool.");
@@ -914,6 +930,8 @@ function redrawOverlay() {
     }
 
     // Now draw overlays corresponding to each segment in the txt data file.
+    //   If the image was flagged as having no measurable Fibers, then place
+    //   a message in the upper left corner of the image to indicate this.
     image_list = get_file_list_from_directory(working_path, image_type);
     image_list_no_ext = newArray();
     for (i = 0; i < image_list.length; i++) {
@@ -926,7 +944,7 @@ function redrawOverlay() {
 	    data = split(data, "\n");
 	    data = Array.slice(data, 1, data.length);
 	    if (data.length > 0) {
-	    	// Draw each segment.
+	    	// There are measured segments. Draw them.
 	    	for (i = 0; i < data.length; i++) {
 	    		x1 = getFieldFromTdf(data[i], 4, true);
 	    		y1 = getFieldFromTdf(data[i], 5, true);
@@ -940,6 +958,13 @@ function redrawOverlay() {
 	    		Overlay.addSelection("", 0, "black");
 	    		run("Select None");
 	    	}
+	    } else {
+	    	// The image was flagged as having no Fibers, so make this apparent
+	    	//   by adding a message to the Overlay.
+	    	setFont("Sanserif", 24, "antialiased");
+			makeText("Image flagged as having\nno measurable fibers", 30, 10);
+			run("Add Selection...", "stroke=cyan fill=#77000000");
+			run("Select None");
 	    }
     }
     Overlay.show();
