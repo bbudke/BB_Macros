@@ -29,6 +29,8 @@ var image_type = retrieve_configuration(1, 1);
 var n_channels = retrieve_configuration(1, 2);
 
 var currentColor = "GREEN";
+var scaleUnitPerPx = 0.06;
+var scaleUnit = fromCharCode(0xb5) + "m";
 
 /*
 --------------------------------------------------------------------------------
@@ -374,7 +376,9 @@ macro "Add Point [f9]" {
 							   "y1",     		// 5
 							   "x2",     		// 6
 							   "y2",     		// 7
-							   "color");  		// 8
+							   "length",		// 8
+							   "units",			// 9
+							   "color");  		// 10
 
 	// Check to make sure this macro can be run in a meaningful way. If so,
 	//   add the new point and rename it to something we can easily find later.
@@ -445,9 +449,10 @@ macro "Points To Fiber [f10]" {
 
 	// Build each segment of two points. Start at the second POINT ROI, since we'll
 	//   be looking back at the previous POINT ROI and the current one to make each
-	//   two-point segment.
+	//   two-point segment. Save each segment as a line of text in a temporary file.
 	xCoords = newArray();
 	yCoords = newArray();
+	run("Set Measurements...", "  redirect=None decimal=3");
 	tempfile = File.open(temp_directory_fibers + "Image_viewer_fibers_temp.txt");
 	for (i = 2; i <= point_rois; i++) {
 	    runMacro(getDirectory("plugins") +
@@ -474,10 +479,16 @@ macro "Points To Fiber [f10]" {
 		y2 = y;
 		xCoords = Array.concat(xCoords, x2);
 		yCoords = Array.concat(yCoords, y2);
+		makeLine(x1, y1, x2, y2);
+		run("Measure");
+		length = getResult("Length");
 		print(tempfile, image + "\t" +
 			            IJ.pad(fiber_number, 3) + "\t" +
 			            IJ.pad(i - 1, 3) + "\t" + // The segment number
-			            x1 + "\t" + y1 + "\t" + x2 + "\t" + y2 + "\t" + color);
+			            x1 + "\t" + y1 + "\t" + x2 + "\t" + y2 + "\t" +
+			            length + "\t" +
+			            scaleUnit + "\t" +
+			            color);
 	}
 	File.close(tempfile);
 
@@ -671,6 +682,8 @@ function display_image(image) {
         
     }
     roiManager("Reset");
+    run("Set Scale...", "distance=1 known=" + scaleUnitPerPx + 
+        " unit=" + scaleUnit + " global");
     if (lengthOf(alert) > 0) {
         showStatus(alert);
     }
@@ -870,7 +883,7 @@ function redrawOverlay() {
 	    		y1 = getFieldFromTdf(data[i], 5, true);
 	    		x2 = getFieldFromTdf(data[i], 6, true);
 	    		y2 = getFieldFromTdf(data[i], 7, true);
-	    		color = getFieldFromTdf(data[i], 8, false);
+	    		color = getFieldFromTdf(data[i], 10, false);
 	    		if (toLowerCase(color) == "black") color = "ff555555"; else color = toLowerCase(color);
 	    		makeLine(x1, y1, x2, y2);
 	    		Overlay.addSelection(color, 5);
@@ -934,3 +947,4 @@ function getFiberNumber() {
     	return fiber_number;
     }
 }
+
