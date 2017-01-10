@@ -43,6 +43,13 @@ var txt_data_header = "Image\t" +		// 1
 					  "color\n";  		// 10 That trailing newline is intentional
 
 var currentColor = "GREEN";
+
+// Allowable values are:
+//   'Red_Green'
+//   'Magenta_Cyan'
+//   'Disabled'
+var overlayDisplay = "Red_Green";
+
 var scaleUnitPerPx = 0.06;
 var scaleUnit = fromCharCode(0xb5) + "m";
 
@@ -83,6 +90,7 @@ macro "Image Viewer Startup" {
     	  "F7 - Set the current fiber color to Black.\n\n" +
     	  "F9 - Add a point vertex to build the next Fiber.\n" +
     	  "F10 - Assemble all current point vertices into a Fiber.\n\n" +
+    	  "F12 - Toggle Overlay display modes.\n\n" +
     	  "It is recommended to print or write these commands down,\n" +
     	  "since many of them can only be accessed through their\n" +
     	  "keyboard shortcuts.\n" +
@@ -636,6 +644,36 @@ macro "Points To Fiber [f10]" {
 	selectImage(1);
 }
 
+// Cycle through display options for the Overlay.
+macro "Toggle Overlay Display [f12]" {
+	// make sure that this macro can be run in a meaningful way.
+	if (nImages == 0) {
+		exit("No images open. Cannot toggle next Overlay display option.");
+	}
+
+	// Allowable values are:
+	//   'Red_Green'
+	//   'Magenta_Cyan'
+	//   'Disabled'
+	if (overlayDisplay == "Red_Green") {
+		overlayDisplay = "Magenta_Cyan";
+		redrawOverlay();
+		print("Showing high-contrast Overlay color scheme.");
+	} else if (overlayDisplay == "Magenta_Cyan") {
+		overlayDisplay = "Disabled";
+		Overlay.remove();
+		print("Overlay disabled.");
+	} else if (overlayDisplay == "Disabled") {
+		overlayDisplay = "Red_Green";
+		redrawOverlay();
+		print("Showing normal Overlay color scheme.");
+	} else {
+		exit("Something went wrong here.\n" +
+			 overlayDisplay + " is not recognized as a valid\n" +
+			 "argument to Toggle Overlay Display.");
+	}
+}
+
 /*
 --------------------------------------------------------------------------------
     FUNCTIONS
@@ -990,6 +1028,7 @@ function getFieldFromTdf(inputString, field, isNumberBoolean) {
 //   traces) and the ROI manager (individual points that have not yet been merged
 //   into Fiber traces).
 function redrawOverlay() {
+	if (overlayDisplay == "Disabled") return;
     Overlay.remove();
 
     // First, draw overlays corresponding to each point in the ROI manager.
@@ -1005,6 +1044,10 @@ function redrawOverlay() {
 	    						  lengthOf("NEW FIBER 001 POINT 001 "), // Dummy string; just need length.
 	    						  lengthOf(name));
 	    		if (color == "BLACK") color = "#ff555555"; else color = toLowerCase(color);
+	    		if (overlayDisplay == "Magenta_Cyan") {
+	    			if (color == "red") color = "magenta";
+	    			else if (color == "green") color = "cyan";
+	    		}
 	    		getSelectionBounds(x, y, width, height);
 	    		makeOval(x - (outerOvalSize - 1)/2, y - (outerOvalSize - 1)/2, outerOvalSize, outerOvalSize);
 	    		Overlay.addSelection("", 0, "black");
@@ -1039,6 +1082,10 @@ function redrawOverlay() {
 	    		x2 = getFieldFromTdf(data[i], 6, true);
 	    		y2 = getFieldFromTdf(data[i], 7, true);
 	    		color = getFieldFromTdf(data[i], 10, false);
+	    		if (overlayDisplay == "Magenta_Cyan") {
+	    			if (color == "red") color = "magenta";
+	    			else if (color == "green") color = "cyan";
+	    		}
 	    		if (toLowerCase(color) == "black") color = "ff555555"; else color = toLowerCase(color);
 	    		makeLine(x1, y1, x2, y2);
 	    		Overlay.addSelection(color, 5);
