@@ -460,7 +460,7 @@ macro "Load Previous Image [f1]" {
             roiManager("Open", obs_unit_ROI_path + image + ".zip");
         }
         redrawOverlay();
-
+  		selectWindow(getTitle());
         is_in_use = false;
     }
 }
@@ -486,7 +486,7 @@ macro "Load Next Image [f2]" {
             roiManager("Open", obs_unit_ROI_path + image + ".zip");
         }
         redrawOverlay();
-
+  		selectWindow(getTitle());
         is_in_use = false;
     }
 }
@@ -919,7 +919,7 @@ function get_min_max() {
     FWHM = 2*sqrt(2*log(2))*stdev;
     offset = FWHM * 0;
     min = mode + offset;
-    max = mode + offset + FWHM*3;
+    max = mode + offset + FWHM*(mode/4096)*15;
     result = newArray(min, max);
     return result;
 }
