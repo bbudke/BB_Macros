@@ -506,9 +506,18 @@ macro "Set Current Color To Black [f7]" {
 macro "Add Point [f9]" {
 	// Check to make sure this macro can be run in a meaningful way. If so,
 	//   add the new point and rename it to something we can easily find later.
-	if (IJ.getToolName() != "point") 	exit("Single point selection tool required.");
-	if (selectionType != 10) 			exit("Single point selection required.");
-	if (current_image_index == -1) 		exit("No images are open");
+	if (IJ.getToolName() != "point") {
+		print("*** Single point selection tool required.");
+		exit();
+	}
+	if (selectionType != 10) {
+		print("*** Single point selection required.");
+		exit();
+	}
+	if (current_image_index == -1) {
+		print("*** No images are open");
+		exit();
+	}
 	roiManager("Add");
 	roiManager("Select", roiManager("Count") - 1);
 	roiManager("Rename", "TEMPORARY NEW POINT");
