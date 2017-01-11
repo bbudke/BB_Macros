@@ -251,6 +251,9 @@ macro "Image Viewer Configuration Action Tool - C037T0b10CT8b09fTdb09g" {
         }
         image = image_list_no_ext[current_image_index];
         display_image(image);
+        if (File.exists(obs_unit_ROI_path + image + ".zip")) {
+            roiManager("Open", obs_unit_ROI_path + image + ".zip");
+        }
         redrawOverlay();
         is_in_use = false;
     }
