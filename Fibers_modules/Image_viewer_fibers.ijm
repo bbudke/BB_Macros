@@ -251,6 +251,7 @@ macro "Image Viewer Configuration Action Tool - C037T0b10CT8b09fTdb09g" {
         }
         image = image_list_no_ext[current_image_index];
         display_image(image);
+        redrawOverlay();
         is_in_use = false;
     }
 }
@@ -556,6 +557,7 @@ macro "Add Point [f9]" {
 
     redrawOverlay();
     updateROIFile();
+    selectWindow(getTitle());
 }
 
 macro "Points To Fiber [f10]" {
@@ -655,7 +657,7 @@ macro "Points To Fiber [f10]" {
 			deleted = File.delete(temp_directory_fibers + "Image_viewer_fibers_temp.txt");
 			redrawOverlay();
 			print("Fiber " + fiber_number + " assembled.");
-			selectImage(1);
+			selectWindow(getTitle());
 		}
 	}
 }
