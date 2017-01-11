@@ -551,97 +551,104 @@ macro "Add Point [f9]" {
 
 macro "Points To Fiber [f10]" {
 	// Check to make sure this macro can be run in a meaningful way.
-	if (roiManager("Count") < 1) exit("There must be at least two POINT ROIs.");
-	point_rois = countROIsWithName("POINT");
-	if (point_rois < 2) exit("There must be at least two POINT ROIs.");
-
-	// Get the current image name, which we'll need later.
-    image_list = get_file_list_from_directory(working_path, image_type);
-    image_list_no_ext = newArray();
-    for (i = 0; i < image_list.length; i++) {
-        append = substring(image_list[i], 0, indexOf(image_list[i], image_type));
-        image_list_no_ext = Array.concat(image_list_no_ext, append);
-    }
-    image = image_list_no_ext[current_image_index];
-
-	// Get the current Fiber number. This should correspond to the POINT ROI names
-	//   that are currently in the ROI manager, but it is actually generated as in
-	//   the previous macro, by looking in the txt data files that contain any
-	//   existing Fibers.
-	fiber_number = getFiberNumber();
-	fiber_number++; // Increment to the next Fiber number.
-
-	// Build each segment of two points. Start at the second POINT ROI, since we'll
-	//   be looking back at the previous POINT ROI and the current one to make each
-	//   two-point segment. Save each segment as a line of text in a temporary file.
-	xCoords = newArray();
-	yCoords = newArray();
-	run("Set Measurements...", "  redirect=None decimal=3");
-	tempfile = File.open(temp_directory_fibers + "Image_viewer_fibers_temp.txt");
-	for (i = 2; i <= point_rois; i++) {
-	    runMacro(getDirectory("plugins") +
-	        "BB_macros" + File.separator() +
-	        "Utilities" + File.separator() +
-	        "Select_roi.ijm", "NEW FIBER " + IJ.pad(fiber_number, 3) +
-	        				  " POINT " + IJ.pad(i - 1, 3) + "\t" + "contains");
-		getSelectionBounds(x, y, width, height);
-		x1 = x;
-		y1 = y;
-		if (i == 2) { // Avoid making duplicate identical points when building polyline.
-			xCoords = Array.concat(xCoords, x1);
-			yCoords = Array.concat(yCoords, y1);
-		}
-	    runMacro(getDirectory("plugins") +
-	        "BB_macros" + File.separator() +
-	        "Utilities" + File.separator() +
-	        "Select_roi.ijm", "NEW FIBER " + IJ.pad(fiber_number, 3) +
-	        				  " POINT " + IJ.pad(i, 3) + "\t" + "contains");
-	    name = Roi.getName();
-	    color = substring(name, lengthOf("NEW FIBER 001 POINT 001 "), lengthOf(name));
-		getSelectionBounds(x, y, width, height);
-		x2 = x;
-		y2 = y;
-		xCoords = Array.concat(xCoords, x2);
-		yCoords = Array.concat(yCoords, y2);
-		makeLine(x1, y1, x2, y2);
-		run("Measure");
-		length = getResult("Length");
-		print(tempfile, image + "\t" +
-			            IJ.pad(fiber_number, 3) + "\t" +
-			            IJ.pad(i - 1, 3) + "\t" + // The segment number
-			            x1 + "\t" + y1 + "\t" + x2 + "\t" + y2 + "\t" +
-			            length + "\t" +
-			            scaleUnit + "\t" +
-			            color);
-	}
-	File.close(tempfile);
-
-	// Now that we have the coordinate pairs that make up the fiber polyline,
-	//   make a corresponding FIBER polyline ROI and remove the POINT ROIs
-	//   since we don't need them anymore.
-	makeSelection("polyline", xCoords, yCoords);
-	roiManager("Add");
-	roiManager("Select", roiManager("Count") - 1);
-	roiManager("Rename", "FIBER " + fiber_number);
-	removeROIsWithName("POINT");
-	updateROIFile();
-
-	// Append the newest Fiber measurements from the temporary file to the
-	//   txt data file for this image. Then redraw the overlay to include
-	//   the new Fiber.
-	temp = File.openAsString(temp_directory_fibers + "Image_viewer_fibers_temp.txt");
-	if (File.exists(directory_txt_data + image + ".txt")) {
-		data = File.openAsString(directory_txt_data + image + ".txt");
+	if (roiManager("Count") < 1) {
+		print("*** There must be at least two POINT ROIs.\n" +
+			  "No Fiber was assembled.");
 	} else {
-		data = txt_data_header;
+		point_rois = countROIsWithName("POINT");
+		if (point_rois < 2) {
+			print("*** There must be at least two POINT ROIs.\n" +
+				  "No Fiber was assembled.");
+		} else {
+			// Get the current image name, which we'll need later.
+		    image_list = get_file_list_from_directory(working_path, image_type);
+		    image_list_no_ext = newArray();
+		    for (i = 0; i < image_list.length; i++) {
+		        append = substring(image_list[i], 0, indexOf(image_list[i], image_type));
+		        image_list_no_ext = Array.concat(image_list_no_ext, append);
+		    }
+		    image = image_list_no_ext[current_image_index];
+
+			// Get the current Fiber number. This should correspond to the POINT ROI names
+			//   that are currently in the ROI manager, but it is actually generated as in
+			//   the previous macro, by looking in the txt data files that contain any
+			//   existing Fibers.
+			fiber_number = getFiberNumber();
+			fiber_number++; // Increment to the next Fiber number.
+
+			// Build each segment of two points. Start at the second POINT ROI, since we'll
+			//   be looking back at the previous POINT ROI and the current one to make each
+			//   two-point segment. Save each segment as a line of text in a temporary file.
+			xCoords = newArray();
+			yCoords = newArray();
+			run("Set Measurements...", "  redirect=None decimal=3");
+			tempfile = File.open(temp_directory_fibers + "Image_viewer_fibers_temp.txt");
+			for (i = 2; i <= point_rois; i++) {
+			    runMacro(getDirectory("plugins") +
+			        "BB_macros" + File.separator() +
+			        "Utilities" + File.separator() +
+			        "Select_roi.ijm", "NEW FIBER " + IJ.pad(fiber_number, 3) +
+			        				  " POINT " + IJ.pad(i - 1, 3) + "\t" + "contains");
+				getSelectionBounds(x, y, width, height);
+				x1 = x;
+				y1 = y;
+				if (i == 2) { // Avoid making duplicate identical points when building polyline.
+					xCoords = Array.concat(xCoords, x1);
+					yCoords = Array.concat(yCoords, y1);
+				}
+			    runMacro(getDirectory("plugins") +
+			        "BB_macros" + File.separator() +
+			        "Utilities" + File.separator() +
+			        "Select_roi.ijm", "NEW FIBER " + IJ.pad(fiber_number, 3) +
+			        				  " POINT " + IJ.pad(i, 3) + "\t" + "contains");
+			    name = Roi.getName();
+			    color = substring(name, lengthOf("NEW FIBER 001 POINT 001 "), lengthOf(name));
+				getSelectionBounds(x, y, width, height);
+				x2 = x;
+				y2 = y;
+				xCoords = Array.concat(xCoords, x2);
+				yCoords = Array.concat(yCoords, y2);
+				makeLine(x1, y1, x2, y2);
+				run("Measure");
+				length = getResult("Length");
+				print(tempfile, image + "\t" +
+					            IJ.pad(fiber_number, 3) + "\t" +
+					            IJ.pad(i - 1, 3) + "\t" + // The segment number
+					            x1 + "\t" + y1 + "\t" + x2 + "\t" + y2 + "\t" +
+					            length + "\t" +
+					            scaleUnit + "\t" +
+					            color);
+			}
+			File.close(tempfile);
+
+			// Now that we have the coordinate pairs that make up the fiber polyline,
+			//   make a corresponding FIBER polyline ROI and remove the POINT ROIs
+			//   since we don't need them anymore.
+			makeSelection("polyline", xCoords, yCoords);
+			roiManager("Add");
+			roiManager("Select", roiManager("Count") - 1);
+			roiManager("Rename", "FIBER " + fiber_number);
+			removeROIsWithName("POINT");
+			updateROIFile();
+
+			// Append the newest Fiber measurements from the temporary file to the
+			//   txt data file for this image. Then redraw the overlay to include
+			//   the new Fiber.
+			temp = File.openAsString(temp_directory_fibers + "Image_viewer_fibers_temp.txt");
+			if (File.exists(directory_txt_data + image + ".txt")) {
+				data = File.openAsString(directory_txt_data + image + ".txt");
+			} else {
+				data = txt_data_header;
+			}
+			datafile = File.open(directory_txt_data + image + ".txt");
+			print(datafile, data + temp);
+			File.close(datafile);
+			deleted = File.delete(temp_directory_fibers + "Image_viewer_fibers_temp.txt");
+			redrawOverlay();
+			print("Fiber " + fiber_number + " assembled.");
+			selectImage(1);
+		}
 	}
-	datafile = File.open(directory_txt_data + image + ".txt");
-	print(datafile, data + temp);
-	File.close(datafile);
-	deleted = File.delete(temp_directory_fibers + "Image_viewer_fibers_temp.txt");
-	redrawOverlay();
-	print("Fiber " + fiber_number + " assembled.");
-	selectImage(1);
 }
 
 // Cycle through display options for the Overlay.
