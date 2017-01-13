@@ -5,12 +5,12 @@ Do not modify unless you know exactly what you are doing.
 	PATHS
 --------------------------------------------------------------------------------
 
-Working Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Clonogenics\CL 2016-12-09 Lymphoma plating test\Plate images 4000 cP\
-Analysis Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Clonogenics\CL 2016-12-09 Lymphoma plating test\Plate images 4000 cP\Analysis\
-Obs Unit Roi Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Clonogenics\CL 2016-12-09 Lymphoma plating test\Plate images 4000 cP\Analysis\OBS UNIT ROIs\
-Analysis Setup File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Clonogenics\CL 2016-12-09 Lymphoma plating test\Plate images 4000 cP\Analysis\Setup.txt
-Image Index File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Clonogenics\CL 2016-12-09 Lymphoma plating test\Plate images 4000 cP\Analysis\Image index.txt
-Group Labels File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Clonogenics\CL 2016-12-09 Lymphoma plating test\Plate images 4000 cP\Analysis\Group labels.txt
+Working Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Clonogenics\CL 2016-12-13b Kur SNU Vel WL-1-55\Plate images KUR\
+Analysis Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Clonogenics\CL 2016-12-13b Kur SNU Vel WL-1-55\Plate images KUR\Analysis\
+Obs Unit Roi Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Clonogenics\CL 2016-12-13b Kur SNU Vel WL-1-55\Plate images KUR\Analysis\OBS UNIT ROIs\
+Analysis Setup File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Clonogenics\CL 2016-12-13b Kur SNU Vel WL-1-55\Plate images KUR\Analysis\Setup.txt
+Image Index File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Clonogenics\CL 2016-12-13b Kur SNU Vel WL-1-55\Plate images KUR\Analysis\Image index.txt
+Group Labels File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Clonogenics\CL 2016-12-13b Kur SNU Vel WL-1-55\Plate images KUR\Analysis\Group labels.txt
 
 --------------------------------------------------------------------------------
 	SETTINGS
