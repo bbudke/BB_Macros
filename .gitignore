@@ -216,4 +216,4 @@ pip-log.txt
 .mr.developer.cfg
 
 #No .txt files; all the macro files are *ijm
-*.txt
+.txt
