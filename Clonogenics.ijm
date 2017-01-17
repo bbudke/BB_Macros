@@ -298,7 +298,8 @@ function checkForAndCreateIndexFiles() {
             rawString = fileList[i];
             filename = substring(rawString, 0, indexOf(rawString, imageType));
             if (autoAssignGroupNumbers == true) {
-                group = substring(rawString, 11, 13);
+                // group = substring(rawString, 11, 13);
+                group = 1;
                 print(imageIndex, filename + "\t" + group);
             } else {
                 print(imageIndex, filename + "\t");
@@ -306,9 +307,7 @@ function checkForAndCreateIndexFiles() {
         }
         File.close(imageIndex);
         message1 = "An image index file has been created under the\n" +
-                   "'Analysis' folder in the experiment directory.\n" +
-                   "Please modify this file so that each image is in\n" +
-                   "its appropriate group in the experiment.";
+                   "'Analysis' folder in the experiment directory.";
     }
 
     noGroupLabels = false;
@@ -316,12 +315,10 @@ function checkForAndCreateIndexFiles() {
         noGroupLabels = true;
         groupLabels = File.open(groupLabelsFile);
         print(groupLabels, "Group number\tGroup label");
+        print(groupLabels, "1\tColonies");
         File.close(groupLabels);
         message2 = "A group index file has been created under the\n" +
-                   "'Analysis' folder in the experiment directory.\n" +
-                   "Please modify this file so that all the groups in\n" +
-                   "the experiment are listed with corresponding\n" +
-                   "identifying group names.";
+                   "'Analysis' folder in the experiment directory.";
     }
 
     if (noImageIndex == true || noGroupLabels == true) {

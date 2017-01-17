@@ -15,7 +15,7 @@ var setupBlock03Labels = newArray("Color:", "Monotone display min value:", "Mono
 var setupBlock03Defaults = newArray("Gray", 0, 4095, 0, 4095, "Single Heatmap Images", 0, 0, 0);
 
 var setupBlock04Labels = newArray("Box size for enclosing obs unit:", "Circle size for well submask:");
-var setupBlock04Defaults = newArray(884, 714);
+var setupBlock04Defaults = newArray(884, 740);
 
 var setupBlock05Labels = newArray("Calibration images (image index,obs unit;...):", "Background subtraction data:", "Maxima tolerance:", "Lower threshold:", "Minimum focus size:", "Minimum focus avg. intensity:", "Minimum focus intensity:", "Minimum focus upper decile:", "Active channel for focus counting:");
 var setupBlock05Defaults = newArray("null", -50, 300, 200, 150, 250, 10000, 500, 1);
