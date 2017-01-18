@@ -3,6 +3,7 @@ var analysis_path		= get_working_paths("analysis_path");
 var obs_unit_ROI_path   = get_working_paths("obs_unit_ROI_path");
 
 var current_image_index = -1;
+var image = "dummy";
 var is_in_use = false;
 var alerts = newArray("No corresponding ROI zip file found for this image.",
                       "At least one channel must have a color that is not 'unused'. (Hit 'Cfg')");
@@ -508,6 +509,7 @@ macro "Set Current Color To Black [f7]" {
 
 // Add a point selection to the ROI manager.
 macro "Add Point [f9]" {
+    if (image == "dummy") exit("Add Point.ijm:\nGlobal image variable has not been assigned.");
 	// Check to make sure this macro can be run in a meaningful way. If so,
 	//   add the new point and rename it to something we can easily find later.
 	if (IJ.getToolName() != "point") {
@@ -574,15 +576,7 @@ macro "Points To Fiber [f10]" {
 			print("*** There must be at least two POINT ROIs.\n" +
 				  "No Fiber was assembled.");
 		} else {
-			// Get the current image name, which we'll need later.
-		    image_list = get_file_list_from_directory(working_path, image_type);
-		    image_list_no_ext = newArray();
-		    for (i = 0; i < image_list.length; i++) {
-		        append = substring(image_list[i], 0, indexOf(image_list[i], image_type));
-		        image_list_no_ext = Array.concat(image_list_no_ext, append);
-		    }
-		    image = image_list_no_ext[current_image_index];
-
+            if (image == "dummy") exit("Points To Fiber.ijm:\nGlobal image variable has not been assigned.");
 			// Get the current Fiber number. This should correspond to the POINT ROI names
 			//   that are currently in the ROI manager, but it is actually generated as in
 			//   the previous macro, by looking in the txt data files that contain any
@@ -1084,13 +1078,7 @@ function redrawOverlay() {
     // Now draw overlays corresponding to each segment in the txt data file.
     //   If the image was flagged as having no measurable Fibers, then place
     //   a message in the upper left corner of the image to indicate this.
-    image_list = get_file_list_from_directory(working_path, image_type);
-    image_list_no_ext = newArray();
-    for (i = 0; i < image_list.length; i++) {
-        append = substring(image_list[i], 0, indexOf(image_list[i], image_type));
-        image_list_no_ext = Array.concat(image_list_no_ext, append);
-    }
-    image = image_list_no_ext[current_image_index];
+    if (image == "dummy") exit("redrawOverlay:\nGlobal image variable has not been assigned.");
     if (File.exists(directory_txt_data + image + ".txt")) {
 	    data = File.openAsString(directory_txt_data + image + ".txt");
 	    data = split(data, "\n");
@@ -1128,13 +1116,7 @@ function redrawOverlay() {
 
 // Utility function to save any changes made to the ROI zip file.
 function updateROIFile() {
-    image_list = get_file_list_from_directory(working_path, image_type);
-    image_list_no_ext = newArray();
-    for (i = 0; i < image_list.length; i++) {
-        append = substring(image_list[i], 0, indexOf(image_list[i], image_type));
-        image_list_no_ext = Array.concat(image_list_no_ext, append);
-    }
-    image = image_list_no_ext[current_image_index];
+    if (image == "dummy") exit("updateROIFile:\nGlobal image variable has not been assigned.");
 
 	if (!isOpen("ROI Manager")) {
         showStatus("ROI Manager is not open.");
@@ -1156,15 +1138,7 @@ function updateROIFile() {
 // Return the highest Fiber number from saved Fibers (from the txt data) for
 //   the current image.
 function getFiberNumber() {
-	// Get the name of the current image. This will be the same name as the ROI zip
-	//   file and txt_data file.
-    image_list = get_file_list_from_directory(working_path, image_type);
-    image_list_no_ext = newArray();
-    for (i = 0; i < image_list.length; i++) {
-        append = substring(image_list[i], 0, indexOf(image_list[i], image_type));
-        image_list_no_ext = Array.concat(image_list_no_ext, append);
-    }
-    image = image_list_no_ext[current_image_index];
+	if (image == "dummy") exit("getFiberNumber:\nGlobal image variable has not been assigned.");
 
 	// The next block of code should ultimately tell us how many Fibers have
 	//   already been measured for this image. Fiber measurements are stored in
