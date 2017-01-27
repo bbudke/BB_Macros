@@ -5,12 +5,12 @@ Do not modify unless you know exactly what you are doing.
 	PATHS
 --------------------------------------------------------------------------------
 
-Working Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Cytology\CYT 2016-01-12 293-DR 1-55 4 Gy yH2AX\ZVIs 2016-01-30\
-Analysis Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Cytology\CYT 2016-01-12 293-DR 1-55 4 Gy yH2AX\ZVIs 2016-01-30\Analysis\
-Obs Unit Roi Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Cytology\CYT 2016-01-12 293-DR 1-55 4 Gy yH2AX\ZVIs 2016-01-30\Analysis\OBS UNIT ROIs\
-Analysis Setup File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Cytology\CYT 2016-01-12 293-DR 1-55 4 Gy yH2AX\ZVIs 2016-01-30\Analysis\Setup.txt
-Image Index File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Cytology\CYT 2016-01-12 293-DR 1-55 4 Gy yH2AX\ZVIs 2016-01-30\Analysis\Image index.txt
-Group Labels File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Cytology\CYT 2016-01-12 293-DR 1-55 4 Gy yH2AX\ZVIs 2016-01-30\Analysis\Group labels.txt
+Working Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Cytology\CYT 2016-09-08 PC-3 MRC-5 RI-1 WL-1-55 53BP1\ZVIs 2017-01-26 PC-3\
+Analysis Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Cytology\CYT 2016-09-08 PC-3 MRC-5 RI-1 WL-1-55 53BP1\ZVIs 2017-01-26 PC-3\Analysis\
+Obs Unit Roi Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Cytology\CYT 2016-09-08 PC-3 MRC-5 RI-1 WL-1-55 53BP1\ZVIs 2017-01-26 PC-3\Analysis\OBS UNIT ROIs\
+Analysis Setup File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Cytology\CYT 2016-09-08 PC-3 MRC-5 RI-1 WL-1-55 53BP1\ZVIs 2017-01-26 PC-3\Analysis\Setup.txt
+Image Index File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Cytology\CYT 2016-09-08 PC-3 MRC-5 RI-1 WL-1-55 53BP1\ZVIs 2017-01-26 PC-3\Analysis\Image index.txt
+Group Labels File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\Cytology\CYT 2016-09-08 PC-3 MRC-5 RI-1 WL-1-55 53BP1\ZVIs 2017-01-26 PC-3\Analysis\Group labels.txt
 
 --------------------------------------------------------------------------------
 	SETTINGS
@@ -22,4 +22,4 @@ Initial threshold for submasks: 	Local threshold
 Minimum submask size: 	2500
 Exclude edge submasks: 	1
 Allow composite submasks: 	0
-Show ROI manager in Image Viewer: 	0
+Show ROI manager in Image Viewer: 	1

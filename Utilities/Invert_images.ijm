@@ -26,7 +26,7 @@ macro "Invert images" {
 			workingPath + File.separator() + imageList[i]
 			);
 		cleanup();
-		print(ImageList[i] + " inverted.");
+		print(imageList[i] + " inverted.");
 	}
 	print(
 		imageList.length +
