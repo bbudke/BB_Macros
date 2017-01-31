@@ -461,7 +461,7 @@ macro "Load Previous Image [f1]" {
             roiManager("Open", obs_unit_ROI_path + image + ".zip");
         }
         redrawOverlay();
-  		selectWindow(getTitle());
+
         is_in_use = false;
     }
 }
@@ -487,7 +487,7 @@ macro "Load Next Image [f2]" {
             roiManager("Open", obs_unit_ROI_path + image + ".zip");
         }
         redrawOverlay();
-  		selectWindow(getTitle());
+
         is_in_use = false;
     }
 }
