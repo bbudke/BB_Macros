@@ -5,7 +5,7 @@ Do not modify unless you know exactly what you are doing.
 	PATHS
 --------------------------------------------------------------------------------
 
-Working Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\DNA fibers\Fibers 2016-12-16\ZVIs 2016-12-28 0h 5h 8h\
-Analysis Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\DNA fibers\Fibers 2016-12-16\ZVIs 2016-12-28 0h 5h 8h\Analysis\
-Obs Unit Roi Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\DNA fibers\Fibers 2016-12-16\ZVIs 2016-12-28 0h 5h 8h\Analysis\OBS UNIT ROIs\
-Analysis Setup File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\DNA fibers\Fibers 2016-12-16\ZVIs 2016-12-28 0h 5h 8h\Analysis\Setup.txt
+Working Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\DNA fibers\Fibers 2017-02-06 CldU IdU HU\ZVIs 2017-02-13\
+Analysis Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\DNA fibers\Fibers 2017-02-06 CldU IdU HU\ZVIs 2017-02-13\Analysis\
+Obs Unit Roi Path: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\DNA fibers\Fibers 2017-02-06 CldU IdU HU\ZVIs 2017-02-13\Analysis\OBS UNIT ROIs\
+Analysis Setup File: 	C:\Users\Brian Budke\Box Sync\Bishop and Connell Lab Group Folder\Current lab members\Brian Budke\DNA fibers\Fibers 2017-02-06 CldU IdU HU\ZVIs 2017-02-13\Analysis\Setup.txt
