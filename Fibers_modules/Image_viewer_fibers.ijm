@@ -51,8 +51,10 @@ var currentColor = "GREEN";
 //   'Disabled'
 var overlayDisplay = "Red_Green";
 
-var scaleUnitPerPx = 0.06;
-var scaleUnit = fromCharCode(0xb5) + "m";
+var scaleUnitPerPx = 1;
+var scaleUnit = "px";
+// var scaleUnitPerPx = 0.06;
+// var scaleUnit = fromCharCode(0xb5) + "m";
 
 var load_cmds = newMenu(
     "Load Image Menu Tool",
@@ -877,10 +879,11 @@ function display_image(image) {
     }
     roiManager("Reset");
     setTool("point");
-    run("Set Scale...", "distance=1 known=" + scaleUnitPerPx + 
-        " unit=" + scaleUnit + " global");
-    print("Image " + image + " is now loaded.\n" +
-    	  "Global scale is set to " + scaleUnitPerPx + " " + scaleUnit + " per pixel.\n");
+    run("Set Scale...", "distance=0 known=0 pixel=1 unit=pixel global");
+    // run("Set Scale...", "distance=1 known=" + scaleUnitPerPx + 
+    //     " unit=" + scaleUnit + " global");
+    // print("Image " + image + " is now loaded.\n" +
+    // 	  "Global scale is set to " + scaleUnitPerPx + " " + scaleUnit + " per pixel.\n");
     if (currentColor == "GREEN") {
     	print("The current segment color is Green.");
     } else if (currentColor == "RED") {
@@ -1048,7 +1051,7 @@ function redrawOverlay() {
 
     // First, draw overlays corresponding to each point in the ROI manager.
     if (roiManager("Count") > 0) {
-	    outerOvalSize = 19; // This should be an odd number.
+	    outerOvalSize = 11; // This should be an odd number. Was 19 in last version.
 	    middleOvalSize = outerOvalSize - 2;
 	    innerOvalSize = outerOvalSize - 4;
 	    for (i = 0; i < roiManager("Count"); i++) {
@@ -1097,8 +1100,8 @@ function redrawOverlay() {
 	    		}
 	    		if (toLowerCase(color) == "black") color = "ff555555"; else color = toLowerCase(color);
 	    		makeLine(x1, y1, x2, y2);
-	    		Overlay.addSelection(color, 5);
-	    		makeRectangle(x1 - 2, y1 - 2, 4, 4);
+	    		Overlay.addSelection(color, 2); // Second argument was 5 in last version.
+	    		makeRectangle(x1 - 1, y1 - 1, 3, 3);
 	    		Overlay.addSelection("", 0, "black");
 	    		run("Select None");
 	    	}
