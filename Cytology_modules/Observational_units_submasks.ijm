@@ -487,6 +487,9 @@ function loadNextObsUnit() {
 	----------------------------------------------------------------------------
 	*/
 
+	// This block will create an error message from the ROI manager saying the
+	// active image does not have a selection if the code above does not
+	// result in an ROI.
 
 		if (submasks.length > 0) {
 			arr = newArray();

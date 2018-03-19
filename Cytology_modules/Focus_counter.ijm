@@ -436,6 +436,21 @@ macro "Focus Counter" {
 							k = roiManager("Count");
 						}
 					}
+					if (submaskRoiIndex == -1) {
+						submaskRoiName = "OBS UNIT " + IJ.pad(j + 1, 2);
+						for (k=0; k<roiManager("Count"); k++) {
+							roiManager("Select", k);
+							name = Roi.getName();
+							if (matches(name, submaskRoiName) == true) {
+								submaskRoiIndex = k;
+								k = roiManager("Count");
+							}
+						}
+					}
+					if (submaskRoiIndex == -1) {
+						exit("Could not find the submask ROI for " + zipListNoExt[i] + "\n" +
+							submaskRoiName);
+					}
 
 					run("Set Measurements...", "area mean integrated median redirect=None decimal=3");
 					selectWindow("extractedImage.tif");
