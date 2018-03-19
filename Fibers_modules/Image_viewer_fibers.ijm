@@ -1051,7 +1051,7 @@ function redrawOverlay() {
 
     // First, draw overlays corresponding to each point in the ROI manager.
     if (roiManager("Count") > 0) {
-	    outerOvalSize = 11; // This should be an odd number. Was 19 in last version.
+	    outerOvalSize = 8; // This should be an odd number. Was 19 in last version.
 	    middleOvalSize = outerOvalSize - 2;
 	    innerOvalSize = outerOvalSize - 4;
 	    for (i = 0; i < roiManager("Count"); i++) {
