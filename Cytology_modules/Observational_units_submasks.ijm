@@ -343,7 +343,7 @@ function loadNextObsUnit() {
 					if (name == "OBS UNIT " + obsUnits[i]) {
 						obsUnitIndex2 = j;
 						j = roiManager("Count");
-					}
+					} 
 				}
 				for (j=0; j<roiManager("Count"); j++) {
 					roiManager("Select", j)
@@ -597,10 +597,16 @@ function loadNextObsUnit() {
 			if (arr.length > 1) {
 				roiManager("OR");
 			}
-			roiManager("Add"); // for some reason, this doesn't work in batch mode
-			roiManager("Select", roiManager("Count") - 1);
-			roiManager("Rename", "Initial submask minus junk");
-
+			if (roiManager("Count") > 0) {
+				roiManager("Add"); // for some reason, this doesn't work in batch mode
+				roiManager("Select", roiManager("Count") - 1);
+				roiManager("Rename", "Initial submask minus junk");
+			} else {
+				run("Select All");
+				roiManager("Add");
+				roiManager("Select", roiManager("Count") - 1);
+				roiManager("Rename", "Initial submask minus junk");
+			}
 			roiManager("Open", getDirectory("temp") + "temp roi file.zip");
 			do {
 				found = false;

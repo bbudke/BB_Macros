@@ -87,9 +87,16 @@ macro "Obervational Units Global Masks" {
 		roiManager("Select", roiManager("Count") -1 );
 		roiManager("Rename", "Global Foreground mask");
 		run("Make Inverse");
-		roiManager("Add");
-		roiManager("Select", roiManager("Count") -1 );
-		roiManager("Rename", "Global Background mask");
+		if (selectionType != -1) {
+			roiManager("Add");
+			roiManager("Select", roiManager("Count") -1 );
+			roiManager("Rename", "Global Background mask");
+		} else {
+			roiManager("Select", findRoiWithName("Global Foreground mask"));
+			roiManager("Add");
+			roiManager("Select", roiManager("Count") -1 );
+			roiManager("Rename", "Global Background mask");
+		}
 		roiManager("Save", obsUnitRoiPath + zipListNoMaskNoExt[i] + ".zip");
 		deleted = File.delete(getDirectory("temp") + "temp.tif");
 		run("Close All");
@@ -105,6 +112,19 @@ macro "Obervational Units Global Masks" {
 	FUNCTIONS
 --------------------------------------------------------------------------------
 */
+
+function findRoiWithName(roiName) { 
+	nR = roiManager("Count"); 
+ 
+	for (i=0; i<nR; i++) { 
+		roiManager("Select", i); 
+		rName = Roi.getName(); 
+		if (matches(rName, roiName)) { 
+			return i; 
+		} 
+	} 
+	return -1; 
+}
 
 function getFileListFromDirectory(directory, extension) {
 	allFileList = getFileList(directory);
