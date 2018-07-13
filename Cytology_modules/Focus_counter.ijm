@@ -436,6 +436,7 @@ macro "Focus Counter" {
 							k = roiManager("Count");
 						}
 					}
+					/*
 					if (submaskRoiIndex == -1) {
 						submaskRoiName = "OBS UNIT " + IJ.pad(j + 1, 2);
 						for (k=0; k<roiManager("Count"); k++) {
@@ -447,6 +448,7 @@ macro "Focus Counter" {
 							}
 						}
 					}
+					*/
 					if (submaskRoiIndex == -1) {
 						exit("Could not find the submask ROI for " + zipListNoExt[i] + "\n" +
 							submaskRoiName);
