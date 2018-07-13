@@ -34,8 +34,8 @@ macro "Colocalization" {
 	Dialog.show();
 	channelY = Dialog.getChoice();
 	*/
-	channelX = 2;
-	channelY = 3;
+	channelX = 3; // Each focus from this channel is scored to see if it overlaps with the mask
+	channelY = 2; // Used to make the mask
 
 	if (channelX == channelY) {
 		exit("The two channels used for\ncolocalization must be different.");
@@ -187,7 +187,9 @@ macro "Colocalization" {
 							run("Measure");
 							XCirc = Array.concat(XCirc, getResult("Circ."));
 							colocalizedInt = getResult("RawIntDen");
-							if (colocalizedInt > 0) {
+							colocalizedArea = getResult("Area");
+							// The test number below can be 0 - 255, with 255 being 100% colocalization
+							if (colocalizedInt / colocalizedArea > 128) {
 								XYfociColocalized++;
 							}
 						}
