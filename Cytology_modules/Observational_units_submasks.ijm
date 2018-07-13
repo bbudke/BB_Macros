@@ -597,7 +597,7 @@ function loadNextObsUnit() {
 			if (arr.length > 1) {
 				roiManager("OR");
 			}
-			if (roiManager("Count") > 0) {
+			if (roiManager("Count") > 0 && false) {
 				roiManager("Add"); // for some reason, this doesn't work in batch mode
 				roiManager("Select", roiManager("Count") - 1);
 				roiManager("Rename", "Initial submask minus junk");
