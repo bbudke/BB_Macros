@@ -6,7 +6,7 @@ var alerts = newArray("No corresponding ROI zip file found for this image.", "No
 var colorChoices = newArray("Unused", "Red", "Green", "Blue", "Gray", "Cyan", "Magenta", "Yellow");
 
 var imageType = retrieveConfiguration(0, 0);
-var nChannels = retrieveConfiguration(0, 1);
+var nChannels = parseInt(retrieveConfiguration(0, 1));
 var zSeriesOption = retrieveConfiguration(0, 3);
 
 /*

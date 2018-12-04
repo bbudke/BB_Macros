@@ -6,6 +6,8 @@ var imageType = retrieveConfiguration(0, 0);
 var nChannels = retrieveConfiguration(0, 1);
 var zSeriesOption = retrieveConfiguration(0, 3);
 
+random("seed", 1);
+
 /*
 --------------------------------------------------------------------------------
 	MACRO

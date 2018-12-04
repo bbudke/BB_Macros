@@ -221,7 +221,7 @@ macro "Focus Counter Core" {
 		if (maskFile != "null" && submaskRoiIndex != -1) {
 			roiManager("Open", maskFile);
 			submaskEnlarge = 0; // temporary until I write an option to resize submasks later.
-			
+
 			selectWindow("Original image.tif");
 			run("Overlay Options...", "stroke=green width=0 fill=none");
 			run("Labels...", "color=green font=18");
@@ -274,10 +274,10 @@ macro "Focus Counter Core" {
 			roiManager("Select", submaskRoiIndex);
 
 			run("Enlarge...", "enlarge=" + submaskEnlarge);
-
 			run("Add Selection...");
 			run("Make Inverse");
-			run("Set...", "value=255");
+
+			if (selectionType != -1) run("Set...", "value=255");
 
 			roiManager("Reset");
 		} else {
