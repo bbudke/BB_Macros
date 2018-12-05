@@ -114,6 +114,55 @@ macro "RGB Composite Montages Action Tool - Cc00F0055C0c0F6055C00cFc055C00cF0655
 --------------------------------------------------------------------------------
 */
 
+function addFociOverlay(image, obsUnit) {
+	fociPathCh1 = analysisPath + "Channel 1 Results" + File.separator() + "Raw Data" + File.separator() +
+    image + "-" + IJ.pad(obsUnit + 1, 2) + " foci.zip";
+	fociPathCh2 = analysisPath + "Channel 2 Results" + File.separator() + "Raw Data" + File.separator() +
+	image + "-" + IJ.pad(obsUnit + 1, 2) + " foci.zip";
+	print(fociPathCh1 + " + " + fociPathCh2);
+
+	run("Set Measurements...", "centroid redirect=None decimal=3");
+
+	//run("Select None");
+	//run("Set...", "value=0");
+
+	run("Remove Overlay");
+	roiManager("Reset");
+	if (File.exists(fociPathCh1)) {
+	    roiManager("Open", fociPathCh1);
+	    for(i = 0; i < roiManager("Count"); i++) {
+	        roiManager("Select", i);
+	        if (matches(Roi.getName, "Focus PASS.*")) {
+	            run("Measure");
+	            x = getResult("X");
+	            y = getResult("Y");
+	            makeLine(x - 1, y, x + 1, y);
+	            Overlay.addSelection("cyan", 0);
+	            makeLine(x, y - 1, x, y + 1);
+	            Overlay.addSelection("cyan", 0);
+	        }
+	    }
+	}
+	roiManager("Reset");
+	if (File.exists(fociPathCh2)) {
+	    roiManager("Open", fociPathCh2);
+	    for(i = 0; i < roiManager("Count"); i++) {
+	        roiManager("Select", i);
+	        if (matches(Roi.getName, "Focus PASS.*")) {
+	            run("Measure");
+	            x = getResult("X");
+	            y = getResult("Y");
+	            makeLine(x - 1, y, x + 1, y);
+	            Overlay.addSelection("magenta", 0);
+	            makeLine(x, y - 1, x, y + 1);
+	            Overlay.addSelection("magenta", 0);
+	        }
+	    }
+	}
+	run("Select None");
+	run("Flatten");
+}
+
 function cleanup() {
 	run("Close All");
 	if (isOpen("Log")) { selectWindow("Log"); run("Close"); }
@@ -264,6 +313,7 @@ function createMontages(montageType) {
 			run("Copy");
 			newImage("temp montage panel " + IJ.pad(1 + j, 2), "RGB black", width, height, 1, 1, 1);
 			run("Paste");
+			addFociOverlay(imageArray[j], obsUnitArray[j]);
 			run("Size...", "width=" + toString(1600 / panelsWide) + " constrain average interpolation=Bilinear");
 			saveAs("Tiff", getDirectory("temp") + "temp montage panel " + IJ.pad(1 + j, 2) + ".tif");
 			run("Close All");
